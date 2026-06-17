@@ -348,7 +348,7 @@ const CMD = [
   ['sleep',     'waiting','wait / sleep',    'Wait fixed milliseconds',      'vibium sleep','browser_sleep','page.wait(ms)','page.wait(ms)','page.sleep(ms)',['B22'],[]],
   ['waitFor',   'waiting','waitFor',         'Wait for selector to appear',  'vibium wait','browser_wait','page.waitFor()','page.wait_for()','page.waitFor()',[],[]],
   ['waitForFn', 'waiting','waitForFunction', 'Wait for JS expression truthy','vibium wait fn','browser_wait_for_fn','page.waitForFunction()','page.wait_for_function()','page.waitForFunction()',['JV-174'],['JS-Bug1']],
-  ['waitURL',   'waiting','waitForURL',      'Wait for URL to match',        'vibium wait url','browser_wait_for_url','page.waitForURL()','page.wait_for_url()','page.waitForURL()',[],[]],
+  ['waitURL',   'waiting','waitForURL',      'Wait for URL to match',        'vibium wait url','browser_wait_for_url','page.waitForURL()','page.wait_for_url()','page.waitForURL()',['JV-129'],[]],
   ['waitLoad',  'waiting','waitForLoad',     'Wait for page load event',     'vibium wait load','browser_wait_for_load','page.waitForLoad()','page.wait_for_load()','page.waitForLoad()',[],[]],
   ['waitText',  'extras', 'wait text',        'Wait for text visible on page','vibium wait text','browser_wait_for_text','','','',[],[]],
   ['waitUntil', 'waiting','el.waitUntil',    'Wait for element state change','vibium wait --state','browser_wait','el.waitUntil()','el.wait_until()','el.waitUntil()',[],[]],
@@ -424,7 +424,7 @@ const CMD = [
   ['mo-wheel', 'input','mouse.wheel',     'Scroll mouse wheel',               '','⬜','mouse.wheel()','mouse.wheel()','mouse.wheel()',[],[]],
   ['tc-tap',   'input','touch.tap',       'Touch tap at coordinates',         '','','touch.tap()','touch.tap()','touch.tap()',[],[]],
   // NETWORK
-  ['addScript','network','addScript',  'Add script tag to page',          '⬜','⬜','page.addScript()','page.add_script()','page.addScript()',[],[]],
+  ['addScript','network','addScript',  'Add script tag to page',          '⬜','⬜','page.addScript()','page.add_script()','page.addScript()',['JV-130'],[]],
   ['addStyle', 'network','addStyle',   'Add style tag to page',           '⬜','⬜','page.addStyle()','page.add_style()','page.addStyle()',[],[]],
   ['expose',   'network','expose',          'Expose JS fn from Node to page',  '','','page.expose()','page.expose()','page.expose()',['JV-135'],[]],
   ['route',    'network','route',           'Register request route handler',  '','','page.route()','page.route()','page.route()',['JV-128'],[]],
@@ -440,7 +440,7 @@ const CMD = [
   // EVENTS
   ['onDialog', 'events','onDialog',          'Dialog event listener',          '','','page.onDialog()','page.on_dialog()','page.onDialog(cb)',[],[]],
   ['onCons',   'events','onConsole',         'Console event listener',         '','','page.onConsole()','page.on_console()','page.onConsole(cb)',[],[]],
-  ['onErr',    'events','onError',           'Error event listener',           '','','page.onError()','page.on_error()','page.onError(cb)',[],[]],
+  ['onErr',    'events','onError',           'Error event listener',           '','','page.onError()','page.on_error()','page.onError(cb)',['JV-136'],[]],
   ['onDl',     'events','onDownload',        'Download event listener',        '','','page.onDownload()','page.on_download()','page.onDownload(cb)',[],[]],
   ['onWS',     'events','onWebSocket',       'WebSocket event listener',       '','','page.onWebSocket()','page.on_web_socket()','page.onWebSocket(cb)',[],[]],
   ['pg-rmAl',  'events','page.removeAllListeners','Remove all page listeners','','','page.removeAllListeners()','page.remove_all_listeners()','page.removeAllListeners()',[],[]],
@@ -454,10 +454,10 @@ const CMD = [
   ['cl-inst',  'clock','clock.install',      'Install fake timers',            '','page_clock_install','clock.install()','clock.install()','clock.install()',[],[]],
   ['cl-ff',    'clock','clock.fastForward',  'Fast-forward fake time',         '','page_clock_fast_forward','clock.fastForward()','clock.fast_forward()','clock.fastForward()',[],[]],
   ['cl-runF',  'clock','clock.runFor',       'Run timers for duration',        '','page_clock_run_for','clock.runFor()','clock.run_for()','clock.runFor()',[],[]],
-  ['cl-pAt',   'clock','clock.pauseAt',      'Pause clock at timestamp',       '','page_clock_pause_at','clock.pauseAt()','clock.pause_at()','clock.pauseAt()',[],[]],
+  ['cl-pAt',   'clock','clock.pauseAt',      'Pause clock at timestamp',       '','page_clock_pause_at','clock.pauseAt()','clock.pause_at()','clock.pauseAt()',['JV-137'],[]],
   ['cl-res',   'clock','clock.resume',       'Resume fake clock',              '','page_clock_resume','clock.resume()','clock.resume()','clock.resume()',[],[]],
-  ['cl-sFixed','clock','clock.setFixedTime', 'Freeze time at fixed value',     '','page_clock_set_fixed_time','clock.setFixedTime()','clock.set_fixed_time()','clock.setFixedTime()',[],['JS-Bug3']],
-  ['cl-sSys',  'clock','clock.setSystemTime','Set Date.now() to value',        '','page_clock_set_system_time','clock.setSystemTime()','clock.set_system_time()','clock.setSystemTime()',[],[]],
+  ['cl-sFixed','clock','clock.setFixedTime', 'Freeze time at fixed value',     '','page_clock_set_fixed_time','clock.setFixedTime()','clock.set_fixed_time()','clock.setFixedTime()',['JV-137'],['JS-Bug3']],
+  ['cl-sSys',  'clock','clock.setSystemTime','Set Date.now() to value',        '','page_clock_set_system_time','clock.setSystemTime()','clock.set_system_time()','clock.setSystemTime()',['JV-137'],[]],
   ['cl-sTZ',   'clock','clock.setTimezone',  'Override browser timezone',      '','page_clock_set_timezone','clock.setTimezone()','clock.set_timezone()','clock.setTimezone()',[],[]],
   // RECORDING
   ['rec-st',   'recording','recording.start',      'Start full recording',     'vibium record start','browser_record_start','recording.start()','recording.start()','recording.start()',[],[]],
@@ -686,6 +686,19 @@ const STATIC_NODES = [
   { id:'JV-106', name:'Jv #106', group:'bug-open', val:4, color:'#fb923c', surface:'Java', severity:'Medium', priority:'P2',
     desc:'SelectorOptions not forwarded to engine. Only first argument used in page.find(new SelectorOptions().text("Login").role("button")).',
     workaround:'Pass selector as plain string; chain find+filter via evaluate' },
+  // Java partial fixes (PR #167 fixed core param mismatch; residual failures found by vibium-java-test hardening suite)
+  { id:'JV-129', name:'Jv #129', group:'bug-partial', val:4, color:'#fbbf24', surface:'Java', severity:'Medium', priority:'P2',
+    desc:'page.waitForURL(): "pattern is required" fixed (PR #167). Residual: **/*.html and .*example.* patterns still time out — path-separator glob and regex-style matching not evaluated correctly.',
+    workaround:'Use simple glob: *example* works; avoid **/*.html and regex patterns' },
+  { id:'JV-130', name:'Jv #130', group:'bug-partial', val:4, color:'#fbbf24', surface:'Java', severity:'Medium', priority:'P2',
+    desc:'page.addScript(): param key fixed (PR #167). Residual: addScript→go() path still broken — script null after navigation. Only setContent→addScript→evaluate path works.',
+    workaround:'Inject script after navigation via page.evaluate() with script content directly' },
+  { id:'JV-136', name:'Jv #136', group:'bug-partial', val:4, color:'#fbbf24', surface:'Java', severity:'Medium', priority:'P2',
+    desc:'onError()/collectErrors(): routing fixed (PR #167). Residual: ErrorEvent dispatched via JS and unhandled Promise.reject still not captured. Only setTimeout/script errors work.',
+    workaround:'None for ErrorEvent/Promise.reject; use try/catch or evaluate-based guards' },
+  { id:'JV-137', name:'Jv #137', group:'bug-partial', val:4, color:'#fbbf24', surface:'Java', severity:'Medium', priority:'P2',
+    desc:'clock.setFixedTime/pauseAt/setSystemTime: "time is required" fixed (PR #167). Residual: ClockOptions.time() builder path still ignored — time not forwarded from options object.',
+    workaround:'Pass time directly as string arg: clock.setFixedTime("2024-01-01T00:00:00.000Z") works; ClockOptions.time() does not' },
   // Patterns
   { id:'p-dialog',  name:'dialog_deadlock', group:'pattern', val:10, color:'#d946ef',
     desc:'Socket-level deadlock when a BiDi command blocks waiting for a dialog/navigation that only resolves through another BiDi command — circular dependency.',
@@ -857,6 +870,12 @@ const bugCmdLinks = [
   { source:'JV-128', target:'cmd-route',     width:1,   color:'rgba(220,38,38,0.4)' },
   { source:'JV-128', target:'cmd-setHdr',    width:1,   color:'rgba(220,38,38,0.4)' },
   { source:'JV-106', target:'cmd-find',      width:1,   color:'rgba(251,146,60,0.4)' },
+  { source:'JV-129', target:'cmd-waitURL',   width:1,   color:'rgba(251,191,36,0.4)' },
+  { source:'JV-130', target:'cmd-addScript', width:1,   color:'rgba(251,191,36,0.4)' },
+  { source:'JV-136', target:'cmd-onErr',     width:1,   color:'rgba(251,191,36,0.4)' },
+  { source:'JV-137', target:'cmd-cl-pAt',    width:1,   color:'rgba(251,191,36,0.4)' },
+  { source:'JV-137', target:'cmd-cl-sFixed', width:1,   color:'rgba(251,191,36,0.4)' },
+  { source:'JV-137', target:'cmd-cl-sSys',   width:1,   color:'rgba(251,191,36,0.4)' },
 ];
 
 const ALL_LINKS = [...STATIC_LINKS, ...catLinks, ...surfCatLinks, ...cmdCatLinks, ...bugCmdLinks];

@@ -2,8 +2,8 @@
 method: onError
 category: events
 last_tested: v26.5.31
-bugs: []
-status: stub
+bugs: [JV-136]
+status: partial
 ---
 
 # onError
@@ -20,4 +20,10 @@ Error event listener.
 | Python | `page.on_error()` |
 | Java | `page.onError(cb)` |
 
-→ [[reference/api-reference]]
+## Known issues
+
+**JV-136 — partial (#136):** Java `onError()` event routing fixed (PR #167). Residual: `ErrorEvent` dispatched via JS and unhandled `Promise.reject` still not captured. Only `setTimeout`-thrown errors and uncaught script errors are delivered.
+
+**Workaround:** none for `ErrorEvent`/`Promise.reject`; use try/catch or evaluate-based guards.
+
+→ [[bugs/java#136]] · → [[reference/api-reference]]

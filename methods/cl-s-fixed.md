@@ -2,7 +2,7 @@
 method: cl-sFixed
 aliases: [page_clock_set_fixed_time, page.clock.setFixedTime]
 last_tested: v26.5.31
-bugs: [Bug3]
+bugs: [Bug3, JV-137]
 status: partial
 ---
 
@@ -24,4 +24,8 @@ Set Date.now() to a fixed value. Requires prior `clock.install()`.
 
 **Bug 3 — FIXED v26.5.31**: calling `setFixedTime()` without prior `clock.install()` silently had no effect in v26.3.18. v26.5.31 returns an error. Standalone `setFixedTime()` (without install) remains unsupported. → [[methods/cl-inst]] · → [[bugs/js#Bug3]]
 
-→ [[reference/api-reference]]
+**JV-137 — partial (#137):** `ClockOptions.time()` builder path ignored in Java. Pass time directly as a string arg instead.
+
+**Workaround:** `clock.setFixedTime("2024-01-01T00:00:00.000Z")` works; `new ClockOptions().time(...)` does not.
+
+→ [[bugs/java#137]] · → [[reference/api-reference]]

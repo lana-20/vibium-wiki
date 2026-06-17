@@ -2,7 +2,7 @@
 
 **Current version:** v26.5.31 (2026-06-01)  
 **Last ingest:** 2026-06-14  
-**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (MB1–MB10), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, memory entries, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
+**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (MB1–MB10), vibium-js-test suite (JS Bug1–4, #118), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
 
 ---
 
@@ -62,6 +62,10 @@ All 148 commands have a page in [methods/](methods/) — one file per command. T
 | # | Title | Client | Relates to |
 |---|---|---|---|
 | #174 | page.waitForFunction() Java double-wraps | Java | Java B3 |
+| #129 | page.waitForURL() — `**/*.html` + regex patterns still fail after partial fix | Java | partial |
+| #130 | page.addScript() — script null after go() (addScript→go() path still broken) | Java | partial |
+| #136 | onError() — ErrorEvent + Promise.reject still not captured after partial fix | Java | partial |
+| #137 | clock — ClockOptions.time() builder path still ignored after partial fix | Java | partial |
 | #159 | vibium pipe fails with Selenium Grid | CLI | — |
 | #158 | vibium pipe --connect disconnects immediately | CLI | — |
 | #151 | browser_click deadlocks on native dialog (MCP) | MCP | MB3 |
@@ -113,7 +117,7 @@ See [SCHEMA.md](SCHEMA.md) for page conventions, status values, ingest rules, an
 
 ## Knowledge Graphs
 
-Two interactive views of the same 226-node dataset: root → 5 surfaces → 17 categories → 148 commands + 32 open bugs + 15 fixed bugs + 3 patterns + 5 references.
+Two interactive views of the same 230-node dataset: root → 5 surfaces → 17 categories → 148 commands + 36 open bugs + 15 fixed bugs + 3 patterns + 5 references.
 
 **Guide (start here):** https://lana-20.github.io/vibium-wiki/guide.html
 

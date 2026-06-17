@@ -1,6 +1,6 @@
 # Java Client Bug Index
 
-Last updated: 2026-06-14 · reference version: v26.5.31
+Last updated: 2026-06-17 · reference version: v26.5.31
 
 ## Open issues
 
@@ -11,22 +11,107 @@ Last updated: 2026-06-14 · reference version: v26.5.31
 | #128 | page.route() and page.setHeaders() cause page.go() to deadlock permanently | open |
 | #106 | SelectorOptions methods not applied in element lookup (Java SDK) | open |
 
+## Partial fixes in v26.5.31
+
+Core parameter mismatches resolved by PR #167 (merged 2026-05-31 by Jason Huggins / @hugs into VibiumDev/vibium main, shipped in v26.5.31). Hardening suite found residual failures in specific cases.
+
+| Issue | Java Bug ID | Title | What was fixed | What still fails |
+|---|---|---|---|---|
+| #129 | B2 | page.waitForURL() pattern matching | `"pattern is required"` error gone; exact URLs + simple globs work | `**/*.html` and `.*example.*` patterns time out |
+| #130 | B4 | page.addScript()/addStyle() never execute | Param key corrected; `setContent→addScript→evaluate` works | `addScript→go()` path — script still null after navigation |
+| #136 | B8 | onError()/collectErrors() | `setTimeout` errors + uncaught script errors now captured | `ErrorEvent` dispatched via JS + unhandled `Promise.reject` still not captured |
+| #137 | B9 | clock.setFixedTime()/pauseAt()/setSystemTime() | ISO-8601 and epoch-ms string args now accepted | `ClockOptions.time()` builder path still ignored |
+
 ## Fixed in v26.5.31 (closed 2026-05-31)
 
 | Issue | Java Bug ID | Title | Notes |
 |---|---|---|---|
 | #131 | B1 | page.waitForFunction() engine-side — bare expressions timed out | fixed engine-side via #163; Java client double-wrap still open (#174) |
-| #129 | B2 | page.waitForURL() throws "pattern is required" | fixed |
-| #130 | B4 | page.addScript()/addStyle() never execute | fixed |
 | #132 | B5 | el.dispatchEvent() never triggers event handlers | fixed |
 | #133 | B6 | el.highlight() throws "Unknown command" | fixed engine-side |
 | #134 | B7 | el.dragTo(Element) throws "dragTo requires 'target' parameter" | fixed |
-| #136 | B8 | onError()/collectErrors() never receive uncaught page errors | fixed |
-| #137 | B9 | clock.setFixedTime()/pauseAt()/setSystemTime() throw "time is required" | fixed |
 
 ---
 
 ## Detail entries
+
+### #129 — page.waitForURL() pattern matching · partial
+
+**Fixed:** `"pattern is required"` error resolved in PR #167 (commit ba845474). Java client was sending `"url"` key; engine reads `"pattern"`. Parameter plumbing now correct.
+
+**Still failing (v26.5.31):**
+```java
+page.go("https://example.com/index.html");
+page.waitForURL("**/*.html", new WaitOptions().timeout(4000));
+// VibiumTimeoutException — path-separator glob not evaluated correctly
+
+page.go("https://example.com");
+page.waitForURL(".*example.*", new WaitOptions().timeout(4000));
+// VibiumTimeoutException — regex-style pattern not evaluated correctly
+```
+
+**Pattern status after fix:**
+
+| Pattern | Status |
+|---|---|
+| `"https://example.com"` | ✅ PASS |
+| `"https://example.com/"` | ✅ PASS |
+| `"*example*"` | ✅ PASS |
+| `"**example**"` | ✅ PASS |
+| `"https://**"` | ✅ PASS |
+| `"**/*.html"` | ❌ still fails (timeout) |
+| `".*example.*"` | ❌ still fails (timeout) |
+
+**Workaround:** poll `page.url()` manually, or use `*example*` glob form where possible.
+
+---
+
+### #130 — page.addScript()/addStyle() · partial
+
+**Fixed:** Java client was sending `"source"` key; engine reads `"url"` or `"content"`. PR #167 corrects the key based on whether the arg is a URL. `setContent → addScript → evaluate` path now works.
+
+**Still failing (v26.5.31):** `addScript → go()` — script injected before navigation is null after `go()` completes. The engine does not re-inject scripts on navigation.
+
+```java
+page.addScript("https://cdn.example.com/lib.js");
+page.go("https://example.com");
+page.evaluate("typeof window.myLib");  // → "undefined"
+```
+
+**Workaround:** inject after navigation via `page.evaluate()` with the script content directly.
+
+---
+
+### #136 — onError()/collectErrors() · partial
+
+**Fixed:** `log.entryAdded` events were always routed to the console handler. PR #167 now routes by `"type"` field: `"javascript"` → error handler, else console. Uncaught script errors and `setTimeout`-thrown errors are now captured.
+
+**Still failing (v26.5.31):** `ErrorEvent` dispatched via `dispatchEvent(new ErrorEvent(...))` and unhandled `Promise.reject` are not delivered to the error handler.
+
+```java
+// These still not captured:
+page.evaluate("window.dispatchEvent(new ErrorEvent('error', { message: 'dispatched' }))");
+page.evaluate("Promise.reject(new Error('unhandled'))");
+```
+
+---
+
+### #137 — clock methods · partial
+
+**Fixed:** `clock.setFixedTime()`, `pauseAt()`, `setSystemTime()` were sending time as a string; engine reads epoch-milliseconds (number). PR #167 normalizes ISO-8601 strings and epoch-ms strings to a number. Direct string args now work.
+
+**Still failing (v26.5.31):** `ClockOptions.time()` builder path — the time value set via the options object is not forwarded.
+
+```java
+page.clock.install(new ClockOptions().time("2024-01-01T00:00:00.000Z"));
+// clock not frozen — Date.now() returns live system time
+
+// Workaround — pass time directly:
+page.clock.install();
+page.clock.setFixedTime("2024-01-01T00:00:00.000Z");  // ✅ works
+```
+
+---
 
 ### #174 — page.waitForFunction() Java double-wraps (open)
 
