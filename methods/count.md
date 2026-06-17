@@ -2,7 +2,7 @@
 method: count
 category: finding
 last_tested: v26.5.31
-bugs: []
+bugs: [MCP-149]
 status: stub
 ---
 

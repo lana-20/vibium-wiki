@@ -3,7 +3,7 @@ method: click
 aliases: [browser_click]
 last_tested: v26.5.31
 last_tested_date: 2026-06-06
-bugs: [B3, B6]
+bugs: [B3, B6, MCP-151]
 status: open
 ---
 

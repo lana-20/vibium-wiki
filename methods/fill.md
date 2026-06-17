@@ -3,7 +3,7 @@ method: fill
 aliases: [browser_fill]
 last_tested: v26.5.31
 last_tested_date: 2026-06-01
-bugs: [B7, B18, B20, B31]
+bugs: [B7, B18, B20, B31, MCP-155]
 status: partial
 ---
 

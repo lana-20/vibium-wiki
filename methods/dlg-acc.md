@@ -3,7 +3,7 @@ method: dlg-acc
 aliases: [browser_dialog_accept, page.capture.dialog]
 last_tested: v26.5.31
 last_tested_date: 2026-06-01
-bugs: [B3]
+bugs: [B3, MCP-151]
 status: open
 ---
 

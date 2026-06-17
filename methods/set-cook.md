@@ -2,7 +2,7 @@
 method: setCookies
 category: context
 last_tested: v26.5.31
-bugs: [MB4]
+bugs: [MB4, MCP-152]
 status: fixed
 ---
 

@@ -2,7 +2,7 @@
 method: el.text
 category: reading
 last_tested: v26.5.31
-bugs: [B25, MB9]
+bugs: [B25, MB9, MCP-157]
 status: open
 ---
 
