@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-URL="${1:-file:///Users/lanabegunova/vibium-wiki/graph-layered.html}"
+URL="${1:-file://$(cd "$(dirname "$0")/.." && pwd)/graph-layered.html}"
 
 VIB=vibium
 command -v vibium &>/dev/null || { echo "ERROR: vibium not found in PATH" >&2; exit 1; }
