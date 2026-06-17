@@ -1,7 +1,7 @@
 # Vibium API Reference — Cross-Surface Command Table
 
 Source: `docs/reference/api.md` · v26.5.31  
-**Total: 150 commands** across Browser, Page, Element, BrowserContext, Keyboard, Mouse, Touch, Clock, Recording, Route, Dialog, Download, and Agent Extras.
+**Total: 148 commands** across Browser, Page, Element, BrowserContext, Keyboard, Mouse, Touch, Clock, Recording, Route, Dialog, Download, and Agent Extras.
 
 Legend: filled = implemented · `⬜` = planned · `—` = not applicable
 
@@ -178,8 +178,7 @@ Key notes:
 | # | Description | JS | Python |
 |---|---|---|---|
 | 148 | Assert visual claim | `page.check(claim)` | `page.check(claim)` |
-| 149 | Natural language action | `page.do(action)` | `page.do(action)` |
-| 150 | NL action + data extraction | `page.do(action, {data})` | `page.do(action, data=...)` |
+| 149 | Natural language action | `page.do(action, data?)` | `page.do(action, data=...)` |
 
 ---
 
