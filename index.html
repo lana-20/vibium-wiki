@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibium Knowledge Graph</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background:#07071a; color:#e2e8f0; font-family:'Inter',system-ui,-apple-system,sans-serif; height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+  #header { flex-shrink:0; display:flex; align-items:center; gap:14px; padding:8px 14px; background:rgba(15,15,40,0.95); border-bottom:1px solid rgba(148,163,184,0.12); z-index:10; flex-wrap:wrap; }
+  #header h1 { font-size:14px; font-weight:600; color:#a78bfa; letter-spacing:.02em; white-space:nowrap; }
+  #search { background:rgba(255,255,255,0.06); border:1px solid rgba(148,163,184,0.2); border-radius:6px; color:#e2e8f0; padding:4px 10px; font-size:12px; width:170px; outline:none; }
+  #search:focus { border-color:#7c3aed; }
+  #search::placeholder { color:#64748b; }
+  .filter-group { display:flex; gap:5px; flex-wrap:wrap; }
+  .filter-btn { padding:3px 9px; border-radius:20px; border:1px solid rgba(148,163,184,0.25); background:rgba(255,255,255,0.05); color:#94a3b8; font-size:11px; cursor:pointer; white-space:nowrap; }
+  .filter-btn:hover { border-color:rgba(148,163,184,0.5); color:#e2e8f0; }
+  .filter-btn.active { background:rgba(124,58,237,0.2); border-color:#7c3aed; color:#c4b5fd; }
+  .filter-btn[data-group="bug-open"].active   { background:rgba(220,38,38,0.2);  border-color:#ef4444; color:#fca5a5; }
+  .filter-btn[data-group="bug-fixed"].active  { background:rgba(22,163,74,0.2);  border-color:#22c55e; color:#86efac; }
+  .filter-btn[data-group="surface"].active    { background:rgba(59,130,246,0.2); border-color:#3b82f6; color:#93c5fd; }
+  .filter-btn[data-group="api"].active        { background:rgba(14,165,233,0.2); border-color:#0ea5e9; color:#7dd3fc; }
+  .filter-btn[data-group="pattern"].active    { background:rgba(192,38,211,0.2); border-color:#d946ef; color:#f0abfc; }
+  .filter-btn[data-group="reference"].active  { background:rgba(71,85,105,0.3);  border-color:#64748b; color:#94a3b8; }
+  #main { flex:1; display:flex; overflow:hidden; }
+  #graph-wrap { flex:1; position:relative; overflow:hidden; min-width:0; }
+  #3d-graph { width:100%; height:100%; }
+  #sidebar { width:280px; flex-shrink:0; background:rgba(10,10,30,0.92); border-left:1px solid rgba(148,163,184,0.1); overflow-y:auto; display:flex; flex-direction:column; }
+  #sidebar-inner { padding:14px; min-width:0; position:relative; }
+  #sidebar .node-type { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  #sidebar h2 { font-size:15px; font-weight:600; margin-bottom:5px; line-height:1.3; }
+  #sidebar .meta { font-size:11px; color:#64748b; margin-bottom:10px; }
+  #sidebar .desc { font-size:12px; color:#cbd5e1; line-height:1.6; margin-bottom:12px; }
+  #sidebar .tag { display:inline-block; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:1px 6px; font-size:11px; margin:2px 2px 2px 0; color:#94a3b8; }
+  #sidebar .workaround { background:rgba(255,255,255,0.04); border-left:3px solid #7c3aed; border-radius:0 6px 6px 0; padding:8px 10px; font-size:11px; color:#cbd5e1; line-height:1.6; margin-top:10px; font-family:'JetBrains Mono','Fira Code',monospace; }
+  #sidebar .workaround-label { font-size:10px; color:#7c3aed; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px; font-family:inherit; }
+  #sidebar .surf-table { width:100%; font-size:11px; border-collapse:collapse; margin:10px 0; }
+  #sidebar .surf-table td { padding:3px 4px; vertical-align:top; }
+  #sidebar .surf-table td:first-child { color:#475569; width:56px; }
+  #sidebar .surf-table td:last-child { color:#e2e8f0; font-family:'JetBrains Mono','Fira Code',monospace; color:#7dd3fc; word-break:break-all; }
+  #sidebar .surf-table td.dim { color:#374151; font-style:italic; }
+  #close-sidebar { position:absolute; top:8px; right:8px; background:rgba(255,255,255,0.08); border:none; color:#94a3b8; width:22px; height:22px; border-radius:50%; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; }
+  #close-sidebar:hover { background:rgba(255,255,255,0.15); color:#e2e8f0; }
+  #legend { position:absolute; bottom:14px; left:14px; background:rgba(10,10,30,0.85); border:1px solid rgba(148,163,184,0.1); border-radius:8px; padding:9px 11px; font-size:10px; pointer-events:none; z-index:5; max-height:calc(100vh - 80px); overflow-y:auto; }
+  #legend .legend-title { color:#64748b; font-weight:600; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .legend-section { color:#475569; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-top:7px; margin-bottom:2px; }
+  .legend-row { display:flex; align-items:center; gap:6px; margin-bottom:3px; color:#94a3b8; }
+  .legend-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  #stats { position:absolute; bottom:14px; right:14px; background:rgba(10,10,30,0.85); border:1px solid rgba(148,163,184,0.1); border-radius:8px; padding:9px 12px; font-size:10px; z-index:5; pointer-events:none; color:#64748b; }
+  #stats span { color:#e2e8f0; font-weight:600; }
+  #stat-open  { color:#f87171 !important; }
+  #stat-fixed { color:#4ade80 !important; }
+  .tier-btn { padding:2px 8px; border-radius:20px; border:1px solid rgba(148,163,184,0.15); background:transparent; color:#475569; font-size:10px; cursor:pointer; white-space:nowrap; }
+  .tier-btn.active { color:var(--tc); border-color:var(--tc); }
+  #mode-badge { font-size:10px; color:#94a3b8; align-self:center; padding:2px 8px; border-radius:4px; border:1px solid rgba(148,163,184,0.18); display:none; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #search-notice { font-size:10px; color:#f59e0b; display:none; white-space:nowrap; align-self:center; }
+  .surf-hi-btn { padding:2px 9px; border-radius:20px; border:1px solid; background:transparent; font-size:10px; cursor:pointer; white-space:nowrap; opacity:0.5; transition:opacity .15s; }
+  .surf-hi-btn.active { opacity:1; }
+  .surf-hi-btn[data-sid="cli"]    { color:#3b82f6; border-color:rgba(59,130,246,0.5); }
+  .surf-hi-btn[data-sid="mcp"]    { color:#06b6d4; border-color:rgba(6,182,212,0.5); }
+  .surf-hi-btn[data-sid="js"]     { color:#eab308; border-color:rgba(234,179,8,0.5); }
+  .surf-hi-btn[data-sid="python"] { color:#22c55e; border-color:rgba(34,197,94,0.5); }
+  .surf-hi-btn[data-sid="java"]   { color:#f97316; border-color:rgba(249,115,22,0.5); }
+  .surf-hi-btn.active             { background:rgba(255,255,255,0.06); }
+  #help-btn { padding:3px 10px; border-radius:20px; border:1px solid rgba(148,163,184,0.25); background:rgba(255,255,255,0.05); color:#64748b; font-size:11px; cursor:pointer; flex-shrink:0; }
+  #help-btn:hover { border-color:#7c3aed; color:#a78bfa; }
+  #help-overlay { display:none; position:fixed; inset:0; background:rgba(7,7,26,0.93); z-index:200; overflow-y:auto; padding:30px 16px; }
+  #help-inner { max-width:640px; margin:0 auto; background:rgba(15,15,40,0.99); border:1px solid rgba(148,163,184,0.15); border-radius:12px; padding:26px 30px; font-size:12.5px; color:#94a3b8; line-height:1.75; position:relative; }
+  #help-inner h2 { font-size:15px; color:#a78bfa; margin-bottom:4px; }
+  #help-inner .help-sub { font-size:11px; color:#475569; margin-bottom:20px; }
+  #help-inner h3 { font-size:10px; color:#e2e8f0; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin:18px 0 7px; border-top:1px solid rgba(148,163,184,0.08); padding-top:14px; }
+  #help-inner p { margin-bottom:8px; }
+  #help-inner ul { padding-left:16px; margin-bottom:8px; }
+  #help-inner li { margin-bottom:4px; }
+  #help-inner code { background:rgba(255,255,255,0.07); border-radius:3px; padding:1px 5px; font-size:10.5px; color:#7dd3fc; font-family:'JetBrains Mono','Fira Code',monospace; }
+  .htier { display:flex; align-items:center; gap:8px; margin-bottom:5px; font-size:12px; }
+  .hdot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  #close-help { position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.08); border:none; color:#94a3b8; width:24px; height:24px; border-radius:50%; cursor:pointer; font-size:13px; line-height:24px; text-align:center; }
+  #close-help:hover { background:rgba(255,255,255,0.18); color:#e2e8f0; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>⬡ Vibium Knowledge Graph</h1>
+  <span style="font-size:10px;color:#475569;white-space:nowrap">Current as of 2026-06-14 · v26.5.31</span>
+  <input id="search" type="search" placeholder="Search nodes…">
+  <span id="search-notice"></span>
+  <div class="filter-group">
+    <button class="filter-btn active" data-group="surface">Surfaces</button>
+    <button class="filter-btn active" data-group="api">API (148)</button>
+    <button class="filter-btn active" data-group="bug-open">Open Bugs</button>
+    <button class="filter-btn active" data-group="bug-fixed">Fixed Bugs</button>
+    <button class="filter-btn active" data-group="pattern">Patterns</button>
+    <button class="filter-btn active" data-group="reference">Reference</button>
+  </div>
+  <div class="filter-group">
+    <span style="font-size:9px;color:#374151;text-transform:uppercase;letter-spacing:.06em;align-self:center;margin-right:2px">Tier</span>
+    <button class="tier-btn" data-tier="all5"    style="--tc:#cbd5e1">All 5</button>
+    <button class="tier-btn" data-tier="4surf"   style="--tc:#93c5fd">4 surf</button>
+    <button class="tier-btn" data-tier="3surf"   style="--tc:#a5f3fc">3 surf</button>
+    <button class="tier-btn" data-tier="2surf"   style="--tc:#bbf7d0">2 surf</button>
+    <button class="tier-btn" data-tier="planned" style="--tc:#374151">Planned</button>
+  </div>
+  <div class="filter-group">
+    <span style="font-size:9px;color:#374151;text-transform:uppercase;letter-spacing:.06em;align-self:center;margin-right:2px">Surface focus</span>
+    <button class="surf-hi-btn" data-sid="cli">CLI</button>
+    <button class="surf-hi-btn" data-sid="mcp">MCP</button>
+    <button class="surf-hi-btn" data-sid="js">JS</button>
+    <button class="surf-hi-btn" data-sid="python">Python</button>
+    <button class="surf-hi-btn" data-sid="java">Java</button>
+  </div>
+  <button id="help-btn">? Guide</button>
+  <div id="mode-badge">–</div>
+</div>
+
+<div id="main">
+  <div id="graph-wrap">
+    <div id="3d-graph"></div>
+    <div id="legend">
+      <div class="legend-title">Node types</div>
+
+      <div class="legend-section">Root</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#7c3aed"></div>Vibium</div>
+
+      <div class="legend-section">Surfaces</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#3b82f6"></div>CLI</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#06b6d4"></div>MCP</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#eab308"></div>JS client</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#22c55e"></div>Python</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#f97316"></div>Java</div>
+
+      <div class="legend-section">Categories (17)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#0ea5e9"></div>varies by category</div>
+
+      <div class="legend-section">Commands · by availability</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#cbd5e1"></div>All 5 surfaces</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#93c5fd"></div>4 surfaces</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#a5f3fc"></div>3 surfaces</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#bbf7d0"></div>2 surfaces</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#d8b4fe"></div>Client only (JS/Py/Java)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#67e8f9"></div>CLI/MCP only</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#374151"></div>Planned / not yet impl</div>
+
+      <div class="legend-section">Bugs</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#dc2626"></div>Open · critical (P1)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ef4444"></div>Open · high (P1–P2)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#fb923c"></div>Open · medium (P2–P3)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#94a3b8"></div>Open · low (P3–P4)</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#fbbf24"></div>Partial fix</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#a78bfa"></div>Regression check</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#4ade80"></div>Fixed</div>
+
+      <div class="legend-section">Patterns</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#d946ef"></div>dialog_deadlock</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#a855f7"></div>find_text_case / negative_values</div>
+
+      <div class="legend-section">Reference</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#475569"></div>Architecture / docs</div>
+    </div>
+    <div id="stats">
+      <div>Commands <span id="stat-cmds">–</span></div>
+      <div>Open bugs <span id="stat-open">–</span></div>
+      <div>Fixed <span id="stat-fixed">–</span></div>
+      <div style="border-top:1px solid rgba(148,163,184,0.08);margin-top:4px;padding-top:4px;font-size:9px">Nodes <span id="stat-nodes">–</span> · Links <span id="stat-links">–</span></div>
+    </div>
+  </div>
+  <div id="sidebar">
+    <div id="sidebar-inner">
+      <button id="close-sidebar" style="display:none">✕</button>
+      <div id="sidebar-placeholder" style="font-size:12px;line-height:1.7;padding:18px 4px 0">
+
+          <div style="font-size:13px;font-weight:600;color:#a78bfa;margin-bottom:6px">Vibium Knowledge Graph</div>
+          <div style="color:#64748b;font-size:11.5px;margin-bottom:16px;line-height:1.6">
+            Every API method in Vibium — a BiDi-based browser automation tool — mapped across all 5 ways to call it: CLI, MCP, JS, Python, and Java.
+          </div>
+
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#475569;margin-bottom:8px">What you're looking at</div>
+
+          <div style="margin-bottom:7px;display:flex;gap:8px;align-items:flex-start">
+            <div style="width:10px;height:10px;border-radius:50%;background:#7c3aed;flex-shrink:0;margin-top:2px"></div>
+            <div><span style="color:#c4b5fd;font-weight:600">Vibium root</span> <span style="color:#475569">— the center of the graph</span></div>
+          </div>
+          <div style="margin-bottom:7px;display:flex;gap:8px;align-items:flex-start">
+            <div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#f97316);flex-shrink:0;margin-top:2px"></div>
+            <div><span style="color:#93c5fd;font-weight:600">5 surface nodes</span> <span style="color:#475569">— CLI, MCP, JS, Python, Java. Each is a different way to call Vibium.</span></div>
+          </div>
+          <div style="margin-bottom:7px;display:flex;gap:8px;align-items:flex-start">
+            <div style="width:10px;height:10px;border-radius:50%;background:#0ea5e9;flex-shrink:0;margin-top:2px"></div>
+            <div><span style="color:#7dd3fc;font-weight:600">17 category rings</span> <span style="color:#475569">— API groups like Navigation, Finding, Clicking, Clock, Recording…</span></div>
+          </div>
+          <div style="margin-bottom:7px;display:flex;gap:8px;align-items:flex-start">
+            <div style="width:10px;height:10px;border-radius:50%;background:#cbd5e1;flex-shrink:0;margin-top:2px"></div>
+            <div><span style="color:#e2e8f0;font-weight:600">~148 command dots</span> <span style="color:#475569">— individual API methods. Color encodes how many surfaces support it.</span></div>
+          </div>
+          <div style="margin-bottom:7px;display:flex;gap:8px;align-items:flex-start">
+            <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:2px"></div>
+            <div><span style="color:#fca5a5;font-weight:600">Bug nodes</span> <span style="color:#475569">— red = open, green = fixed. Linked to the command they affect.</span></div>
+          </div>
+
+          <div style="border-top:1px solid rgba(148,163,184,0.08);margin:14px 0"></div>
+
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#475569;margin-bottom:8px">Command dot colors</div>
+          <div style="font-size:11px;color:#64748b;margin-bottom:8px">A dot's color shows how many of the 5 surfaces support that method:</div>
+          <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#cbd5e1;flex-shrink:0"></div><span style="color:#94a3b8">All 5 surfaces (CLI + MCP + JS + Python + Java)</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#93c5fd;flex-shrink:0"></div><span style="color:#94a3b8">4 surfaces</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#a5f3fc;flex-shrink:0"></div><span style="color:#94a3b8">3 surfaces</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#bbf7d0;flex-shrink:0"></div><span style="color:#94a3b8">2 surfaces</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#d8b4fe;flex-shrink:0"></div><span style="color:#94a3b8">Client SDK only (JS / Python / Java)</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#67e8f9;flex-shrink:0"></div><span style="color:#94a3b8">CLI or MCP only — no SDK equivalent</span></div>
+            <div style="display:flex;align-items:center;gap:7px"><div style="width:8px;height:8px;border-radius:50%;background:#374151;border:1px solid #4b5563;flex-shrink:0"></div><span style="color:#94a3b8">Planned — not yet implemented</span></div>
+          </div>
+
+          <div style="border-top:1px solid rgba(148,163,184,0.08);margin:14px 0"></div>
+
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#475569;margin-bottom:8px">Try it</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.75">
+            <div style="margin-bottom:5px">↗ <b style="color:#94a3b8">Click any node</b> to see its details and connections here</div>
+            <div style="margin-bottom:5px">↗ <b style="color:#94a3b8">Click a category</b> to highlight all its commands</div>
+            <div style="margin-bottom:5px">↗ Use <b style="color:#93c5fd">Surface Focus</b> buttons to see what each surface supports</div>
+            <div>↗ Press <b style="color:#c4b5fd">? Guide</b> for the full walkthrough</div>
+          </div>
+
+      </div>
+      <div id="sidebar-content"></div>
+    </div>
+  </div>
+</div>
+
+<div id="help-overlay">
+<div id="help-inner">
+  <button id="close-help">✕</button>
+  <h2>Vibium Knowledge Graph — Guide</h2>
+  <div class="help-sub">v26.5.31 · ~148 commands · 5 surfaces · 17 categories</div>
+
+  <h3>What this graph shows</h3>
+  <p>Every Vibium API method mapped across all 5 access surfaces (CLI, MCP, JS, Python, Java), grouped into 17 functional categories. Bugs and design patterns are attached to the commands they affect.</p>
+
+  <h3>Node types</h3>
+  <ul>
+    <li><b>Purple large sphere</b> — Vibium root node (the entry point to the whole graph)</li>
+    <li><b>Surface nodes (5)</b> — CLI, MCP, JS Client, Python Client, Java Client. Each branches to the categories it covers.</li>
+    <li><b>Category rings (17)</b> — functional groups: Browser, BrowserContext, Navigation, Finding, Clicking, Keyboard, Mouse, Touch, Frame, Network, Storage, Dialog, Download, Recording, Clock, Evaluate, Wait</li>
+    <li><b>Command dots (~148)</b> — individual API methods. Their color encodes availability (see Availability Tiers below).</li>
+    <li><b>Red/orange nodes</b> — open or partial bugs, linked to the commands they affect</li>
+    <li><b>Green nodes</b> — fixed bugs (historical record)</li>
+    <li><b>Pink/purple nodes</b> — design patterns (recommended usage sequences)</li>
+  </ul>
+
+  <h3>Availability tiers — command node colors</h3>
+  <p>A command's color tells you how many surfaces it's available on. The tier filter buttons in the header match these colors.</p>
+  <div class="htier"><div class="hdot" style="background:#cbd5e1"></div><div><b>All 5</b> — available on CLI + MCP + JS + Python + Java</div></div>
+  <div class="htier"><div class="hdot" style="background:#93c5fd"></div><div><b>4 surfaces</b> — one surface is missing</div></div>
+  <div class="htier"><div class="hdot" style="background:#a5f3fc"></div><div><b>3 surfaces</b></div></div>
+  <div class="htier"><div class="hdot" style="background:#bbf7d0"></div><div><b>2 surfaces</b></div></div>
+  <div class="htier"><div class="hdot" style="background:#374151;border:1px solid #475569"></div><div><b>Planned</b> — not yet implemented on any surface</div></div>
+
+  <h3>Header controls</h3>
+  <ul>
+    <li><b>Group filter row</b> — toggle entire node types on/off: Surfaces, API (all commands), Open Bugs, Fixed Bugs, Patterns, Reference. Hiding "API" removes all command dots; tier filters then have no effect.</li>
+    <li><b>Tier filter row</b> — isolate commands by availability tier. Click a tier to show only those commands; click again to clear. Works within the "API" group.</li>
+    <li><b>Surface Focus row</b> — highlight all commands available on a specific surface. The graph dims everything else. Only one surface can be active at a time. Click the active button again to clear, or press Escape.</li>
+  </ul>
+  <p>Group filters and tier filters <b>combine</b>: tier filters refine within the API group; Surface Focus highlights across all visible nodes without hiding anything. Example: "All 5" tier only + CLI Surface Focus = see which cross-platform commands are on the CLI.</p>
+
+  <h3>Clicking nodes</h3>
+  <ul>
+    <li><b>Click any node</b> — highlights its direct connections; opens detail panel in the right sidebar showing CLI/MCP/JS/Python/Java syntax for command nodes</li>
+    <li><b>Click same node again</b> — clears the highlight</li>
+    <li><b>Click a surface node</b> — highlights all commands on that surface (same effect as Surface Focus buttons)</li>
+    <li><b>Click a category node</b> — highlights all commands in that category</li>
+    <li><b>Click background</b> — closes sidebar and clears highlight</li>
+    <li><b>Escape key</b> — clears all highlights and closes sidebar</li>
+  </ul>
+
+  <h3>Sidebar — category collapse</h3>
+  <p>Click a category node, then look in the right sidebar. You'll see a <code>▼ Collapse commands</code> button. Collapsing a category hides its command dots from the graph — useful for de-cluttering large categories like Finding or Clicking. Click <code>▶ Expand commands</code> in the sidebar to restore them.</p>
+
+  <h3>Search</h3>
+  <p>The search box highlights nodes by name, description, CLI syntax, MCP tool name, or surface. Results dim non-matching nodes. Clear the box to reset.</p>
+
+  <h3>Example workflows</h3>
+  <ul>
+    <li><b>"What can the CLI do?"</b> → click <code>CLI</code> in Surface Focus — 52 matching commands highlighted</li>
+    <li><b>"What's Java-only (no CLI/MCP)?"</b> → disable all tier buttons except <i>Client</i>, then click <code>Java</code> in Surface Focus</li>
+    <li><b>"Explore the Recording API"</b> → click the Recording category node; sidebar shows 6 commands; use collapse/expand to toggle them</li>
+    <li><b>"Find all open bugs affecting navigation"</b> → enable Open Bugs group, search <code>navigation</code></li>
+    <li><b>"Compare clock syntax across surfaces"</b> → search <code>clock</code>, click a clock command to see CLI/MCP/JS/Python/Java in the sidebar</li>
+    <li><b>"Show only universally available commands"</b> → deactivate all tier buttons except <i>All 5</i></li>
+    <li><b>"De-clutter the graph"</b> → collapse large categories (Finding, Clicking, Browser) via the sidebar button after clicking each</li>
+  </ul>
+</div>
+</div>
+
+<script src="https://unpkg.com/3d-force-graph@1/dist/3d-force-graph.min.js"></script>
+<script>
+// ─── CATEGORIES ───────────────────────────────────────────────────────────────
+const CATEGORIES = {
+  'browser':      { name:'Browser',       color:'#8b5cf6', val:9,  desc:'9 commands — launch, lifecycle, page management' },
+  'navigation':   { name:'Navigation',    color:'#0ea5e9', val:9,  desc:'8 commands — go, back, forward, reload, url, title, switch, close' },
+  'finding':      { name:'Finding',       color:'#06b6d4', val:7,  desc:'4 commands — find / findAll (page + element scoped)' },
+  'waiting':      { name:'Waiting',       color:'#10b981', val:8,  desc:'7 commands — wait ms, selector, function, URL, load, text, el.waitUntil' },
+  'interaction':  { name:'Interaction',   color:'#f43f5e', val:11, desc:'17 commands — click, fill, type, check, select, hover, drag, upload…' },
+  'reading':      { name:'Reading',       color:'#f59e0b', val:10, desc:'15 commands — text, html, value, attr, isVisible, a11yTree, bounds…' },
+  'page-control': { name:'Page Control',  color:'#6366f1', val:10, desc:'14 commands — screenshot, pdf, evaluate, scroll, viewport, setContent…' },
+  'context':      { name:'Context',       color:'#14b8a6', val:8,  desc:'9 commands — cookies, storage, addInitScript, newPage…' },
+  'input':        { name:'Input',         color:'#ea580c', val:8,  desc:'10 commands — keyboard, mouse (click/move/buttons/wheel), touch.tap' },
+  'network':      { name:'Network',       color:'#a855f7', val:9,  desc:'13 commands — route, expose, setHeaders, onRequest/Response, capture.*' },
+  'events':       { name:'Events',        color:'#ec4899', val:9,  desc:'12 commands — onDialog, onConsole, capture.*, consoleMessages, errors' },
+  'clock':        { name:'Clock',         color:'#84cc16', val:7,  desc:'8 commands — install, fastForward, runFor, pauseAt, setFixedTime…' },
+  'recording':    { name:'Recording',     color:'#dc2626', val:7,  desc:'6 commands — start/stop, startChunk/stopChunk, startGroup/stopGroup' },
+  'dialog':       { name:'Dialog',        color:'#eab308', val:7,  desc:'5 commands — message, type, defaultValue, accept, dismiss' },
+  'download':     { name:'Download',      color:'#64748b', val:6,  desc:'4 commands — saveAs, url, filename, path' },
+  'extras':       { name:'Agent Extras',  color:'#3b82f6', val:8,  desc:'5 CLI/MCP — map, diff, count, wait text, download-set-dir' },
+  'ai':           { name:'AI Native',     color:'#7c3aed', val:5,  desc:'2 planned — page.check() and page.do() · not yet implemented' },
+};
+
+// ─── COMMAND TABLE ────────────────────────────────────────────────────────────
+// [id, cat, name, desc, cli, mcp, js, py, java, openBugs[], fixedBugs[]]
+// '' = not available on this surface, '⬜' = planned
+const CMD = [
+  // BROWSER
+  ['b-start',   'browser','browser.start',   'Launch browser & connect',    'vibium start','browser_start','browser.start()','browser.start()','Vibium.start()',[],[]],
+  ['b-page',    'browser','browser.page',    'Get default page',            '','','browser.page()','browser.page()','bro.page()',[],[]],
+  ['b-newPage', 'browser','browser.newPage', 'Create new tab',              'vibium page new','browser_new_page','browser.newPage()','browser.new_page()','bro.newPage()',[],[]],
+  ['b-newCtx',  'browser','browser.newContext','Create isolated context',   '','','browser.newContext()','browser.new_context()','bro.newContext()',[],[]],
+  ['b-pages',   'browser','browser.pages',   'List all open pages',         'vibium pages','browser_list_pages','browser.pages()','browser.pages()','bro.pages()',[],[]],
+  ['b-stop',    'browser','browser.stop',    'Stop browser',                'vibium stop','browser_stop','browser.stop()','browser.stop()','bro.stop()',[],[]],
+  ['b-onPage',  'browser','browser.onPage',  'New page event listener',     '','','browser.onPage(cb)','browser.on_page(cb)','bro.onPage(cb)',[],[]],
+  ['b-onPopup', 'browser','browser.onPopup', 'Popup event listener',        '','','browser.onPopup(cb)','browser.on_popup(cb)','bro.onPopup(cb)',[],[]],
+  ['b-rmAll',   'browser','removeAllListeners','Remove browser listeners',  '','','browser.removeAllListeners()','browser.remove_all_listeners()','bro.removeAllListeners()',[],[]],
+  // NAVIGATION
+  ['go',      'navigation','go / navigate', 'Navigate to URL',              'vibium go','browser_navigate','page.go()','page.go()','page.go()',['B3','JS-Bug4','JV-128'],[]],
+  ['back',    'navigation','back',          'Go back in history',           'vibium back','browser_back','page.back()','page.back()','page.back()',['B11'],[]],
+  ['forward', 'navigation','forward',       'Go forward in history',        'vibium forward','browser_forward','page.forward()','page.forward()','page.forward()',[],[]],
+  ['reload',  'navigation','reload',        'Reload page',                  'vibium reload','browser_reload','page.reload()','page.reload()','page.reload()',[],[]],
+  ['url',     'navigation','url',           'Get current URL',              'vibium url','browser_get_url','page.url()','page.url()','page.url()',['JS-Bug4'],[]],
+  ['title',   'navigation','title',         'Get page title',               'vibium title','browser_get_title','page.title()','page.title()','page.title()',[],[]],
+  ['bring',   'navigation','bringToFront',  'Switch to this page/tab',      'vibium page switch','browser_switch_page','page.bringToFront()','page.bring_to_front()','page.bringToFront()',[],[]],
+  ['pg-close','navigation','page.close',    'Close current tab',            'vibium page close','browser_close_page','page.close()','page.close()','page.close()',[],[]],
+  // FINDING
+  ['find',    'finding','find',      'Find element by sel/role/text/label', 'vibium find','browser_find','page.find()','page.find()','page.find()',['B15','B17','B29','JS-118','JV-106'],[]],
+  ['findAll', 'finding','findAll',   'Find all matching elements',          'vibium find --all','browser_find_all','page.findAll()','page.find_all()','page.findAll()',['JS-118'],[]],
+  ['el-find', 'finding','el.find',   'Scoped find within element',          '','','el.find()','el.find()','el.find()',[],[]],
+  ['el-finA', 'finding','el.findAll','Scoped findAll within element',       '','','el.findAll()','el.find_all()','el.findAll()',[],[]],
+  // WAITING
+  ['sleep',     'waiting','wait / sleep',    'Wait fixed milliseconds',      'vibium sleep','browser_sleep','page.wait(ms)','page.wait(ms)','page.sleep(ms)',['B22'],[]],
+  ['waitFor',   'waiting','waitFor',         'Wait for selector to appear',  'vibium wait','browser_wait','page.waitFor()','page.wait_for()','page.waitFor()',[],[]],
+  ['waitForFn', 'waiting','waitForFunction', 'Wait for JS expression truthy','vibium wait fn','browser_wait_for_fn','page.waitForFunction()','page.wait_for_function()','page.waitForFunction()',['JV-174'],['JS-Bug1']],
+  ['waitURL',   'waiting','waitForURL',      'Wait for URL to match',        'vibium wait url','browser_wait_for_url','page.waitForURL()','page.wait_for_url()','page.waitForURL()',[],[]],
+  ['waitLoad',  'waiting','waitForLoad',     'Wait for page load event',     'vibium wait load','browser_wait_for_load','page.waitForLoad()','page.wait_for_load()','page.waitForLoad()',[],[]],
+  ['waitText',  'extras', 'wait text',        'Wait for text visible on page','vibium wait text','browser_wait_for_text','','','',[],[]],
+  ['waitUntil', 'waiting','el.waitUntil',    'Wait for element state change','vibium wait --state','browser_wait','el.waitUntil()','el.wait_until()','el.waitUntil()',[],[]],
+  // INTERACTION
+  ['click',    'interaction','click',        'Click element',                'vibium click','browser_click','el.click()','el.click()','el.click()',['B3','B6','MB3','MB10'],[]],
+  ['dblclick', 'interaction','dblclick',     'Double-click element',         'vibium dblclick','browser_dblclick','el.dblclick()','el.dblclick()','el.dblclick()',[],[]],
+  ['fill',     'interaction','fill',         'Fill input with value',        'vibium fill','browser_fill','el.fill()','el.fill()','el.fill()',['B18','B20','B31'],['B7','MB7']],
+  ['type',     'interaction','type',         'Type character by character',  'vibium type','browser_type','el.type()','el.type()','el.type()',['B18'],[]],
+  ['press',    'interaction','press',        'Press key on element',         'vibium press','browser_press','el.press()','el.press()','el.press()',[],[]],
+  ['clear',    'interaction','clear',        'Clear input value',            '','','el.clear()','el.clear()','el.clear()',[],[]],
+  ['check',    'interaction','check',        'Check checkbox/radio',         'vibium check','browser_check','el.check()','el.check()','el.check()',['B26'],[]],
+  ['uncheck',  'interaction','uncheck',      'Uncheck checkbox',             'vibium uncheck','browser_uncheck','el.uncheck()','el.uncheck()','el.uncheck()',[],[]],
+  ['select',   'interaction','selectOption', 'Select dropdown option',       'vibium select','browser_select','el.selectOption()','el.select_option()','el.selectOption()',['B5'],[]],
+  ['hover',    'interaction','hover',        'Hover over element',           'vibium hover','browser_hover','el.hover()','el.hover()','el.hover()',['B30'],[]],
+  ['focus',    'interaction','focus',        'Focus element',                'vibium focus','browser_focus','el.focus()','el.focus()','el.focus()',[],[]],
+  ['dragTo',   'interaction','dragTo',       'Drag element to target',       'vibium drag','browser_drag','el.dragTo()','el.drag_to()','el.dragTo()',[],[]],
+  ['tap',      'interaction','tap',          'Touch tap on element',         '','','el.tap()','el.tap()','el.tap()',[],[]],
+  ['scrollIV', 'interaction','scrollIntoView','Scroll element into view',    'vibium scroll into-view','browser_scroll_into_view','el.scrollIntoView()','el.scroll_into_view()','el.scrollIntoView()',[],[]],
+  ['dispEvt',  'interaction','dispatchEvent','Dispatch DOM event on element','','','el.dispatchEvent()','el.dispatch_event()','el.dispatchEvent()',[],[]],
+  ['setFiles', 'interaction','setFiles',     'Set files on file input',      'vibium upload','browser_upload','el.setFiles()','el.set_files()','el.setFiles()',[],[]],
+  ['hilite',   'interaction','highlight',    'Highlight element visually',   'vibium highlight','browser_highlight','el.highlight()','el.highlight()','el.highlight()',[],[]],
+  // READING
+  ['content',  'reading','page.content',  'Get full page HTML',              '','','page.content()','page.content()','page.content()',[],[]],
+  ['a11y',     'reading','a11yTree',       'Accessibility tree',             'vibium a11y-tree','browser_a11y_tree','page.a11yTree()','page.a11y_tree()','page.a11yTree()',[],[]],
+  ['text',     'reading','el.text',        'Get text content',               'vibium text','browser_get_text','el.text()','el.text()','el.text()',['B25'],['MB9']],
+  ['inner',    'reading','el.innerText',   'Get inner text (rendered)',       '','','el.innerText()','el.inner_text()','el.innerText()',[],[]],
+  ['html',     'reading','el.html',        'Get outer HTML',                 'vibium html','browser_get_html','el.html()','el.html()','el.html()',[],[]],
+  ['value',    'reading','el.value',       'Get input value',                'vibium value','browser_get_value','el.value()','el.value()','el.value()',[],[]],
+  ['attr',     'reading','el.attr',        'Get element attribute',          'vibium attr','browser_get_attribute','el.attr()','el.attr()','el.attr()',['B8'],['MB5']],
+  ['bounds',   'reading','el.bounds',      'Get bounding box {x,y,w,h}',     '','','el.bounds()','el.bounds()','el.bounds()',[],[]],
+  ['isVis',    'reading','isVisible',      'Check if visible',               'vibium is visible','browser_is_visible','el.isVisible()','el.is_visible()','el.isVisible()',['B10'],[]],
+  ['isHid',    'reading','isHidden',       'Check if hidden',                '','','el.isHidden()','el.is_hidden()','el.isHidden()',[],[]],
+  ['isEn',     'reading','isEnabled',      'Check if enabled',               'vibium is enabled','browser_is_enabled','el.isEnabled()','el.is_enabled()','el.isEnabled()',[],[]],
+  ['isCh',     'reading','isChecked',      'Check if checked',               'vibium is checked','browser_is_checked','el.isChecked()','el.is_checked()','el.isChecked()',[],[]],
+  ['isEdit',   'reading','isEditable',     'Check if editable',              '⬜','⬜','el.isEditable()','el.is_editable()','el.isEditable()',[],[]],
+  ['role',     'reading','el.role',        'Get ARIA role',                  '','','el.role()','el.role()','el.role()',[],[]],
+  ['label',    'reading','el.label',       'Get accessible label',           '','','el.label()','el.label()','el.label()',[],[]],
+  ['el-ss',    'reading','el.screenshot',  'Screenshot element only',        '','','el.screenshot()','el.screenshot()','el.screenshot()',[],[]],
+  // PAGE CONTROL
+  ['scrnshot', 'page-control','screenshot',     'Capture page screenshot',   'vibium screenshot','browser_screenshot','page.screenshot()','page.screenshot()','page.screenshot()',[],['MB8']],
+  ['pdf',      'page-control','pdf',            'Generate PDF',               'vibium pdf','browser_pdf','page.pdf()','page.pdf()','page.pdf()',[],[]],
+  ['eval',     'page-control','evaluate',       'Run JavaScript in page',     'vibium eval','browser_evaluate','page.evaluate()','page.evaluate()','page.evaluate()',['JS-Bug2'],['B9','MB6']],
+  ['scroll',   'page-control','scroll',         'Scroll page',                'vibium scroll','browser_scroll','page.scroll()','page.scroll()','page.scroll()',[],[]],
+  ['setVP',    'page-control','setViewport',    'Set viewport size',          'vibium viewport','browser_set_viewport','page.setViewport()','page.set_viewport()','page.setViewport()',[],[]],
+  ['getVP',    'page-control','viewport',       'Get viewport dimensions',    'vibium viewport get','browser_get_viewport','page.viewport()','page.viewport()','page.viewport()',[],[]],
+  ['media',    'page-control','emulateMedia',   'Override media type/features','vibium media','browser_emulate_media','page.emulateMedia()','page.emulate_media()','page.emulateMedia()',[],[]],
+  ['setCont',  'page-control','setContent',     'Set page HTML directly',     'vibium content','browser_set_content','page.setContent()','page.set_content()','page.setContent()',['B33'],[]],
+  ['setGeo',   'page-control','setGeolocation', 'Override GPS coordinates',   'vibium geolocation','browser_set_geolocation','page.setGeolocation()','page.set_geolocation()','page.setGeolocation()',['B14'],[]],
+  ['setWin',   'page-control','setWindow',      'Set window size/position',   'vibium window','browser_set_window','page.setWindow()','page.set_window()','page.setWindow()',[],[]],
+  ['getWin',   'page-control','window',         'Get window info',            'vibium window get','browser_get_window','page.window()','page.window()','page.window()',[],[]],
+  ['frames',   'page-control','frames',         'List all frames',            'vibium frames','browser_frames','page.frames()','page.frames()','page.frames()',[],[]],
+  ['frame',    'page-control','frame',          'Get frame by name or URL',   'vibium frame','browser_frame','page.frame()','page.frame()','page.frame()',['B19'],[]],
+  ['mFrame',   'page-control','mainFrame',      'Get main frame',             '','','page.mainFrame()','page.main_frame()','page.mainFrame()',[],[]],
+  // CONTEXT
+  ['cx-newP',  'context','context.newPage',   'New page in context',          '','','context.newPage()','context.new_page()','context.newPage()',[],[]],
+  ['cx-close', 'context','context.close',    'Close context',                 '','','context.close()','context.close()','context.close()',[],[]],
+  ['cookies',  'context','cookies',          'Get browser cookies',           'vibium cookies','browser_get_cookies','context.cookies()','context.cookies()','context.cookies()',[],['B4']],
+  ['setCook',  'context','setCookies',       'Set cookies',                   'vibium cookies set','browser_set_cookie','context.setCookies()','context.set_cookies()','context.setCookies()',[],['MB4']],
+  ['clrCook',  'context','clearCookies',     'Clear all cookies',             'vibium cookies clear','browser_delete_cookies','context.clearCookies()','context.clear_cookies()','context.clearCookies()',[],[]],
+  ['storage',  'context','storage',          'Get local/session storage',     'vibium storage','browser_storage_state','context.storage()','context.storage()','context.storage()',[],['B2','MB2']],
+  ['setStor',  'context','setStorage',       'Restore storage state',         '','browser_restore_storage','context.setStorage()','context.set_storage()','context.setStorage()',[],[]],
+  ['clrStor',  'context','clearStorage',     'Clear all storage',             '','','context.clearStorage()','context.clear_storage()','context.clearStorage()',[],[]],
+  ['addInit',  'context','addInitScript',    'Add script to every new page',  '','','context.addInitScript()','context.add_init_script()','context.addInitScript()',[],[]],
+  // INPUT
+  ['kb-press', 'input','keyboard.press',  'Press keyboard key',               'vibium keys','browser_keys','keyboard.press()','keyboard.press()','keyboard.press()',[],[]],
+  ['kb-down',  'input','keyboard.down',   'Key down event',                   '','','keyboard.down()','keyboard.down()','keyboard.down()',[],[]],
+  ['kb-up',    'input','keyboard.up',     'Key up event',                     '','','keyboard.up()','keyboard.up()','keyboard.up()',[],[]],
+  ['kb-type',  'input','keyboard.type',   'Type text via keyboard',           '','','keyboard.type()','keyboard.type()','keyboard.type()',[],[]],
+  ['mo-click', 'input','mouse.click',     'Click at exact coordinates',       'vibium mouse click','browser_mouse_click','mouse.click()','mouse.click()','mouse.click()',[],[]],
+  ['mo-move',  'input','mouse.move',      'Move mouse to coordinates',        'vibium mouse move','browser_mouse_move','mouse.move()','mouse.move()','mouse.move()',[],[]],
+  ['mo-down',  'input','mouse.down',      'Mouse button down',                'vibium mouse down','browser_mouse_down','mouse.down()','mouse.down()','mouse.down()',[],[]],
+  ['mo-up',    'input','mouse.up',        'Mouse button up',                  'vibium mouse up','browser_mouse_up','mouse.up()','mouse.up()','mouse.up()',[],[]],
+  ['mo-wheel', 'input','mouse.wheel',     'Scroll mouse wheel',               '','⬜','mouse.wheel()','mouse.wheel()','mouse.wheel()',[],[]],
+  ['tc-tap',   'input','touch.tap',       'Touch tap at coordinates',         '','','touch.tap()','touch.tap()','touch.tap()',[],[]],
+  // NETWORK
+  ['addScript','network','addScript',  'Add script tag to page',          '⬜','⬜','page.addScript()','page.add_script()','page.addScript()',[],[]],
+  ['addStyle', 'network','addStyle',   'Add style tag to page',           '⬜','⬜','page.addStyle()','page.add_style()','page.addStyle()',[],[]],
+  ['expose',   'network','expose',          'Expose JS fn from Node to page',  '','','page.expose()','page.expose()','page.expose()',['JV-135'],[]],
+  ['route',    'network','route',           'Register request route handler',  '','','page.route()','page.route()','page.route()',['JV-128'],[]],
+  ['unroute',  'network','unroute',         'Remove route handler',            '','','page.unroute()','page.unroute()','page.unroute()',[],[]],
+  ['setHdr',   'network','setHeaders', 'Set extra HTTP headers',          '⬜','⬜','page.setHeaders()','page.set_headers()','page.setHeaders()',['JV-128'],[]],
+  ['onReq',    'network','onRequest',       'Request event listener',          '','','page.onRequest()','page.on_request()','page.onRequest()',[],[]],
+  ['onResp',   'network','onResponse',      'Response event listener',         '','','page.onResponse()','page.on_response()','page.onResponse()',[],[]],
+  ['capResp',  'network','capture.response','Capture response before receipt', '','','page.capture.response()','page.capture.response()','',[],[]],
+  ['capReq',   'network','capture.request', 'Capture request before send',     '','','page.capture.request()','page.capture.request()','',[],[]],
+  ['rt-ful',   'network','route.fulfill',   'Fulfill intercepted request',     '','','route.fulfill()','route.fulfill()','route.fulfill()',[],[]],
+  ['rt-cont',  'network','route.continue',  'Continue intercepted request',    '','','route.continue()','route.continue_()','route.continue()',[],[]],
+  ['rt-abort', 'network','route.abort',     'Abort intercepted request',       '','','route.abort()','route.abort()','route.abort()',[],[]],
+  // EVENTS
+  ['onDialog', 'events','onDialog',          'Dialog event listener',          '','','page.onDialog()','page.on_dialog()','page.onDialog(cb)',[],[]],
+  ['onCons',   'events','onConsole',         'Console event listener',         '','','page.onConsole()','page.on_console()','page.onConsole(cb)',[],[]],
+  ['onErr',    'events','onError',           'Error event listener',           '','','page.onError()','page.on_error()','page.onError(cb)',[],[]],
+  ['onDl',     'events','onDownload',        'Download event listener',        '','','page.onDownload()','page.on_download()','page.onDownload(cb)',[],[]],
+  ['onWS',     'events','onWebSocket',       'WebSocket event listener',       '','','page.onWebSocket()','page.on_web_socket()','page.onWebSocket(cb)',[],[]],
+  ['pg-rmAl',  'events','page.removeAllListeners','Remove all page listeners','','','page.removeAllListeners()','page.remove_all_listeners()','page.removeAllListeners()',[],[]],
+  ['capNav',   'events','capture.navigation','Capture navigation before load', '','','page.capture.navigation()','page.capture.navigation()','',['JS-Bug4'],[]],
+  ['capEvt',   'events','capture.event',     'Capture arbitrary BiDi event',   '','','page.capture.event()','page.capture.event()','',[],[]],
+  ['capDl',    'events','capture.download',  'Capture download before save',   '','','page.capture.download()','page.capture.download()','',[],[]],
+  ['capDlg',   'events','capture.dialog',    'Capture dialog before shown',    '','','page.capture.dialog()','page.capture.dialog()','',['PY-146'],[]],
+  ['consMsgs', 'events','consoleMessages',   'Get buffered console messages',  '','','page.consoleMessages()','page.console_messages()','page.consoleMessages()',[],[]],
+  ['errors',   'events','page.errors',       'Get buffered page errors',       '','','page.errors()','page.errors()','page.errors()',[],[]],
+  // CLOCK
+  ['cl-inst',  'clock','clock.install',      'Install fake timers',            '','page_clock_install','clock.install()','clock.install()','clock.install()',[],[]],
+  ['cl-ff',    'clock','clock.fastForward',  'Fast-forward fake time',         '','page_clock_fast_forward','clock.fastForward()','clock.fast_forward()','clock.fastForward()',[],[]],
+  ['cl-runF',  'clock','clock.runFor',       'Run timers for duration',        '','page_clock_run_for','clock.runFor()','clock.run_for()','clock.runFor()',[],[]],
+  ['cl-pAt',   'clock','clock.pauseAt',      'Pause clock at timestamp',       '','page_clock_pause_at','clock.pauseAt()','clock.pause_at()','clock.pauseAt()',[],[]],
+  ['cl-res',   'clock','clock.resume',       'Resume fake clock',              '','page_clock_resume','clock.resume()','clock.resume()','clock.resume()',[],[]],
+  ['cl-sFixed','clock','clock.setFixedTime', 'Freeze time at fixed value',     '','page_clock_set_fixed_time','clock.setFixedTime()','clock.set_fixed_time()','clock.setFixedTime()',[],['JS-Bug3']],
+  ['cl-sSys',  'clock','clock.setSystemTime','Set Date.now() to value',        '','page_clock_set_system_time','clock.setSystemTime()','clock.set_system_time()','clock.setSystemTime()',[],[]],
+  ['cl-sTZ',   'clock','clock.setTimezone',  'Override browser timezone',      '','page_clock_set_timezone','clock.setTimezone()','clock.set_timezone()','clock.setTimezone()',[],[]],
+  // RECORDING
+  ['rec-st',   'recording','recording.start',      'Start full recording',     'vibium record start','browser_record_start','recording.start()','recording.start()','recording.start()',[],[]],
+  ['rec-stop', 'recording','recording.stop',       'Stop recording',           'vibium record stop','browser_record_stop','recording.stop()','recording.stop()','recording.stop()',[],[]],
+  ['rec-cs',   'recording','recording.startChunk', 'Start named chunk',        'vibium record chunk start','browser_record_start_chunk','recording.startChunk()','recording.start_chunk()','recording.startChunk()',[],[]],
+  ['rec-cx',   'recording','recording.stopChunk',  'Stop named chunk',         'vibium record chunk stop','browser_record_stop_chunk','recording.stopChunk()','recording.stop_chunk()','recording.stopChunk()',[],[]],
+  ['rec-gs',   'recording','recording.startGroup', 'Start named group',        'vibium record group start','browser_record_start_group','recording.startGroup()','recording.start_group()','recording.startGroup()',[],[]],
+  ['rec-gx',   'recording','recording.stopGroup',  'Stop named group',         'vibium record group stop','browser_record_stop_group','recording.stopGroup()','recording.stop_group()','recording.stopGroup()',[],[]],
+  // DIALOG
+  ['dlg-msg',  'dialog','dialog.message',      'Get dialog message text',      '','','dialog.message()','dialog.message()','dialog.message()',[],[]],
+  ['dlg-type', 'dialog','dialog.type',         'Get dialog type (alert/…)',    '','','dialog.type()','dialog.type()','dialog.type()',[],[]],
+  ['dlg-dv',   'dialog','dialog.defaultValue', 'Get prompt default value',     '','','dialog.defaultValue()','dialog.default_value()','dialog.defaultValue()',[],[]],
+  ['dlg-acc',  'dialog','dialog.accept',       'Accept dialog (with value)',    'vibium dialog accept','browser_dialog_accept','dialog.accept()','dialog.accept()','dialog.accept()',['B3','MB3'],[]],
+  ['dlg-dis',  'dialog','dialog.dismiss',      'Dismiss dialog',               'vibium dialog dismiss','browser_dialog_dismiss','dialog.dismiss()','dialog.dismiss()','dialog.dismiss()',[],[]],
+  // DOWNLOAD
+  ['dl-save',  'download','download.saveAs',  'Save download to path (⬜)',     '','⬜','download.saveAs()','download.save_as()','download.saveAs()',[],[]],
+  ['dl-url',   'download','download.url',     'Get download URL',              '','','download.url()','download.url()','download.url()',[],[]],
+  ['dl-fn',    'download','download.filename','Get suggested filename',        '','','download.filename()','download.filename()','download.suggestedFilename()',[],[]],
+  ['dl-path',  'download','download.path',    'Get saved file path',           '','','download.path()','download.path()','download.path()',[],[]],
+  // AGENT EXTRAS
+  ['map',      'extras','map',            'Map interactive @ref handles',      'vibium map','browser_map','','','',['B16','B24'],[]],
+  ['diff',     'extras','diff',           'Diff vs previous map',              'vibium diff','browser_diff_map','','','',[],[]],
+  ['count',    'extras','count',          'Count matching elements',           'vibium count','browser_count','','','',[], ['B1','MB1']],
+  ['dl-dir',   'extras','download-set-dir','Set download directory',           'vibium download set-dir','browser_download_set_dir','','','',[],[]],
+  // AI NATIVE (planned)
+  ['ai-check', 'ai','page.check',  'AI visual assertion (not yet impl)',        '⬜','⬜','⬜ page.check()','⬜ page.check()','⬜',[],[]],
+  ['ai-do',    'ai','page.do',     'AI natural language action (not yet impl)', '⬜','⬜','⬜ page.do()','⬜ page.do()','⬜',[],[]],
+];
+
+// ─── GENERATE NODES ───────────────────────────────────────────────────────────
+function cmdHasSurf(v) { return v && v !== '' && !v.startsWith('⬜'); }
+
+function cmdTier(c) {
+  const n = [c[4],c[5],c[6],c[7],c[8]].filter(cmdHasSurf).length;
+  if (n >= 5) return 'all5';
+  if (n >= 4) return '4surf';
+  if (n >= 3) return '3surf';
+  if (n >= 2) return '2surf';
+  if (cmdHasSurf(c[6]) || cmdHasSurf(c[7]) || cmdHasSurf(c[8])) return 'client';
+  if (cmdHasSurf(c[4]) || cmdHasSurf(c[5])) return 'climcp';
+  return 'planned';
+}
+
+function cmdColor(c) {
+  const n = [c[4],c[5],c[6],c[7],c[8]].filter(cmdHasSurf).length;
+  if (n >= 5) return '#cbd5e1';
+  if (n >= 4) return '#93c5fd';
+  if (n >= 3) return '#a5f3fc';
+  if (n >= 2) return '#bbf7d0';
+  const hasClient = cmdHasSurf(c[6]) || cmdHasSurf(c[7]) || cmdHasSurf(c[8]);
+  if (hasClient) return '#d8b4fe';
+  const hasCLIMCP = cmdHasSurf(c[4]) || cmdHasSurf(c[5]);
+  if (hasCLIMCP) return '#67e8f9';
+  return '#374151';
+}
+
+const catNodes = Object.entries(CATEGORIES).map(([id, c]) => ({
+  id: 'cat-' + id, name: c.name, group: 'category',
+  val: c.val, color: c.color, desc: c.desc, catId: id,
+}));
+
+const cmdNodes = CMD.map(c => {
+  const hasOpen = c[9].length > 0;
+  const hasFix  = c[10].length > 0;
+  return {
+    id: 'cmd-' + c[0], name: c[2], group: 'command',
+    val: hasOpen ? 3.5 : (hasFix ? 2.5 : 2),
+    color: cmdColor(c), catId: c[1], desc: c[3],
+    cli: c[4], mcp: c[5], js: c[6], py: c[7], java: c[8],
+    openBugs: c[9], fixedBugs: c[10], _tier: cmdTier(c),
+  };
+});
+
+// ─── STATIC BUG / PATTERN / REFERENCE NODES ──────────────────────────────────
+const STATIC_NODES = [
+  // Root
+  { id:'vibium', name:'Vibium', group:'root', val:28, color:'#7c3aed',
+    desc:'The verification layer for coding agents. v26.5.31 · github.com/VibiumDev/vibium',
+    meta:'BiDi-based · Go binary · CLI + MCP + JS/Python/Java clients' },
+  // Surfaces
+  { id:'cli',    name:'CLI',       group:'surface', val:14, color:'#3b82f6',
+    desc:'66 commands via persistent daemon. vibium <cmd> [args].',
+    meta:'go · click · fill · find · eval · map · diff · screenshot…' },
+  { id:'mcp',    name:'MCP',       group:'surface', val:14, color:'#06b6d4',
+    desc:'85 tools via JSON-RPC stdio. Per-session browser_start/stop.',
+    meta:'browser_navigate · browser_click · browser_fill · page_clock_*…' },
+  { id:'js',     name:'JS Client', group:'surface', val:12, color:'#eab308',
+    desc:'68 methods. Async + sync API. npm install vibium.',
+    meta:'page.go() · page.find() · el.click() · browser.start()' },
+  { id:'python', name:'Python',    group:'surface', val:12, color:'#22c55e',
+    desc:'72 methods. async_api + sync_api. pip install vibium.',
+    meta:'page.go() · page.find() · el.click() · browser.start()' },
+  { id:'java',   name:'Java',      group:'surface', val:12, color:'#f97316',
+    desc:'82 methods. Blocking API. Maven: com.vibium:vibium.',
+    meta:'page.go() · page.find() · el.click() · Vibium.start()' },
+  // CLI bugs — open
+  { id:'B3',  name:'B3',  group:'bug-open', val:6, color:'#dc2626', surface:'CLI', severity:'Critical', priority:'P1',
+    desc:'Dialog deadlock — click on dialog-firing element locks daemon socket. Also fires on POST navigation and PrestaShop subdomain nav.',
+    workaround:'Pre-stub: vibium eval \'window.alert = () => {}; window.confirm = () => true\'\nOr navigate via eval: vibium eval "location.href = \'…\'"' },
+  { id:'B5',  name:'B5',  group:'bug-partial', val:4, color:'#fbbf24', surface:'CLI', severity:'High', priority:'P1',
+    desc:'Partial fix v26.5.31: label matching now works. Remaining: selecting nonexistent option returns exit 0 instead of exit 1.',
+    workaround:'Check returned value matches expected after select' },
+  { id:'B6',  name:'B6',  group:'bug-open', val:5, color:'#ef4444', surface:'CLI', severity:'High', priority:'P1',
+    desc:'--timeout flag silently ignored on click. Default ~160ms always used regardless of --timeout value.',
+    workaround:'Use shell timeout wrapper: timeout 10 vibium click "#selector"' },
+  { id:'B8',  name:'B8',  group:'bug-open', val:5, color:'#ef4444', surface:'CLI', severity:'High', priority:'P2',
+    desc:'vibium attr always returns false for hasAttribute check, even when attribute is present.',
+    workaround:'vibium eval \'document.querySelector("#sel").hasAttribute("disabled")\'' },
+  { id:'B10', name:'B10', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'vibium is requires 2 args (element ref + state). Passing 1 arg crashes.',
+    workaround:'Always pass element ref: vibium is @e1 visible' },
+  { id:'B11', name:'B11', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'vibium back can navigate past the session origin into browser chrome.',
+    workaround:'Check URL before calling back; guard with vibium url | grep expected-path' },
+  { id:'B14', name:'B14', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'Negative geolocation coordinates (e.g. -33.8688) parsed as CLI flags, not values.',
+    workaround:'Use -- separator: vibium geolocation -- -33.8688 151.2093' },
+  { id:'B15', name:'B15', group:'bug-regression', val:3, color:'#a78bfa', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'find text is case-sensitive against DOM text. CSS text-transform never applied. Correct — retained as regression check.',
+    workaround:'Search by DOM text, not rendered text. Inspect DOM for actual value.' },
+  { id:'B16', name:'B16', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'vibium map skips shadow DOM elements entirely. No @ref returned for web components.',
+    workaround:'vibium eval \'document.querySelector("host").shadowRoot.querySelector("btn").click()\'' },
+  { id:'B17', name:'B17', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'find role button times out on input[type=submit]. Implicit ARIA role not recognised.',
+    workaround:'vibium eval \'document.querySelector("input[type=submit]").click()\'' },
+  { id:'B18', name:'B18', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'Negative numbers in fill/type parsed as CLI flags. fill -5 fails with "unknown flag".',
+    workaround:'Eval native setter: vibium eval \'const s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,"value").set; s.call(document.querySelector("#sel"),"-2"); ...\'' },
+  { id:'B19', name:'B19', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'vibium frame context not persisted between commands. Each command re-runs from top frame.',
+    workaround:'vibium eval \'.contentDocument.querySelector("…").click()\' for cross-frame access' },
+  { id:'B20', name:'B20', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P2',
+    desc:'fill with empty string "" silently no-ops. Field not cleared.',
+    workaround:'vibium eval \'document.querySelector("#sel").value = ""\'' },
+  { id:'B21', name:'B21', group:'bug-open', val:4, color:'#ef4444', surface:'CLI', severity:'High', priority:'P3',
+    desc:'vibium bidi-test and launch-test commands fail or produce misleading output.',
+    workaround:'None documented' },
+  { id:'B22', name:'B22', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Medium', priority:'P3',
+    desc:'Negative value to vibium sleep causes panic instead of clean error.',
+    workaround:'Validate: [ "$ms" -ge 0 ] && vibium sleep "$ms"' },
+  { id:'B24', name:'B24', group:'bug-open', val:4, color:'#fb923c', surface:'CLI', severity:'Medium', priority:'P3',
+    desc:'map returns @ref handles for off-screen (overflow-hidden) elements that cannot be clicked.',
+    workaround:'Use eval getBoundingClientRect to check visibility, then mouse.click by coords' },
+  { id:'B25', name:'B25', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Medium', priority:'P3',
+    desc:'vibium text output truncated at internal buffer limit on very long pages.',
+    workaround:'vibium eval \'document.body.innerText.slice(0, 50000)\'' },
+  { id:'B26', name:'B26', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Low', priority:'P3',
+    desc:'vibium check on non-checkbox element throws uncaught exception rather than clean error.',
+    workaround:'Verify element type with eval before calling check' },
+  { id:'B29', name:'B29', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Low', priority:'P3',
+    desc:'find returns @ref for disabled elements. Inconsistent with map which correctly excludes them.',
+    workaround:'Use vibium map instead of find when interactability is required' },
+  { id:'B30', name:'B30', group:'bug-partial', val:3, color:'#fbbf24', surface:'CLI', severity:'Low', priority:'P3',
+    desc:'Partial fix v26.5.31: hover on div fixed. Remaining: hover on <img src="external"> fails (zero-size race).',
+    workaround:'For img: vibium mouse move x y using getBoundingClientRect coords' },
+  { id:'B31', name:'B31', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Low', priority:'P3',
+    desc:'fill fails on range inputs (input[type=range]). Editable check fails for range type.',
+    workaround:'Eval: const s=document.querySelector("input[type=range]"); s.value="3"; s.dispatchEvent(new Event("change",{bubbles:true}))' },
+  { id:'B33', name:'B33', group:'bug-open', val:3, color:'#94a3b8', surface:'CLI', severity:'Low', priority:'P4',
+    desc:'vibium content (set page HTML) does not reset navigation state cleanly.',
+    workaround:'None documented' },
+  // CLI fixed
+  { id:'B1', name:'B1 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'Critical',
+    desc:'count type mismatch — fixed v26.5.31' },
+  { id:'B2', name:'B2 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'Critical',
+    desc:'storage state serialization — fixed v26.5.31' },
+  { id:'B4', name:'B4 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'High',
+    desc:'cookies domain handling — fixed v26.5.31' },
+  { id:'B7', name:'B7 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'High',
+    desc:'fill on <textarea> — fixed v26.5.31 (#117)' },
+  { id:'B9', name:'B9 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'High',
+    desc:'eval returned Go internal repr for objects/arrays — fixed. JSON now correct.' },
+  // MCP bugs — open
+  { id:'MB3',  name:'MB3',  group:'bug-open', val:6, color:'#dc2626', surface:'MCP', severity:'Critical', priority:'P1',
+    desc:'Dialog deadlock (MCP) — browser_click on dialog-firing element blocks BiDi socket. Deferred as #151.',
+    workaround:'browser_evaluate { expression: "setTimeout(() => alert(\'msg\'), 300)" }\nthen browser_dialog_accept {}\nOr pre-stub: window.alert = () => {}' },
+  { id:'MB10', name:'MB10', group:'bug-open', val:5, color:'#f87171', surface:'MCP', severity:'High', priority:'P2',
+    desc:'False "element obscured" on sticky nav pages. Requires position:sticky + z-index + backdrop-filter simultaneously. Intermittent.',
+    workaround:'browser_evaluate { expression: "document.querySelector(\'…\').click()" }\nOr get coords → browser_mouse_click' },
+  // MCP fixed
+  { id:'MB1', name:'MB1 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'Critical',
+    desc:'browser_count returned string not number — fixed v26.5.31' },
+  { id:'MB2', name:'MB2 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'Critical',
+    desc:'browser_storage_state cookie parse error — fixed v26.5.31' },
+  { id:'MB4', name:'MB4 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'High',
+    desc:'browser_set_cookie domain handling — fixed v26.5.31' },
+  { id:'MB5', name:'MB5 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'High',
+    desc:'browser_get_attribute null vs absent — fixed v26.5.31' },
+  { id:'MB6', name:'MB6 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'High',
+    desc:'browser_evaluate empty string "" caused invalid_union error — fixed v26.5.31' },
+  { id:'MB7', name:'MB7 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'High',
+    desc:'browser_fill on <textarea> — fixed v26.5.31' },
+  { id:'MB8', name:'MB8 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'Medium',
+    desc:'browser_screenshot with annotate:true crashed — fixed v26.5.31' },
+  { id:'MB9', name:'MB9 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'Medium',
+    desc:'browser_get_text returned null for empty text — fixed v26.5.31' },
+  // JS bugs
+  { id:'JS-Bug1', name:'JS Bug1 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'JS', severity:'High',
+    desc:'page.waitUntil(expression) always timed out — bare expressions not accepted. Fixed v26.5.31 (#163).' },
+  { id:'JS-Bug2', name:'JS Bug2',   group:'bug-open',  val:5, color:'#ef4444', surface:'JS', severity:'High', priority:'P2',
+    desc:'page.evaluate() wraps nested string[][] inner items as BiDi typed objects {type:"string",value:"…"} instead of plain strings. Flat string[] works correctly.',
+    workaround:'JSON.stringify inside eval, JSON.parse on client:\nconst json = await page.evaluate(`JSON.stringify(nestedArray)`)\nconst result = JSON.parse(json)' },
+  { id:'JS-Bug3', name:'JS Bug3 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'JS', severity:'High',
+    desc:'clock.setFixedTime() silently no-oped without prior clock.install(). Fixed v26.5.31 — now throws clear error. install() still required.' },
+  { id:'JS-Bug4', name:'JS Bug4',   group:'bug-open',  val:4, color:'#fb923c', surface:'JS', severity:'Medium', priority:'P2',
+    desc:'capture.navigation() times out and page.url() goes stale on SPA pushState. browsingContext.historyUpdated (Chrome 123+) not subscribed.',
+    workaround:'Poll page.url() after click + wait, or:\nconst url = await page.evaluate("location.href") // always current' },
+  { id:'JS-118',  name:'#118',      group:'bug-open',  val:4, color:'#38bdf8', surface:'JS', severity:'Enhancement', priority:'P2',
+    desc:'No pierce selector for shadow DOM. page.find() and page.findAll() cannot cross shadow boundaries.',
+    workaround:'page.evaluate(`document.querySelector("host").shadowRoot.querySelector("p").textContent`)' },
+  // Python bugs
+  { id:'PY-146', name:'Py #146', group:'bug-open', val:5, color:'#ef4444', surface:'Python', severity:'Critical', priority:'P1',
+    desc:'capture.dialog(fn) deadlocks when fn triggers dialog via evaluate("alert(…)"). Circular: capture waits for fn, fn blocked on dialog, dialog needs capture.',
+    workaround:'Use setTimeout inside eval:\nawait page.evaluate("setTimeout(() => alert(\'msg\'), 300)")' },
+  // Java bugs
+  { id:'JV-174', name:'Jv #174', group:'bug-open', val:5, color:'#ef4444', surface:'Java', severity:'Critical', priority:'P1',
+    desc:'page.waitForFunction() always fails. Java client double-wraps expression → SyntaxError: Unexpected token ).',
+    workaround:'None — no way to bypass Java client wrapping. Filed as #174.' },
+  { id:'JV-135', name:'Jv #135', group:'bug-open', val:4, color:'#fb923c', surface:'Java', severity:'High', priority:'P2',
+    desc:'page.expose("fn", callback) registers server-side but window.fn always undefined in page JS context.',
+    workaround:'None documented' },
+  { id:'JV-128', name:'Jv #128', group:'bug-open', val:5, color:'#ef4444', surface:'Java', severity:'Critical', priority:'P1',
+    desc:'page.route() or page.setHeaders() causes subsequent page.go() to deadlock permanently. Same socket-level root as B3/MB3.',
+    workaround:'Avoid setHeaders/route before navigation. Use page.evaluate() for header injection.' },
+  { id:'JV-106', name:'Jv #106', group:'bug-open', val:4, color:'#fb923c', surface:'Java', severity:'Medium', priority:'P2',
+    desc:'SelectorOptions not forwarded to engine. Only first argument used in page.find(new SelectorOptions().text("Login").role("button")).',
+    workaround:'Pass selector as plain string; chain find+filter via evaluate' },
+  // Patterns
+  { id:'p-dialog',  name:'dialog_deadlock', group:'pattern', val:10, color:'#d946ef',
+    desc:'Socket-level deadlock when a BiDi command blocks waiting for a dialog/navigation that only resolves through another BiDi command — circular dependency.',
+    meta:'Affects: B3 (CLI) · MB3 (MCP) · Py#146 · Jv#128 · recording #142' },
+  { id:'p-findcase', name:'find_text_case', group:'pattern', val:7, color:'#a855f7',
+    desc:'find text matches raw DOM text only. CSS text-transform never applied. Search by DOM text, not rendered text.',
+    meta:'Affects: B15 (CLI) — regression-check since v26.5.31' },
+  { id:'p-negval',  name:'negative_values', group:'pattern', val:7, color:'#a855f7',
+    desc:'Negative numbers in CLI args parsed as flags (e.g. -5 → unknown flag). Requires -- separator or eval workaround.',
+    meta:'Affects: B14 (geolocation) · B18 (fill/type) · B22 (sleep)' },
+  // Reference
+  { id:'r-arch',    name:'Architecture',       group:'reference', val:5, color:'#475569',
+    desc:'System diagram · CLI daemon vs MCP session · sync/async bridge (SharedArrayBuffer+Atomics) · WebDriver BiDi foundation',
+    meta:'reference/architecture.md' },
+  { id:'r-action',  name:'Actionability',      group:'reference', val:5, color:'#475569',
+    desc:'5 checks: visible, stable, receivesEvents, enabled, editable. Server-side Go before every interaction. 30s timeout, 100ms polling.',
+    meta:'reference/actionability.md' },
+  { id:'r-bidi',    name:'BiDi 40/87',         group:'reference', val:5, color:'#475569',
+    desc:'WebDriver BiDi coverage: 40 of 87 implemented. Gaps: emulation.*, browsingContext.historyUpdated (#126), network.continueWithAuth.',
+    meta:'reference/bidi-coverage.md' },
+  { id:'r-roadmap', name:'Roadmap',            group:'reference', val:5, color:'#475569',
+    desc:'Planned: Cortex (memory layer), Retina (passive recorder), AI locators (page.check/do), video, .NET client, more browsers.',
+    meta:'reference/roadmap.md' },
+  { id:'r-ainative', name:'AI Native (draft)', group:'reference', val:5, color:'#475569',
+    desc:'page.check("claim") and page.do("action") — AI-powered verification and natural language actions. Not yet implemented.',
+    meta:'reference/ai-native.md' },
+];
+
+const ALL_NODES = [...STATIC_NODES, ...catNodes, ...cmdNodes];
+
+// ─── GENERATE LINKS ───────────────────────────────────────────────────────────
+const STATIC_LINKS = [
+  // Surfaces → root
+  { source:'cli',    target:'vibium', width:2, color:'rgba(59,130,246,0.4)' },
+  { source:'mcp',    target:'vibium', width:2, color:'rgba(6,182,212,0.4)' },
+  { source:'js',     target:'vibium', width:2, color:'rgba(234,179,8,0.4)' },
+  { source:'python', target:'vibium', width:2, color:'rgba(34,197,94,0.4)' },
+  { source:'java',   target:'vibium', width:2, color:'rgba(249,115,22,0.4)' },
+  // Reference → root
+  { source:'r-arch',    target:'vibium', width:1, color:'rgba(71,85,105,0.35)' },
+  { source:'r-action',  target:'vibium', width:1, color:'rgba(71,85,105,0.35)' },
+  { source:'r-bidi',    target:'vibium', width:1, color:'rgba(71,85,105,0.35)' },
+  { source:'r-roadmap', target:'vibium', width:1, color:'rgba(71,85,105,0.35)' },
+  { source:'r-ainative',target:'vibium', width:1, color:'rgba(71,85,105,0.35)' },
+  // Bugs → patterns
+  { source:'B3',     target:'p-dialog',   width:2,   color:'rgba(217,70,239,0.5)' },
+  { source:'MB3',    target:'p-dialog',   width:2,   color:'rgba(217,70,239,0.5)' },
+  { source:'PY-146', target:'p-dialog',   width:2,   color:'rgba(217,70,239,0.5)' },
+  { source:'JV-128', target:'p-dialog',   width:2,   color:'rgba(217,70,239,0.5)' },
+  { source:'B15',    target:'p-findcase', width:1.5, color:'rgba(168,85,247,0.4)' },
+  { source:'B14',    target:'p-negval',   width:1.5, color:'rgba(168,85,247,0.4)' },
+  { source:'B18',    target:'p-negval',   width:1.5, color:'rgba(168,85,247,0.4)' },
+  { source:'B22',    target:'p-negval',   width:1.5, color:'rgba(168,85,247,0.4)' },
+  // B21 (bidi-test) → CLI surface (diagnostic commands not in CMD table)
+  { source:'B21', target:'cli', width:1, color:'rgba(239,68,68,0.4)' },
+];
+
+// Category → root
+const catLinks = catNodes.map(c => ({
+  source: c.id, target: 'vibium',
+  width: 1.2,
+  color: CATEGORIES[c.catId].color + '55',
+}));
+
+// Command → category
+const cmdCatLinks = cmdNodes.map(c => ({
+  source: c.id, target: 'cat-' + c.catId,
+  width: 0.5,
+  color: 'rgba(120,130,155,0.18)',
+}));
+
+// Surface → category (one link per surface per category that has ≥1 cmd on that surface)
+const SURF_META = [
+  { id:'cli',    col:4, color:'rgba(59,130,246,0.25)'  },
+  { id:'mcp',    col:5, color:'rgba(6,182,212,0.25)'   },
+  { id:'js',     col:6, color:'rgba(234,179,8,0.25)'   },
+  { id:'python', col:7, color:'rgba(34,197,94,0.25)'   },
+  { id:'java',   col:8, color:'rgba(249,115,22,0.25)'  },
+];
+const surfCatLinks = [];
+Object.keys(CATEGORIES).forEach(catId => {
+  SURF_META.forEach(s => {
+    if (CMD.some(c => c[1] === catId && cmdHasSurf(c[s.col]))) {
+      surfCatLinks.push({ source: s.id, target: 'cat-' + catId, width: 0.7, color: s.color });
+    }
+  });
+});
+
+// Bug → command links
+const bugCmdLinks = [
+  // B3: dialog deadlock → click, dialog.accept, go
+  { source:'B3',  target:'cmd-click',   width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'B3',  target:'cmd-dlg-acc', width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'B3',  target:'cmd-go',      width:1.5, color:'rgba(220,38,38,0.5)' },
+  // B5: select exit code
+  { source:'B5',  target:'cmd-select',  width:1, color:'rgba(251,191,36,0.4)' },
+  // B6: click timeout ignored
+  { source:'B6',  target:'cmd-click',   width:1, color:'rgba(239,68,68,0.4)' },
+  // B8: attr hasAttribute
+  { source:'B8',  target:'cmd-attr',    width:1, color:'rgba(239,68,68,0.4)' },
+  // B10: is command 1-arg crash
+  { source:'B10', target:'cmd-isVis',   width:1, color:'rgba(251,146,60,0.4)' },
+  // B11: back past origin
+  { source:'B11', target:'cmd-back',    width:1, color:'rgba(251,146,60,0.4)' },
+  // B14: negative geolocation
+  { source:'B14', target:'cmd-setGeo',  width:1, color:'rgba(251,146,60,0.4)' },
+  // B15: find text case (regression)
+  { source:'B15', target:'cmd-find',    width:1, color:'rgba(167,139,250,0.4)' },
+  // B16: map skips shadow DOM
+  { source:'B16', target:'cmd-map',     width:1, color:'rgba(251,146,60,0.4)' },
+  // B17: find role button on input[type=submit]
+  { source:'B17', target:'cmd-find',    width:1, color:'rgba(251,146,60,0.4)' },
+  // B18: negative fill/type
+  { source:'B18', target:'cmd-fill',    width:1, color:'rgba(251,146,60,0.4)' },
+  { source:'B18', target:'cmd-type',    width:1, color:'rgba(251,146,60,0.4)' },
+  // B19: frame context not persisted
+  { source:'B19', target:'cmd-frame',   width:1, color:'rgba(251,146,60,0.4)' },
+  // B20: fill empty string
+  { source:'B20', target:'cmd-fill',    width:1, color:'rgba(251,146,60,0.4)' },
+  // B22: sleep negative panic
+  { source:'B22', target:'cmd-sleep',   width:1, color:'rgba(148,163,184,0.3)' },
+  // B24: map off-screen refs
+  { source:'B24', target:'cmd-map',     width:1, color:'rgba(251,146,60,0.4)' },
+  // B25: text truncation
+  { source:'B25', target:'cmd-text',    width:1, color:'rgba(148,163,184,0.3)' },
+  // B26: check wrong type
+  { source:'B26', target:'cmd-check',   width:1, color:'rgba(148,163,184,0.3)' },
+  // B29: find returns disabled
+  { source:'B29', target:'cmd-find',    width:1, color:'rgba(148,163,184,0.3)' },
+  // B30: hover img race
+  { source:'B30', target:'cmd-hover',   width:1, color:'rgba(251,191,36,0.4)' },
+  // B31: fill range
+  { source:'B31', target:'cmd-fill',    width:1, color:'rgba(148,163,184,0.3)' },
+  // B33: setContent nav state
+  { source:'B33', target:'cmd-setCont', width:1, color:'rgba(148,163,184,0.3)' },
+  // CLI fixed → commands
+  { source:'B1',  target:'cmd-count',   width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'B2',  target:'cmd-storage', width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'B4',  target:'cmd-cookies', width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'B7',  target:'cmd-fill',    width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'B9',  target:'cmd-eval',    width:1, color:'rgba(74,222,128,0.2)' },
+  // MCP open → commands
+  { source:'MB3',  target:'cmd-click',   width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'MB3',  target:'cmd-dlg-acc', width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'MB10', target:'cmd-click',   width:1,   color:'rgba(248,113,113,0.4)' },
+  // MCP fixed → commands
+  { source:'MB1', target:'cmd-count',   width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB2', target:'cmd-storage', width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB4', target:'cmd-setCook', width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB5', target:'cmd-attr',    width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB6', target:'cmd-eval',    width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB7', target:'cmd-fill',    width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB8', target:'cmd-scrnshot',width:1, color:'rgba(74,222,128,0.2)' },
+  { source:'MB9', target:'cmd-text',    width:1, color:'rgba(74,222,128,0.2)' },
+  // JS bugs → commands
+  { source:'JS-Bug1', target:'cmd-waitForFn', width:1,   color:'rgba(74,222,128,0.2)' },
+  { source:'JS-Bug2', target:'cmd-eval',      width:1,   color:'rgba(239,68,68,0.4)' },
+  { source:'JS-Bug3', target:'cmd-cl-sFixed', width:1,   color:'rgba(74,222,128,0.2)' },
+  { source:'JS-Bug4', target:'cmd-url',       width:1,   color:'rgba(251,146,60,0.4)' },
+  { source:'JS-Bug4', target:'cmd-capNav',    width:1,   color:'rgba(251,146,60,0.4)' },
+  { source:'JS-118',  target:'cmd-find',      width:1,   color:'rgba(56,189,248,0.4)' },
+  { source:'JS-118',  target:'cmd-findAll',   width:0.8, color:'rgba(56,189,248,0.3)' },
+  // Python → commands
+  { source:'PY-146', target:'cmd-capDlg', width:1.5, color:'rgba(220,38,38,0.5)' },
+  // Java → commands
+  { source:'JV-174', target:'cmd-waitForFn', width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'JV-135', target:'cmd-expose',    width:1,   color:'rgba(251,146,60,0.4)' },
+  { source:'JV-128', target:'cmd-go',        width:1.5, color:'rgba(220,38,38,0.5)' },
+  { source:'JV-128', target:'cmd-route',     width:1,   color:'rgba(220,38,38,0.4)' },
+  { source:'JV-128', target:'cmd-setHdr',    width:1,   color:'rgba(220,38,38,0.4)' },
+  { source:'JV-106', target:'cmd-find',      width:1,   color:'rgba(251,146,60,0.4)' },
+];
+
+const ALL_LINKS = [...STATIC_LINKS, ...catLinks, ...surfCatLinks, ...cmdCatLinks, ...bugCmdLinks];
+
+// ─── FILTER STATE ─────────────────────────────────────────────────────────────
+const GROUPS_WITH_VARIANTS = {
+  'api':       ['category', 'command'],
+  'bug-open':  ['bug-open', 'bug-partial', 'bug-regression'],
+  'bug-fixed': ['bug-fixed'],
+  'surface':   ['surface'],
+  'pattern':   ['pattern'],
+  'reference': ['reference'],
+};
+
+const activeFilters = new Set(['surface','api','bug-open','bug-fixed','pattern','reference']);
+const activeTiers   = new Set(['all5','4surf','3surf','2surf','planned']);
+const collapsedCats = new Set();
+let activeHighlight = null;  // { type:'surface'|'node', ids:Set }
+let lastClickedId   = null;
+let searchQuery = '';
+let highlightedIds = new Set();
+
+function groupVisible(group) {
+  if (group === 'root') return true;
+  for (const [key, variants] of Object.entries(GROUPS_WITH_VARIANTS)) {
+    if (variants.includes(group)) return activeFilters.has(key);
+  }
+  return true;
+}
+
+function getVisibleData() {
+  const visibleNodes = ALL_NODES.filter(n => {
+    if (!groupVisible(n.group)) return false;
+    if (n.group === 'command' && collapsedCats.has(n.catId)) return false;
+    if (n.group === 'command' && !activeTiers.has(n._tier)) return false;
+    return true;
+  });
+  const visibleIds = new Set(visibleNodes.map(n => n.id));
+  const visibleLinks = ALL_LINKS.filter(l => {
+    const src = typeof l.source === 'object' ? l.source.id : l.source;
+    const tgt = typeof l.target === 'object' ? l.target.id : l.target;
+    return visibleIds.has(src) && visibleIds.has(tgt);
+  });
+  return { nodes: visibleNodes, links: visibleLinks };
+}
+
+// ─── HIGHLIGHT ────────────────────────────────────────────────────────────────
+function computeNeighbors(nodeId) {
+  const ids = new Set([nodeId]);
+  ALL_LINKS.forEach(l => {
+    const src = typeof l.source === 'object' ? l.source.id : l.source;
+    const tgt = typeof l.target === 'object' ? l.target.id : l.target;
+    if (src === nodeId) ids.add(tgt);
+    if (tgt === nodeId) ids.add(src);
+  });
+  return ids;
+}
+
+function computeSurfaceHighlight(surfaceId) {
+  const s = SURF_META.find(m => m.id === surfaceId);
+  if (!s) return new Set([surfaceId]);
+  const ids = new Set(['vibium', surfaceId]);
+  CMD.forEach(c => {
+    if (cmdHasSurf(c[s.col])) {
+      ids.add('cat-' + c[1]);
+      ids.add('cmd-' + c[0]);
+    }
+  });
+  return ids;
+}
+
+function setModeBadge(text) {
+  const el = document.getElementById('mode-badge');
+  if (text) { el.textContent = text; el.style.display = 'block'; }
+  else el.style.display = 'none';
+}
+
+function colorNode(node) {
+  if (searchQuery && highlightedIds.size > 0)
+    return highlightedIds.has(node.id) ? node.color : 'rgba(80,80,100,.15)';
+  if (activeHighlight)
+    return activeHighlight.ids.has(node.id) ? node.color : 'rgba(80,80,100,.08)';
+  return node.color;
+}
+
+function colorLink(link) {
+  const src = typeof link.source === 'object' ? link.source.id : link.source;
+  const tgt = typeof link.target === 'object' ? link.target.id : link.target;
+  if (searchQuery && highlightedIds.size > 0) return 'rgba(80,80,100,.04)';
+  if (activeHighlight) {
+    return (activeHighlight.ids.has(src) && activeHighlight.ids.has(tgt))
+      ? (link.color || 'rgba(148,163,184,.3)') : 'rgba(80,80,100,.03)';
+  }
+  return link.color || 'rgba(148,163,184,.2)';
+}
+
+function applyHighlight() {
+  Graph.nodeColor(n => colorNode(n)).linkColor(l => colorLink(l));
+}
+
+// ─── GRAPH INIT ───────────────────────────────────────────────────────────────
+const graphEl = document.getElementById('3d-graph');
+
+const Graph = ForceGraph3D()(graphEl)
+  .backgroundColor('#07071a')
+  .nodeId('id')
+  .nodeLabel(node => {
+    const lines = [];
+    if (node.surface)   lines.push(`<span style="opacity:.6;font-size:10px">${node.surface}</span>`);
+    if (node.severity)  lines.push(`<span style="opacity:.6;font-size:10px">${node.severity}${node.priority ? ' · '+node.priority : ''}</span>`);
+    if (node.catId)     lines.push(`<span style="opacity:.5;font-size:10px">→ ${CATEGORIES[node.catId]?.name||node.catId}</span>`);
+    return `<div style="background:rgba(7,7,26,.93);border:1px solid rgba(148,163,184,.2);border-radius:6px;padding:7px 9px;max-width:230px;font-family:system-ui,sans-serif">
+      <div style="font-weight:600;font-size:12px;color:#e2e8f0;margin-bottom:3px">${node.name}</div>
+      ${lines.join('<br>')}
+      <div style="font-size:11px;color:#94a3b8;line-height:1.5;margin-top:3px">${node.desc||''}</div>
+    </div>`;
+  })
+  .nodeColor(colorNode)
+  .nodeVal(node => node.val)
+  .nodeOpacity(0.88)
+  .nodeResolution(10)
+  .linkColor(colorLink)
+  .linkWidth(link => link.width || 0.5)
+  .linkOpacity(0.7)
+  .linkDirectionalParticles(link => {
+    const tgt = typeof link.target === 'object' ? link.target.id : link.target;
+    if (tgt && tgt.startsWith && tgt.startsWith('p-')) return 3;
+    const src = typeof link.source === 'object' ? link.source.id : link.source;
+    const srcNode = ALL_NODES.find(n => n.id === src);
+    if (srcNode && srcNode.severity === 'Critical' && srcNode.group === 'bug-open') return 2;
+    return 0;
+  })
+  .linkDirectionalParticleWidth(2)
+  .linkDirectionalParticleColor(link => {
+    const tgt = typeof link.target === 'object' ? link.target.id : link.target;
+    if (tgt && tgt.startsWith && tgt.startsWith('p-')) return '#d946ef';
+    return '#ef4444';
+  })
+  .onNodeClick(handleNodeClick)
+  .onBackgroundClick(() => closeSidebar());
+
+// Force tuning: spread categories, keep commands close to their parent
+Graph.d3Force('charge').strength(node => {
+  if (!node.group) return -80;
+  if (node.group === 'command')  return -12;
+  if (node.group === 'category') return -80;
+  if (node.group === 'root')     return -300;
+  return -80;
+});
+
+Graph.d3Force('link').distance(link => {
+  const tgt = typeof link.target === 'object' ? link.target.id : link.target;
+  if (tgt === 'vibium') return 220;
+  const tgtNode = ALL_NODES.find(n => n.id === tgt);
+  if (tgtNode && tgtNode.group === 'category') return 55;
+  if (tgtNode && tgtNode.group === 'pattern')  return 110;
+  return 90;
+});
+
+refreshGraph();
+// Re-measure after flex layout settles so canvas matches the graph-wrap width, not full window
+requestAnimationFrame(() => {
+  Graph.width(graphEl.clientWidth).height(graphEl.clientHeight);
+});
+
+// ─── GRAPH REFRESH ────────────────────────────────────────────────────────────
+function refreshGraph() {
+  const data = getVisibleData();
+  Graph.graphData(data);
+  const cmds     = data.nodes.filter(n => n.group === 'command').length;
+  const openBugs = data.nodes.filter(n => ['bug-open','bug-partial','bug-regression'].includes(n.group)).length;
+  const fixBugs  = data.nodes.filter(n => n.group === 'bug-fixed').length;
+  document.getElementById('stat-cmds').textContent  = cmds + '/' + cmdNodes.length;
+  document.getElementById('stat-open').textContent  = openBugs;
+  document.getElementById('stat-fixed').textContent = fixBugs;
+  document.getElementById('stat-nodes').textContent = data.nodes.length;
+  document.getElementById('stat-links').textContent = data.links.length;
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+const sidebar   = document.getElementById('sidebar');
+const sidebarEl = document.getElementById('sidebar-content');
+
+function toggleCollapse(catId) {
+  if (collapsedCats.has(catId)) collapsedCats.delete(catId);
+  else collapsedCats.add(catId);
+  refreshGraph();
+  updateSearchNotice();
+  const catNode = catNodes.find(n => n.catId === catId);
+  if (catNode) showSidebarContent(catNode);
+}
+
+function showSidebarContent(node) {
+  document.getElementById('sidebar-placeholder').style.display = 'none';
+  document.getElementById('close-sidebar').style.display = '';
+
+  const groupLabel = {
+    'root':'Root', 'surface':'Surface', 'category':'Category', 'command':'API Method',
+    'bug-open':'Bug · Open', 'bug-fixed':'Bug · Fixed', 'bug-partial':'Bug · Partial',
+    'bug-regression':'Bug · Regression-check', 'pattern':'Pattern', 'reference':'Reference',
+  }[node.group] || node.group;
+
+  const groupColor = {
+    'root':'#7c3aed', 'surface':'#3b82f6', 'category':'#0ea5e9', 'command':'#94a3b8',
+    'bug-open':'#ef4444', 'bug-fixed':'#22c55e', 'bug-partial':'#fbbf24',
+    'bug-regression':'#a78bfa', 'pattern':'#d946ef', 'reference':'#475569',
+  }[node.group] || '#64748b';
+
+  let extraHtml = '';
+
+  if (node.group === 'command') {
+    const surfData = [
+      ['CLI',    node.cli],
+      ['MCP',    node.mcp],
+      ['JS',     node.js],
+      ['Python', node.py],
+      ['Java',   node.java],
+    ];
+    const rows = surfData.map(([lbl, val]) => {
+      if (!val || val === '') return `<tr><td>${lbl}</td><td class="dim">—</td></tr>`;
+      if (val.startsWith('⬜')) return `<tr><td>${lbl}</td><td class="dim">⬜ planned</td></tr>`;
+      return `<tr><td>${lbl}</td><td>${escHtml(val)}</td></tr>`;
+    }).join('');
+    const openList = (node.openBugs||[]).map(id => `<span class="tag" style="color:#f87171;border-color:#7f1d1d">${id}</span>`).join('');
+    const fixList  = (node.fixedBugs||[]).map(id => `<span class="tag" style="color:#86efac;border-color:#14532d">${id} ✓</span>`).join('');
+    extraHtml = `<table class="surf-table">${rows}</table>${openList}${fixList}`;
+
+  } else if (node.group === 'category') {
+    const count    = cmdNodes.filter(c => c.catId === node.catId).length;
+    const withBugs = cmdNodes.filter(c => c.catId === node.catId && c.openBugs.length > 0).length;
+    const collapsed = collapsedCats.has(node.catId);
+    extraHtml = `
+      <div class="meta">${count} commands · ${withBugs} with open bugs</div>
+      <button onclick="toggleCollapse('${node.catId}')"
+        style="margin-top:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(148,163,184,0.2);color:#94a3b8;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer">
+        ${collapsed ? '▶ Expand commands' : '▼ Collapse commands'}
+      </button>`;
+
+  } else if (node.group === 'surface') {
+    const s = SURF_META.find(m => m.id === node.id);
+    if (s) {
+      const cmdCount = CMD.filter(c => cmdHasSurf(c[s.col])).length;
+      extraHtml = `<div class="meta">${cmdCount} commands on this surface</div>`;
+    }
+  }
+
+  const metaHtml = node.meta
+    ? `<div style="font-size:11px;color:#475569;margin-top:8px;line-height:1.6">${escHtml(node.meta)}</div>` : '';
+  const tagsHtml = [
+    node.surface  ? `<span class="tag">${node.surface}</span>`  : '',
+    node.severity ? `<span class="tag">${node.severity}</span>` : '',
+    node.priority ? `<span class="tag">${node.priority}</span>` : '',
+  ].filter(Boolean).join('');
+  const workaroundHtml = node.workaround
+    ? `<div class="workaround-label">Workaround</div><div class="workaround">${escHtml(node.workaround)}</div>` : '';
+
+  sidebarEl.innerHTML = `
+    <div class="node-type" style="background:${groupColor}22;color:${groupColor};border:1px solid ${groupColor}44">${groupLabel}</div>
+    <h2 style="color:${node.color}">${escHtml(node.name)}</h2>
+    ${tagsHtml ? `<div class="meta">${tagsHtml}</div>` : ''}
+    <div class="desc">${escHtml(node.desc||'')}</div>
+    ${extraHtml}${metaHtml}${workaroundHtml}
+  `;
+}
+
+function handleNodeClick(node) {
+  // Click same node again → clear highlight
+  if (lastClickedId === node.id && activeHighlight) {
+    closeSidebar();
+    return;
+  }
+  lastClickedId = node.id;
+
+  if (node.group === 'surface') {
+    const ids = computeSurfaceHighlight(node.id);
+    const cmdCount = [...ids].filter(id => id.startsWith('cmd-')).length;
+    activeHighlight = { type:'surface', ids };
+    setModeBadge(`${node.name}: ${cmdCount} commands · click again to clear`);
+  } else {
+    activeHighlight = { type:'node', ids: computeNeighbors(node.id) };
+    const label = node.group === 'category' ? `${node.name} (use sidebar to collapse)` : node.name;
+    setModeBadge(`${label} · click again to clear`);
+  }
+  applyHighlight();
+  showSidebarContent(node);
+}
+
+function closeSidebar() {
+  sidebarEl.innerHTML = '';
+  document.getElementById('sidebar-placeholder').style.display = '';
+  document.getElementById('close-sidebar').style.display = 'none';
+  lastClickedId = null;
+  activeHighlight = null;
+  setModeBadge(null);
+  applyHighlight();
+}
+
+document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ─── FILTERS ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const g = btn.dataset.group;
+    if (activeFilters.has(g)) { activeFilters.delete(g); btn.classList.remove('active'); }
+    else                      { activeFilters.add(g);    btn.classList.add('active');    }
+    refreshGraph();
+    updateSearchNotice();
+  });
+});
+
+const ALL_TIERS = ['all5','4surf','3surf','2surf','planned'];
+let activeTierFilter = null;
+
+document.querySelectorAll('.tier-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.tier;
+    if (activeTierFilter === t) {
+      activeTierFilter = null;
+      ALL_TIERS.forEach(tier => activeTiers.add(tier));
+      btn.classList.remove('active');
+    } else {
+      activeTierFilter = t;
+      activeTiers.clear();
+      activeTiers.add(t);
+      document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    refreshGraph();
+    updateSearchNotice();
+  });
+});
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────────
+const searchNoticeEl = document.getElementById('search-notice');
+
+function updateSearchNotice() {
+  if (!searchQuery || highlightedIds.size === 0) {
+    searchNoticeEl.style.display = 'none';
+    return;
+  }
+  const visibleIds = new Set(Graph.graphData().nodes.map(n => n.id));
+  const hidden = [...highlightedIds].filter(id => !visibleIds.has(id)).length;
+  if (hidden > 0) {
+    searchNoticeEl.textContent = `${hidden} match${hidden === 1 ? '' : 'es'} hidden by filters`;
+    searchNoticeEl.style.display = '';
+  } else {
+    searchNoticeEl.style.display = 'none';
+  }
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim().toLowerCase();
+  if (!searchQuery) {
+    highlightedIds.clear();
+  } else {
+    highlightedIds = new Set(
+      ALL_NODES.filter(n =>
+        n.name.toLowerCase().includes(searchQuery) ||
+        (n.desc   ||'').toLowerCase().includes(searchQuery) ||
+        (n.meta   ||'').toLowerCase().includes(searchQuery) ||
+        (n.cli    ||'').toLowerCase().includes(searchQuery) ||
+        (n.mcp    ||'').toLowerCase().includes(searchQuery) ||
+        (n.js     ||'').toLowerCase().includes(searchQuery) ||
+        (n.surface||'').toLowerCase().includes(searchQuery)
+      ).map(n => n.id)
+    );
+  }
+  applyHighlight();
+  updateSearchNotice();
+});
+
+// ─── RESIZE ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  Graph.width(graphEl.clientWidth).height(graphEl.clientHeight);
+});
+
+// ─── SURFACE FOCUS BUTTONS ───────────────────────────────────────────────────
+let activeSurfHi = null;
+
+document.querySelectorAll('.surf-hi-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sid = btn.dataset.sid;
+    if (activeSurfHi === sid) {
+      activeSurfHi = null;
+      document.querySelectorAll('.surf-hi-btn').forEach(b => b.classList.remove('active'));
+      activeHighlight = null;
+      lastClickedId = null;
+      setModeBadge(null);
+    } else {
+      document.querySelectorAll('.surf-hi-btn').forEach(b => b.classList.remove('active'));
+      activeSurfHi = sid;
+      btn.classList.add('active');
+      const ids = computeSurfaceHighlight(sid);
+      const cmdCount = [...ids].filter(id => id.startsWith('cmd-')).length;
+      activeHighlight = { type:'surface', ids };
+      lastClickedId = null;
+      const sidLabel = {cli:'CLI',mcp:'MCP',js:'JS',python:'Python',java:'Java'}[sid] || sid;
+      setModeBadge(`${sidLabel} surface: ${cmdCount} commands · click again to clear`);
+    }
+    applyHighlight();
+  });
+});
+
+// ─── ESCAPE KEY ──────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('help-overlay').style.display = 'none';
+    document.querySelectorAll('.surf-hi-btn').forEach(b => b.classList.remove('active'));
+    activeSurfHi = null;
+    closeSidebar();
+  }
+});
+
+// ─── HELP PANEL ──────────────────────────────────────────────────────────────
+document.getElementById('help-btn').addEventListener('click', () => {
+  document.getElementById('help-overlay').style.display = 'block';
+});
+document.getElementById('close-help').addEventListener('click', () => {
+  document.getElementById('help-overlay').style.display = 'none';
+});
+document.getElementById('help-overlay').addEventListener('click', e => {
+  if (e.target.id === 'help-overlay')
+    document.getElementById('help-overlay').style.display = 'none';
+});
+</script>
+</body>
+</html>
