@@ -494,7 +494,7 @@ Verifies that each node group renders the correct content structure in `#sidebar
 |---|---|
 | `cmd-click` (existing page) | `methods/click.md` |
 | `cmd-b-start` (stub) | `methods/b-start.md` |
-| `cmd-back` (multi-command page) | `methods/navigate.md` |
+| `cmd-back` | `methods/back.md` |
 | `cmd-scrollIV` (camelCase ID) | `methods/scroll-iv.md` |
 
 Nodes used: `cmd-click`, `cmd-b-start`, `cmd-back`, `cmd-scrollIV`, `cat-interaction`, `cli`, `B3` (bug-open with workaround), `vibium` (root).

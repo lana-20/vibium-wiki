@@ -583,9 +583,9 @@ click_node "cmd-b-start" > /dev/null
 assert "docs link — stub node b-start.md"   "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/b-start.md"
 ev "closeSidebar()" > /dev/null
 
-# Docs link URL mapping — multi-command page (back → navigate.md)
+# Docs link URL mapping — back now has its own page (back → back.md)
 click_node "cmd-back" > /dev/null
-assert "docs link — multi-page back→navigate.md" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/navigate.md"
+assert "docs link — back→back.md" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/back.md"
 ev "closeSidebar()" > /dev/null
 
 # Docs link URL mapping — camelCase ID (scrollIV → scroll-iv.md)

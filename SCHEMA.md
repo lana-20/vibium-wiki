@@ -17,10 +17,12 @@ vibium-wiki/
 │   ├── python.md      ← Python client bugs
 │   └── java.md        ← Java client bugs
 ├── methods/
-│   ├── click.md, dialog.md, evaluate.md, fill.md, find.md, hover.md
-│   ├── map.md, navigate.md, select.md
-│   ├── wait.md         ← waitUntil / wait; Bug 1 JS (fixed v26.5.31)
-│   └── clock.md        ← clock API; Bug 3 JS (fixed v26.5.31)
+│   ├── <148 files — one per command>
+│   ├── click.md, evaluate.md, fill.md, find.md, hover.md, map.md, select.md
+│   ├── go.md, back.md, forward.md, reload.md, url.md, title.md, bring.md, pg-close.md
+│   ├── wait-for.md, sleep.md, wait-for-fn.md, wait-url.md, wait-load.md, wait-text.md, wait-until.md
+│   ├── cl-inst.md, cl-ff.md, cl-run-f.md, cl-p-at.md, cl-res.md, cl-s-fixed.md, cl-s-sys.md, cl-s-tz.md
+│   └── dlg-acc.md, dlg-dis.md, dlg-msg.md, dlg-type.md, dlg-dv.md
 ├── patterns/
 │   └── <name>.md      ← cross-cutting behavioral patterns
 ├── reference/

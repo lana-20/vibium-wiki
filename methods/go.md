@@ -1,5 +1,5 @@
 ---
-method: go / navigate
+method: go
 aliases: [vibium go, browser_navigate, page.go]
 last_tested: v26.5.31
 last_tested_date: 2026-06-01
@@ -7,9 +7,19 @@ bugs: [B3]
 status: open
 ---
 
-# go / navigate
+# go
 
 Navigates the current page to a URL.
+
+## Syntax
+
+| Surface | Syntax |
+|---|---|
+| CLI | `vibium go <url>` |
+| MCP | `browser_navigate { url }` |
+| JS | `page.go(url)` |
+| Python | `page.go(url)` |
+| Java | `page.go(url)` |
 
 ## Known issues
 
@@ -69,10 +79,10 @@ vibium url   # may still show previous URL if SPA (B126)
 vibium eval 'location.href'   # always current
 
 # PrestaShop subdomain — use eval instead of vibium go
-vibium eval "location.href = 'https://demo.prestashop.com/en/..."
+vibium eval "location.href = 'https://demo.prestashop.com/en/...'"
 vibium wait load --timeout 10000
 ```
 
 ## Related
 
-→ [[patterns/dialog_deadlock]] · → [[bugs/cli#B3]]
+→ [[methods/back]] · → [[methods/forward]] · → [[methods/reload]] · → [[patterns/dialog_deadlock]] · → [[bugs/cli#B3]]

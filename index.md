@@ -23,18 +23,18 @@
 | Method | CLI bugs | MCP bugs | Status |
 |---|---|---|---|
 | [click](methods/click.md) | B3 B6 | MB10 | open |
-| [dialog](methods/dialog.md) | B3 | MB3 | open |
+| [dialog](methods/dlg-acc.md) | B3 | MB3 | open |
 | [eval / evaluate](methods/evaluate.md) | B9 ✓ | MB6 ✓ | partial (#124 open) |
 | [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | MB7 ✓ | partial |
 | [find](methods/find.md) | B15✓ B17 B29 | — | partial |
 | [hover](methods/hover.md) | B30 partial | — | partial |
 | [map](methods/map.md) | B16 B24 | — | open |
-| [navigate / go](methods/navigate.md) | B3 #126 | — | open |
+| [go](methods/go.md) | B3 #126 | — | open |
 | [select](methods/select.md) | B5 partial | — | partial |
-| [wait / waitUntil](methods/wait.md) | Bug 1 JS (fixed v26.5.31) | — | fixed |
-| [clock](methods/clock.md) | Bug 3 JS (fixed v26.5.31) | — | fixed |
+| [waitForFn / waitUntil](methods/wait-for-fn.md) | Bug 1 JS (fixed v26.5.31) | — | fixed |
+| [clock.install](methods/cl-inst.md) | Bug 3 JS (fixed v26.5.31) | — | fixed |
 
-All 148 commands have a page in [methods/](methods/). The 11 above have full documentation; the remaining 108 are stubs with cross-surface syntax tables.
+All 148 commands have a page in [methods/](methods/) — one file per command. The pages above have full documentation with bug details and workarounds; all others have cross-surface syntax tables.
 
 ---
 

@@ -8,7 +8,7 @@ Community knowledge base for [Vibium](https://vibium.dev) — browser automation
 
 `index.html` — view on GitHub Pages or open locally:
 
-**GitHub Pages:** https://lana-20.github.io/vibium-wiki/
+**GitHub Pages:** https://lana-20.github.io/vibium-wiki/ · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html
 
 ```sh
 open index.html
@@ -26,7 +26,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 |---|---|
 | [index.md](index.md) | Full table of contents |
 | [bugs/](bugs/) | B1–B33 CLI · MB1–MB10 MCP · JS · Python · Java bug indexes |
-| [methods/](methods/) | 119 per-method pages covering all 148 commands; 11 have full docs, 108 are stubs with syntax tables |
+| [methods/](methods/) | 148 per-method pages — one per command; all have syntax tables, key commands have full docs |
 | [patterns/](patterns/) | dialog_deadlock · negative_values · find_text_case |
 | [reference/](reference/) | Architecture · actionability · full API cross-surface table · BiDi coverage · roadmap |
 | [guides/](guides/) | Getting started with JS/TS and MCP · recording format |
