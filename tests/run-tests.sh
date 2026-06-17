@@ -1,29 +1,14 @@
 #!/usr/bin/env bash
 # Vibium Knowledge Graph — automated test runner
 # Usage: ./run-tests.sh [url]
-# Requires: vibium CLI (resolved below)
-# Built on /vibe-check skill (vibium CLI reference)
+# Requires: vibium CLI on PATH
 
 set -euo pipefail
 
 URL="${1:-file:///Users/lanabegunova/vibium-wiki/graph.html}"
 
-# ── Resolve vibium binary ─────────────────────────────────────────────────────
-# Check candidates in order; verify with 'go --help' to avoid picking up unrelated
-# tools named 'vibium' (e.g. Python packages) that don't have browser automation commands.
-_vib_ok() { "$1" go --help &>/dev/null; }
-
-if [[ -f /Users/lanabegunova/vibium-beginner-course/node_modules/@vibium/darwin-x64/bin/vibium ]]; then
-  VIB=/Users/lanabegunova/vibium-beginner-course/node_modules/@vibium/darwin-x64/bin/vibium
-elif [[ -f ./node_modules/.bin/vibium ]] && _vib_ok ./node_modules/.bin/vibium; then
-  VIB=./node_modules/.bin/vibium
-elif [[ -f ./clicker/bin/vibium ]]; then
-  VIB=./clicker/bin/vibium
-elif command -v vibium &>/dev/null && _vib_ok vibium; then
-  VIB=vibium
-else
-  echo "ERROR: vibium binary not found" >&2; exit 1
-fi
+VIB=vibium
+command -v vibium &>/dev/null || { echo "ERROR: vibium not found in PATH" >&2; exit 1; }
 
 # ── Logging setup ────────────────────────────────────────────────────────────
 RUNS_DIR="$(dirname "$0")/runs"

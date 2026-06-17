@@ -7,18 +7,8 @@ set -euo pipefail
 
 URL="${1:-file:///Users/lanabegunova/vibium-wiki/graph-layered.html}"
 
-# ── Resolve vibium binary ─────────────────────────────────────────────────────
-_vib_ok() { "$1" go --help &>/dev/null; }
-
-if [[ -f /Users/lanabegunova/vibium-beginner-course/node_modules/@vibium/darwin-x64/bin/vibium ]]; then
-  VIB=/Users/lanabegunova/vibium-beginner-course/node_modules/@vibium/darwin-x64/bin/vibium
-elif [[ -f ./node_modules/.bin/vibium ]] && _vib_ok ./node_modules/.bin/vibium; then
-  VIB=./node_modules/.bin/vibium
-elif command -v vibium &>/dev/null && _vib_ok vibium; then
-  VIB=vibium
-else
-  echo "ERROR: vibium binary not found" >&2; exit 1
-fi
+VIB=vibium
+command -v vibium &>/dev/null || { echo "ERROR: vibium not found in PATH" >&2; exit 1; }
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 RUNS_DIR="$(dirname "$0")/runs"

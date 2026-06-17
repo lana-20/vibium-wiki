@@ -111,15 +111,23 @@ See [SCHEMA.md](SCHEMA.md) for page conventions, status values, ingest rules, an
 
 ---
 
-## Knowledge Graph Mindmap
+## Knowledge Graphs
 
-**File:** `index.html`  
-**Last updated:** 2026-06-14 · v26.5.31  
-**Tech:** 3d-force-graph (vasturiano / Three.js) · `file://` local browser
+Two interactive views of the same 226-node dataset: root → 5 surfaces → 17 categories → 148 commands + 32 open bugs + 15 fixed bugs + 3 patterns + 5 references.
 
-Interactive 3D visualization of all 148 Vibium commands across 5 surfaces. Topology: root → 5 surfaces → 17 categories → 148 commands + 32 open bugs + 15 fixed bugs + 3 patterns + 5 references = 226 nodes.
+**Guide (start here):** https://lana-20.github.io/vibium-wiki/guide.html
 
-### Features
+---
+
+### graph.html — Force-Directed View
+
+**Live:** https://lana-20.github.io/vibium-wiki/graph.html  
+**Tech:** 3d-force-graph (vasturiano / Three.js) · also opens locally via `file://`  
+**Last updated:** 2026-06-14 · v26.5.31
+
+3D force-directed graph. Nodes spring apart and attract based on connections — best for exploring relationships and neighbors.
+
+**Features:**
 - **Node click/unclick** — highlights neighbors, opens sidebar with CLI/MCP/JS/Python/Java syntax
 - **Group filters** — toggle Surfaces / API / Open Bugs / Fixed Bugs / Patterns / References
 - **Tier filters** — isolate by availability (All 5 / 4 surf / 3 surf / 2 surf / Planned); mutually exclusive
@@ -127,18 +135,46 @@ Interactive 3D visualization of all 148 Vibium commands across 5 surfaces. Topol
 - **Search** — matches name, desc, meta, CLI syntax, MCP tool name; amber notice when matches are hidden by filters
 - **Guide overlay** — `? Guide` button; closes via X, backdrop click, or Escape
 
-### Test suite
-
+**Test suite:**
 ```sh
-cd ~/vibium-wiki/tests
-./run-tests.sh          # 629 / 629 pass (2026-06-17)
+cd ~/vibium-wiki/tests && ./run-tests.sh
+# 629 / 629 pass (2026-06-17) — 16 suites
 ```
+
+---
+
+### graph-layered.html — Layered Planes View
+
+**Live:** https://lana-20.github.io/vibium-wiki/graph-layered.html  
+**Tech:** Three.js r161 · OrbitControls · CSS2DRenderer · also opens locally via `file://`  
+**Last updated:** 2026-06-16 · v26.5.31
+
+Same 226 nodes arranged as 6 stacked horizontal planes (root / surfaces / categories / commands / bugs+patterns / fixed+refs). Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan) — best for understanding hierarchy and tier structure.
+
+**Features:**
+- **Layer toggles** — show/hide each of the 6 planes independently
+- **Per-layer label buttons** — toggle labels for one layer at a time
+- **All Node Labels checkbox** — bulk on/off for all labels
+- **Spacing slider** — adjust vertical gap between planes
+- **L0–L5 ring markings** — CSS2D labels on each plane's outer ring
+- **Node click info panel** — shows name, group, surface, description; close button deselects
+
+**Test suite:**
+```sh
+cd ~/vibium-wiki/tests && bash run-layered-tests.sh
+# 303 / 303 pass (2026-06-17) — 18 suites incl. T16b 360°/720° twirl
+```
+
+---
+
+### Test files
 
 | File | Contents |
 |---|---|
-| `tests/TESTPLAN.md` | 18 sections: happy path, negative, edge, compound (8 scenarios), category collapse, sidebar content, stats panel, accessibility, runner-discovered facts |
-| `tests/run-tests.sh` | Executable; uses vibium CLI via `/vibe-check`; auto-resolves binary; saves full output to `runs/<timestamp>.txt` and summary to `run-history.log` |
-| `tests/run-history.log` | One-line summary per run: timestamp + pass/fail counts + path to full output |
+| `tests/TESTPLAN.md` | Full test plan — 16 suites for graph.html + 18 suites for graph-layered.html |
+| `tests/run-tests.sh` | **graph.html** runner (629 tests, 16 suites); auto-resolves vibium binary; saves to `runs/<timestamp>.txt` and `run-history.log` |
+| `tests/run-layered-tests.sh` | **graph-layered.html** runner (303 tests, 18 suites); same output pattern as above |
+| `tests/run-history.log` | One-line summary per run (both suites) |
 | `tests/runs/` | Full stdout+stderr per run, timestamped (ISO UTC) |
 
 **Skill:** `/vibium-wiki-test` (see `~/.claude/skills/vibium-wiki-test/SKILL.md`)

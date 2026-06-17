@@ -34,7 +34,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 
 `graph-layered.html` — view on GitHub Pages or open locally:
 
-**Layered graph:** https://lana-20.github.io/vibium-wiki/graph-layered.html · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html#layered
+**Layered graph:** https://lana-20.github.io/vibium-wiki/graph-layered.html
 
 ```sh
 open graph-layered.html
@@ -72,7 +72,7 @@ cd tests && ./run-tests.sh
 **Layered planes view** (`graph-layered.html`):
 ```sh
 cd tests && bash run-layered-tests.sh
-# 303 / 303 pass — 17 suites including camera controls and 360°/720° twirl tests
+# 303 / 303 pass — 18 suites including camera controls and 360°/720° twirl tests
 ```
 
 See [tests/TESTPLAN.md](tests/TESTPLAN.md) for full test plan coverage.
