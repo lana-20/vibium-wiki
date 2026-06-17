@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibium Knowledge Graph — Layered View</title>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.161.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.161.0/examples/jsm/"}}</script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{overflow:hidden;overscroll-behavior:none;width:100%;height:100%}
+  body{background:#07071a;color:#e2e8f0;font-family:'Inter',system-ui,sans-serif}
+  canvas{position:fixed;top:0;left:0;display:block}
+  #layer-panel{
+    position:absolute;top:10px;left:10px;background:rgba(10,10,28,0.88);
+    border:1px solid rgba(148,163,184,0.15);border-radius:8px;padding:12px 14px;
+    font-size:11px;z-index:10;width:200px;max-height:90vh;overflow-y:auto;
+  }
+  #layer-panel h4{font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+  #hide-panel{font-size:10px;color:#475569;cursor:pointer;font-weight:400}
+  #hide-panel:hover{color:#94a3b8}
+  .lp-row{margin-bottom:8px}
+  .lp-row label{display:flex;align-items:center;gap:6px;color:#94a3b8;cursor:pointer}
+  .lp-row input[type=range]{width:100%;accent-color:#7c3aed;margin-top:4px}
+  .layer-toggle{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+  .layer-toggle label{display:flex;align-items:center;gap:6px;cursor:pointer;color:#94a3b8}
+  .layer-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .lbl-btn{font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid rgba(148,163,184,0.2);background:rgba(255,255,255,0.04);color:#64748b;cursor:pointer}
+  .lbl-btn.active{border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.1)}
+  #info-panel{
+    position:absolute;top:10px;right:10px;background:rgba(10,10,28,0.92);
+    border:1px solid rgba(148,163,184,0.15);border-radius:8px;padding:14px;
+    font-size:11px;z-index:10;width:250px;max-height:90vh;overflow-y:auto;display:none;
+  }
+  #info-panel .node-type{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+  #info-panel h3{font-size:13px;font-weight:600;margin-bottom:4px}
+  #info-panel .desc{font-size:11px;color:#94a3b8;line-height:1.6;margin-bottom:10px}
+  #info-panel .surf-row{display:flex;gap:6px;font-size:10px;margin-bottom:3px}
+  #info-panel .surf-row .sl{color:#475569;width:50px;flex-shrink:0}
+  #info-panel .surf-row .sv{color:#7dd3fc;font-family:monospace;word-break:break-all}
+  #info-close{float:right;background:none;border:none;color:#475569;cursor:pointer;font-size:14px;line-height:1}
+  #info-close:hover{color:#94a3b8}
+  #controls-hint{position:absolute;bottom:12px;left:12px;font-size:10px;color:#334155}
+  .node-label{color:#f1f5f9;background:rgba(7,7,26,0.82);padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;pointer-events:none;white-space:nowrap;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.9);border:1px solid rgba(148,163,184,0.18)}
+</style>
+</head>
+<body>
+
+<div id="layer-panel">
+  <h4>Layers <span id="hide-panel">Hide ▲</span></h4>
+  <div class="lp-row">
+    <label>Layer Spacing</label>
+    <input type="range" id="spacing" min="40" max="180" value="90">
+  </div>
+  <div class="lp-row">
+    <label><input type="checkbox" id="all-labels"> All Node Labels</label>
+  </div>
+  <div id="layer-toggles"></div>
+</div>
+
+<div id="info-panel">
+  <button id="info-close">✕</button>
+  <div id="info-content"></div>
+</div>
+
+<div id="controls-hint">Rotate: Drag · Zoom: Scroll · Pan: Right-drag</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+// ─── DATA (same as graph.html) ────────────────────────────────────────────────
+const CATEGORIES = {
+  'browser':{'name':'Browser','color':'#8b5cf6'},
+  'navigation':{'name':'Navigation','color':'#0ea5e9'},
+  'finding':{'name':'Finding','color':'#06b6d4'},
+  'waiting':{'name':'Waiting','color':'#10b981'},
+  'interaction':{'name':'Interaction','color':'#f43f5e'},
+  'reading':{'name':'Reading','color':'#f59e0b'},
+  'page-control':{'name':'Page Control','color':'#6366f1'},
+  'context':{'name':'Context','color':'#14b8a6'},
+  'input':{'name':'Input','color':'#ea580c'},
+  'network':{'name':'Network','color':'#a855f7'},
+  'events':{'name':'Events','color':'#ec4899'},
+  'clock':{'name':'Clock','color':'#84cc16'},
+  'recording':{'name':'Recording','color':'#dc2626'},
+  'dialog':{'name':'Dialog','color':'#eab308'},
+  'download':{'name':'Download','color':'#64748b'},
+  'extras':{'name':'Agent Extras','color':'#3b82f6'},
+  'ai':{'name':'AI Native','color':'#7c3aed'},
+};
+
+const CMD=[
+['b-start','browser','browser.start','Launch browser','vibium start','browser_start','browser.start()','browser.start()','Vibium.start()',[],[]],
+['b-page','browser','browser.page','Get default page','','','browser.page()','browser.page()','bro.page()',[],[]],
+['b-newPage','browser','browser.newPage','Create new tab','vibium page new','browser_new_page','browser.newPage()','browser.new_page()','bro.newPage()',[],[]],
+['b-newCtx','browser','browser.newContext','Create isolated context','','','browser.newContext()','browser.new_context()','bro.newContext()',[],[]],
+['b-pages','browser','browser.pages','List open pages','vibium pages','browser_list_pages','browser.pages()','browser.pages()','bro.pages()',[],[]],
+['b-stop','browser','browser.stop','Stop browser','vibium stop','browser_stop','browser.stop()','browser.stop()','bro.stop()',[],[]],
+['b-onPage','browser','browser.onPage','New page event','','','browser.onPage(cb)','browser.on_page(cb)','bro.onPage(cb)',[],[]],
+['b-onPopup','browser','browser.onPopup','Popup event','','','browser.onPopup(cb)','browser.on_popup(cb)','bro.onPopup(cb)',[],[]],
+['b-rmAll','browser','removeAllListeners','Remove listeners','','','browser.removeAllListeners()','browser.remove_all_listeners()','bro.removeAllListeners()',[],[]],
+['go','navigation','go','Navigate to URL','vibium go','browser_navigate','page.go()','page.go()','page.go()',['B3'],[],],
+['back','navigation','back','Go back','vibium back','browser_back','page.back()','page.back()','page.back()',['B11'],[]],
+['forward','navigation','forward','Go forward','vibium forward','browser_forward','page.forward()','page.forward()','page.forward()',[],[]],
+['reload','navigation','reload','Reload page','vibium reload','browser_reload','page.reload()','page.reload()','page.reload()',[],[]],
+['url','navigation','url','Get URL','vibium url','browser_get_url','page.url()','page.url()','page.url()',[],[]],
+['title','navigation','title','Get title','vibium title','browser_get_title','page.title()','page.title()','page.title()',[],[]],
+['bring','navigation','bringToFront','Switch tab','vibium page switch','browser_switch_page','page.bringToFront()','page.bring_to_front()','page.bringToFront()',[],[]],
+['pg-close','navigation','page.close','Close tab','vibium page close','browser_close_page','page.close()','page.close()','page.close()',[],[]],
+['find','finding','find','Find element','vibium find','browser_find','page.find()','page.find()','page.find()',['B15','B17','B29'],[]],
+['findAll','finding','findAll','Find all','vibium find --all','browser_find_all','page.findAll()','page.find_all()','page.findAll()',[],[]],
+['el-find','finding','el.find','Scoped find','','','el.find()','el.find()','el.find()',[],[]],
+['el-finA','finding','el.findAll','Scoped findAll','','','el.findAll()','el.find_all()','el.findAll()',[],[]],
+['sleep','waiting','sleep','Wait ms','vibium sleep','browser_sleep','page.wait(ms)','page.wait(ms)','page.sleep(ms)',['B22'],[]],
+['waitFor','waiting','waitFor','Wait for selector','vibium wait','browser_wait','page.waitFor()','page.wait_for()','page.waitFor()',[],[]],
+['waitForFn','waiting','waitForFunction','Wait for JS expr','vibium wait fn','browser_wait_for_fn','page.waitForFunction()','page.wait_for_function()','page.waitForFunction()',['JV-174'],['JS-Bug1']],
+['waitURL','waiting','waitForURL','Wait for URL','vibium wait url','browser_wait_for_url','page.waitForURL()','page.wait_for_url()','page.waitForURL()',[],[]],
+['waitLoad','waiting','waitForLoad','Wait page load','vibium wait load','browser_wait_for_load','page.waitForLoad()','page.wait_for_load()','page.waitForLoad()',[],[]],
+['waitText','extras','wait text','Wait for text','vibium wait text','browser_wait_for_text','','','',[],[]],
+['waitUntil','waiting','el.waitUntil','Wait state change','vibium wait --state','browser_wait','el.waitUntil()','el.wait_until()','el.waitUntil()',[],[]],
+['click','interaction','click','Click element','vibium click','browser_click','el.click()','el.click()','el.click()',['B3','B6','MB3','MB10'],[]],
+['dblclick','interaction','dblclick','Double-click','vibium dblclick','browser_dblclick','el.dblclick()','el.dblclick()','el.dblclick()',[],[]],
+['fill','interaction','fill','Fill input','vibium fill','browser_fill','el.fill()','el.fill()','el.fill()',['B18','B20','B31'],['B7','MB7']],
+['type','interaction','type','Type chars','vibium type','browser_type','el.type()','el.type()','el.type()',['B18'],[]],
+['press','interaction','press','Press key','vibium press','browser_press','el.press()','el.press()','el.press()',[],[]],
+['clear','interaction','clear','Clear input','','','el.clear()','el.clear()','el.clear()',[],[]],
+['check','interaction','check','Check checkbox','vibium check','browser_check','el.check()','el.check()','el.check()',['B26'],[]],
+['uncheck','interaction','uncheck','Uncheck','vibium uncheck','browser_uncheck','el.uncheck()','el.uncheck()','el.uncheck()',[],[]],
+['select','interaction','selectOption','Select option','vibium select','browser_select','el.selectOption()','el.select_option()','el.selectOption()',['B5'],[]],
+['hover','interaction','hover','Hover','vibium hover','browser_hover','el.hover()','el.hover()','el.hover()',['B30'],[]],
+['focus','interaction','focus','Focus element','vibium focus','browser_focus','el.focus()','el.focus()','el.focus()',[],[]],
+['dragTo','interaction','dragTo','Drag to target','vibium drag','browser_drag','el.dragTo()','el.drag_to()','el.dragTo()',[],[]],
+['tap','interaction','tap','Touch tap','','','el.tap()','el.tap()','el.tap()',[],[]],
+['scrollIV','interaction','scrollIntoView','Scroll into view','vibium scroll into-view','browser_scroll_into_view','el.scrollIntoView()','el.scroll_into_view()','el.scrollIntoView()',[],[]],
+['dispEvt','interaction','dispatchEvent','Dispatch event','','','el.dispatchEvent()','el.dispatch_event()','el.dispatchEvent()',[],[]],
+['setFiles','interaction','setFiles','Set files','vibium upload','browser_upload','el.setFiles()','el.set_files()','el.setFiles()',[],[]],
+['hilite','interaction','highlight','Highlight','vibium highlight','browser_highlight','el.highlight()','el.highlight()','el.highlight()',[],[]],
+['content','reading','page.content','Get page HTML','','','page.content()','page.content()','page.content()',[],[]],
+['a11y','reading','a11yTree','A11y tree','vibium a11y-tree','browser_a11y_tree','page.a11yTree()','page.a11y_tree()','page.a11yTree()',[],[]],
+['text','reading','el.text','Get text','vibium text','browser_get_text','el.text()','el.text()','el.text()',['B25'],['MB9']],
+['inner','reading','el.innerText','Get inner text','','','el.innerText()','el.inner_text()','el.innerText()',[],[]],
+['html','reading','el.html','Get HTML','vibium html','browser_get_html','el.html()','el.html()','el.html()',[],[]],
+['value','reading','el.value','Get value','vibium value','browser_get_value','el.value()','el.value()','el.value()',[],[]],
+['attr','reading','el.attr','Get attribute','vibium attr','browser_get_attribute','el.attr()','el.attr()','el.attr()',['B8'],['MB5']],
+['bounds','reading','el.bounds','Get bounding box','','','el.bounds()','el.bounds()','el.bounds()',[],[]],
+['isVis','reading','isVisible','Is visible','vibium is visible','browser_is_visible','el.isVisible()','el.is_visible()','el.isVisible()',['B10'],[]],
+['isHid','reading','isHidden','Is hidden','','','el.isHidden()','el.is_hidden()','el.isHidden()',[],[]],
+['isEn','reading','isEnabled','Is enabled','vibium is enabled','browser_is_enabled','el.isEnabled()','el.is_enabled()','el.isEnabled()',[],[]],
+['isCh','reading','isChecked','Is checked','vibium is checked','browser_is_checked','el.isChecked()','el.is_checked()','el.isChecked()',[],[]],
+['isEdit','reading','isEditable','Is editable','⬜','⬜','el.isEditable()','el.is_editable()','el.isEditable()',[],[]],
+['role','reading','el.role','Get ARIA role','','','el.role()','el.role()','el.role()',[],[]],
+['label','reading','el.label','Get label','','','el.label()','el.label()','el.label()',[],[]],
+['el-ss','reading','el.screenshot','Screenshot el','','','el.screenshot()','el.screenshot()','el.screenshot()',[],[]],
+['scrnshot','page-control','screenshot','Screenshot','vibium screenshot','browser_screenshot','page.screenshot()','page.screenshot()','page.screenshot()',[],['MB8']],
+['pdf','page-control','pdf','PDF','vibium pdf','browser_pdf','page.pdf()','page.pdf()','page.pdf()',[],[]],
+['eval','page-control','evaluate','Run JS','vibium eval','browser_evaluate','page.evaluate()','page.evaluate()','page.evaluate()',['JS-Bug2'],['B9','MB6']],
+['scroll','page-control','scroll','Scroll page','vibium scroll','browser_scroll','page.scroll()','page.scroll()','page.scroll()',[],[]],
+['setVP','page-control','setViewport','Set viewport','vibium viewport','browser_set_viewport','page.setViewport()','page.set_viewport()','page.setViewport()',[],[]],
+['getVP','page-control','viewport','Get viewport','vibium viewport get','browser_get_viewport','page.viewport()','page.viewport()','page.viewport()',[],[]],
+['media','page-control','emulateMedia','Emulate media','vibium media','browser_emulate_media','page.emulateMedia()','page.emulate_media()','page.emulateMedia()',[],[]],
+['setCont','page-control','setContent','Set HTML','vibium content','browser_set_content','page.setContent()','page.set_content()','page.setContent()',['B33'],[]],
+['setGeo','page-control','setGeolocation','Set GPS','vibium geolocation','browser_set_geolocation','page.setGeolocation()','page.set_geolocation()','page.setGeolocation()',['B14'],[]],
+['setWin','page-control','setWindow','Set window','vibium window','browser_set_window','page.setWindow()','page.set_window()','page.setWindow()',[],[]],
+['getWin','page-control','window','Get window','vibium window get','browser_get_window','page.window()','page.window()','page.window()',[],[]],
+['frames','page-control','frames','List frames','vibium frames','browser_frames','page.frames()','page.frames()','page.frames()',[],[]],
+['frame','page-control','frame','Get frame','vibium frame','browser_frame','page.frame()','page.frame()','page.frame()',['B19'],[]],
+['mFrame','page-control','mainFrame','Main frame','','','page.mainFrame()','page.main_frame()','page.mainFrame()',[],[]],
+['cx-newP','context','context.newPage','New ctx page','','','context.newPage()','context.new_page()','context.newPage()',[],[]],
+['cx-close','context','context.close','Close context','','','context.close()','context.close()','context.close()',[],[]],
+['cookies','context','cookies','Get cookies','vibium cookies','browser_get_cookies','context.cookies()','context.cookies()','context.cookies()',[],['B4']],
+['setCook','context','setCookies','Set cookies','vibium cookies set','browser_set_cookie','context.setCookies()','context.set_cookies()','context.setCookies()',[],['MB4']],
+['clrCook','context','clearCookies','Clear cookies','vibium cookies clear','browser_delete_cookies','context.clearCookies()','context.clear_cookies()','context.clearCookies()',[],[]],
+['storage','context','storage','Get storage','vibium storage','browser_storage_state','context.storage()','context.storage()','context.storage()',[],['B2','MB2']],
+['setStor','context','setStorage','Restore storage','','browser_restore_storage','context.setStorage()','context.set_storage()','context.setStorage()',[],[]],
+['clrStor','context','clearStorage','Clear storage','','','context.clearStorage()','context.clear_storage()','context.clearStorage()',[],[]],
+['addInit','context','addInitScript','Add init script','','','context.addInitScript()','context.add_init_script()','context.addInitScript()',[],[]],
+['kb-press','input','keyboard.press','Press key','vibium keys','browser_keys','keyboard.press()','keyboard.press()','keyboard.press()',[],[]],
+['kb-down','input','keyboard.down','Key down','','','keyboard.down()','keyboard.down()','keyboard.down()',[],[]],
+['kb-up','input','keyboard.up','Key up','','','keyboard.up()','keyboard.up()','keyboard.up()',[],[]],
+['kb-type','input','keyboard.type','Type text','','','keyboard.type()','keyboard.type()','keyboard.type()',[],[]],
+['mo-click','input','mouse.click','Mouse click','vibium mouse click','browser_mouse_click','mouse.click()','mouse.click()','mouse.click()',[],[]],
+['mo-move','input','mouse.move','Mouse move','vibium mouse move','browser_mouse_move','mouse.move()','mouse.move()','mouse.move()',[],[]],
+['mo-down','input','mouse.down','Mouse down','vibium mouse down','browser_mouse_down','mouse.down()','mouse.down()','mouse.down()',[],[]],
+['mo-up','input','mouse.up','Mouse up','vibium mouse up','browser_mouse_up','mouse.up()','mouse.up()','mouse.up()',[],[]],
+['mo-wheel','input','mouse.wheel','Mouse wheel','','⬜','mouse.wheel()','mouse.wheel()','mouse.wheel()',[],[]],
+['tc-tap','input','touch.tap','Touch tap','','','touch.tap()','touch.tap()','touch.tap()',[],[]],
+['addScript','network','addScript','Add script','⬜','⬜','page.addScript()','page.add_script()','page.addScript()',[],[]],
+['addStyle','network','addStyle','Add style','⬜','⬜','page.addStyle()','page.add_style()','page.addStyle()',[],[]],
+['expose','network','expose','Expose fn','','','page.expose()','page.expose()','page.expose()',['JV-135'],[]],
+['route','network','route','Route requests','','','page.route()','page.route()','page.route()',['JV-128'],[]],
+['unroute','network','unroute','Remove route','','','page.unroute()','page.unroute()','page.unroute()',[],[]],
+['setHdr','network','setHeaders','Set headers','⬜','⬜','page.setHeaders()','page.set_headers()','page.setHeaders()',['JV-128'],[]],
+['onReq','network','onRequest','Request listener','','','page.onRequest()','page.on_request()','page.onRequest()',[],[]],
+['onResp','network','onResponse','Response listener','','','page.onResponse()','page.on_response()','page.onResponse()',[],[]],
+['capResp','network','capture.response','Capture response','','','page.capture.response()','page.capture.response()','',[],[]],
+['capReq','network','capture.request','Capture request','','','page.capture.request()','page.capture.request()','',[],[]],
+['rt-ful','network','route.fulfill','Fulfill request','','','route.fulfill()','route.fulfill()','route.fulfill()',[],[]],
+['rt-cont','network','route.continue','Continue request','','','route.continue()','route.continue_()','route.continue()',[],[]],
+['rt-abort','network','route.abort','Abort request','','','route.abort()','route.abort()','route.abort()',[],[]],
+['onDialog','events','onDialog','Dialog listener','','','page.onDialog()','page.on_dialog()','page.onDialog(cb)',[],[]],
+['onCons','events','onConsole','Console listener','','','page.onConsole()','page.on_console()','page.onConsole(cb)',[],[]],
+['onErr','events','onError','Error listener','','','page.onError()','page.on_error()','page.onError(cb)',[],[]],
+['onDl','events','onDownload','Download listener','','','page.onDownload()','page.on_download()','page.onDownload(cb)',[],[]],
+['onWS','events','onWebSocket','WS listener','','','page.onWebSocket()','page.on_web_socket()','page.onWebSocket(cb)',[],[]],
+['pg-rmAl','events','page.removeAllListeners','Remove listeners','','','page.removeAllListeners()','page.remove_all_listeners()','page.removeAllListeners()',[],[]],
+['capNav','events','capture.navigation','Capture nav','','','page.capture.navigation()','page.capture.navigation()','',['JS-Bug4'],[]],
+['capEvt','events','capture.event','Capture event','','','page.capture.event()','page.capture.event()','',[],[]],
+['capDl','events','capture.download','Capture download','','','page.capture.download()','page.capture.download()','',[],[]],
+['capDlg','events','capture.dialog','Capture dialog','','','page.capture.dialog()','page.capture.dialog()','',['PY-146'],[]],
+['consMsgs','events','consoleMessages','Console msgs','','','page.consoleMessages()','page.console_messages()','page.consoleMessages()',[],[]],
+['errors','events','page.errors','Page errors','','','page.errors()','page.errors()','page.errors()',[],[]],
+['cl-inst','clock','clock.install','Install timers','vibium clock install','page_clock_install','clock.install()','clock.install()','clock.install()',[],[]],
+['cl-ff','clock','clock.fastForward','Fast-forward','vibium clock fast-forward','page_clock_fast_forward','clock.fastForward()','clock.fast_forward()','clock.fastForward()',[],[]],
+['cl-runF','clock','clock.runFor','Run timers','vibium clock run-for','page_clock_run_for','clock.runFor()','clock.run_for()','clock.runFor()',[],[]],
+['cl-pAt','clock','clock.pauseAt','Pause at time','vibium clock pause-at','page_clock_pause_at','clock.pauseAt()','clock.pause_at()','clock.pauseAt()',[],[]],
+['cl-res','clock','clock.resume','Resume clock','vibium clock resume','page_clock_resume','clock.resume()','clock.resume()','clock.resume()',[],[]],
+['cl-sFixed','clock','clock.setFixedTime','Freeze time','vibium clock set-fixed-time','page_clock_set_fixed_time','clock.setFixedTime()','clock.set_fixed_time()','clock.setFixedTime()',[],['JS-Bug3']],
+['cl-sSys','clock','clock.setSystemTime','Set system time','','page_clock_set_system_time','clock.setSystemTime()','clock.set_system_time()','clock.setSystemTime()',[],[]],
+['cl-sTZ','clock','clock.setTimezone','Set timezone','','page_clock_set_timezone','clock.setTimezone()','clock.set_timezone()','clock.setTimezone()',[],[]],
+['rec-st','recording','recording.start','Start recording','vibium record start','browser_record_start','recording.start()','recording.start()','recording.start()',[],[]],
+['rec-stop','recording','recording.stop','Stop recording','vibium record stop','browser_record_stop','recording.stop()','recording.stop()','recording.stop()',[],[]],
+['rec-cs','recording','recording.startChunk','Start chunk','vibium record chunk start','browser_record_start_chunk','recording.startChunk()','recording.start_chunk()','recording.startChunk()',[],[]],
+['rec-cx','recording','recording.stopChunk','Stop chunk','vibium record chunk stop','browser_record_stop_chunk','recording.stopChunk()','recording.stop_chunk()','recording.stopChunk()',[],[]],
+['rec-gs','recording','recording.startGroup','Start group','vibium record group start','browser_record_start_group','recording.startGroup()','recording.start_group()','recording.startGroup()',[],[]],
+['rec-gx','recording','recording.stopGroup','Stop group','vibium record group stop','browser_record_stop_group','recording.stopGroup()','recording.stop_group()','recording.stopGroup()',[],[]],
+['dlg-msg','dialog','dialog.message','Dialog message','','','dialog.message()','dialog.message()','dialog.message()',[],[]],
+['dlg-type','dialog','dialog.type','Dialog type','','','dialog.type()','dialog.type()','dialog.type()',[],[]],
+['dlg-dv','dialog','dialog.defaultValue','Dialog default','','','dialog.defaultValue()','dialog.default_value()','dialog.defaultValue()',[],[]],
+['dlg-acc','dialog','dialog.accept','Accept dialog','vibium dialog accept','browser_dialog_accept','dialog.accept()','dialog.accept()','dialog.accept()',['B3','MB3'],[]],
+['dlg-dis','dialog','dialog.dismiss','Dismiss dialog','vibium dialog dismiss','browser_dialog_dismiss','dialog.dismiss()','dialog.dismiss()','dialog.dismiss()',[],[]],
+['dl-save','download','download.saveAs','Save download','','⬜','download.saveAs()','download.save_as()','download.saveAs()',[],[]],
+['dl-url','download','download.url','Download URL','','','download.url()','download.url()','download.url()',[],[]],
+['dl-fn','download','download.filename','Download name','','','download.filename()','download.filename()','download.suggestedFilename()',[],[]],
+['dl-path','download','download.path','Download path','','','download.path()','download.path()','download.path()',[],[]],
+['map','extras','map','Map @ref handles','vibium map','browser_map','','','',['B16','B24'],[]],
+['diff','extras','diff','Diff map','vibium diff','browser_diff_map','','','',[],[]],
+['count','extras','count','Count elements','vibium count','browser_count','','','',[], ['B1','MB1']],
+['dl-dir','extras','download-set-dir','Set dl dir','vibium download set-dir','browser_download_set_dir','','','',[],[]],
+['ai-check','ai','page.check','AI assertion (planned)','⬜','⬜','⬜ page.check()','⬜ page.check()','⬜',[],[]],
+['ai-do','ai','page.do','AI action (planned)','⬜','⬜','⬜ page.do()','⬜ page.do()','⬜',[],[]],
+];
+
+const hasSurf = v => v && v !== '' && !v.startsWith('⬜');
+function cmdColor(c) {
+  const n = [c[4],c[5],c[6],c[7],c[8]].filter(hasSurf).length;
+  if(n>=5) return '#cbd5e1'; if(n>=4) return '#93c5fd';
+  if(n>=3) return '#a5f3fc'; if(n>=2) return '#bbf7d0';
+  const hasClient = hasSurf(c[6])||hasSurf(c[7])||hasSurf(c[8]);
+  if(hasClient) return '#d8b4fe';
+  if(hasSurf(c[4])||hasSurf(c[5])) return '#67e8f9';
+  return '#374151';
+}
+
+// Build node objects
+const allNodes = [];
+
+// Root
+const rootNode = {id:'vibium',name:'Vibium',group:'root',color:'#7c3aed',desc:'The verification layer for coding agents. v26.5.31',layer:0};
+allNodes.push(rootNode);
+
+// Surfaces
+const SURFS = [
+  {id:'cli',name:'CLI',color:'#3b82f6',desc:'66 commands via persistent daemon'},
+  {id:'mcp',name:'MCP',color:'#06b6d4',desc:'85 tools via JSON-RPC stdio'},
+  {id:'js',name:'JS Client',color:'#eab308',desc:'68 methods. npm install vibium'},
+  {id:'python',name:'Python',color:'#22c55e',desc:'72 methods. pip install vibium'},
+  {id:'java',name:'Java',color:'#f97316',desc:'82 methods. Maven com.vibium:vibium'},
+];
+SURFS.forEach(s => allNodes.push({...s, group:'surface', layer:1}));
+
+// Categories
+Object.entries(CATEGORIES).forEach(([id,c]) => {
+  allNodes.push({id:'cat-'+id, name:c.name, group:'category', color:c.color, catId:id, layer:2});
+});
+
+// Commands
+CMD.forEach(c => {
+  allNodes.push({
+    id:'cmd-'+c[0], name:c[2], group:'command', color:cmdColor(c),
+    catId:c[1], desc:c[3], cli:c[4], mcp:c[5], js:c[6], py:c[7], java:c[8],
+    openBugs:c[9], fixedBugs:c[10], layer:3
+  });
+});
+
+// Bugs & Patterns
+const bugPatternNodes = [
+  {id:'B3',name:'B3',group:'bug-open',color:'#dc2626',surface:'CLI',desc:'Dialog deadlock — click on dialog-firing element locks socket.',workaround:'Pre-stub: vibium eval \'window.alert = () => {}\'',layer:4},
+  {id:'B5',name:'B5',group:'bug-partial',color:'#fbbf24',surface:'CLI',desc:'select: partial fix v26.5.31. Nonexistent option still returns exit 0.',workaround:'Verify returned value after select',layer:4},
+  {id:'B6',name:'B6',group:'bug-open',color:'#ef4444',surface:'CLI',desc:'--timeout ignored on click. Default ~160ms always used.',workaround:'timeout 10 vibium click "#selector"',layer:4},
+  {id:'B8',name:'B8',group:'bug-open',color:'#ef4444',surface:'CLI',desc:'vibium attr always returns false for hasAttribute.',workaround:'vibium eval \'el.hasAttribute("attr")\'',layer:4},
+  {id:'B10',name:'B10',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'vibium is crashes with 1 arg; requires element ref + state.',workaround:'vibium is @e1 visible',layer:4},
+  {id:'B11',name:'B11',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'back can navigate past session origin into browser chrome.',workaround:'Guard with vibium url | grep',layer:4},
+  {id:'B14',name:'B14',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'Negative geolocation coords parsed as flags.',workaround:'vibium geolocation -- -33.8 151.2',layer:4},
+  {id:'B15',name:'B15',group:'bug-regression',color:'#a78bfa',surface:'CLI',desc:'find text case-sensitive vs DOM. CSS text-transform ignored.',layer:4},
+  {id:'B16',name:'B16',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'map skips shadow DOM elements entirely.',workaround:'vibium eval shadowRoot traversal',layer:4},
+  {id:'B17',name:'B17',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'find role button times out on input[type=submit].',workaround:'vibium eval el.click()',layer:4},
+  {id:'B18',name:'B18',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'Negative numbers in fill/type parsed as CLI flags.',workaround:'Eval native value setter',layer:4},
+  {id:'B19',name:'B19',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'frame context not persisted between commands.',workaround:'vibium eval cross-frame',layer:4},
+  {id:'B20',name:'B20',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'fill with "" silently no-ops. Field not cleared.',workaround:'vibium eval el.value = ""',layer:4},
+  {id:'B21',name:'B21',group:'bug-open',color:'#ef4444',surface:'CLI',desc:'bidi-test and launch-test fail or mislead.',layer:4},
+  {id:'B22',name:'B22',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'Negative sleep value causes panic.',workaround:'Validate ms >= 0 before sleep',layer:4},
+  {id:'B24',name:'B24',group:'bug-open',color:'#fb923c',surface:'CLI',desc:'map returns @ref for off-screen elements.',workaround:'getBoundingClientRect + mouse.click',layer:4},
+  {id:'B25',name:'B25',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'vibium text truncated at buffer limit.',workaround:'vibium eval body.innerText.slice()',layer:4},
+  {id:'B26',name:'B26',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'check on non-checkbox throws uncaught exception.',layer:4},
+  {id:'B29',name:'B29',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'find returns @ref for disabled elements.',workaround:'Use map instead of find',layer:4},
+  {id:'B30',name:'B30',group:'bug-partial',color:'#fbbf24',surface:'CLI',desc:'hover: div fixed; img with external src still zero-size.',workaround:'Mouse move by coords for img',layer:4},
+  {id:'B31',name:'B31',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'fill fails on range inputs.',layer:4},
+  {id:'B33',name:'B33',group:'bug-open',color:'#94a3b8',surface:'CLI',desc:'vibium content does not reset nav state.',layer:4},
+  {id:'MB3',name:'MB3',group:'bug-open',color:'#dc2626',surface:'MCP',desc:'Dialog deadlock (MCP) — browser_click on dialog-firing element.',workaround:'browser_evaluate setTimeout alert; then browser_dialog_accept',layer:4},
+  {id:'MB10',name:'MB10',group:'bug-open',color:'#f87171',surface:'MCP',desc:'False "element obscured" on sticky nav pages.',workaround:'browser_evaluate el.click() or mouse_click by coords',layer:4},
+  {id:'JS-Bug2',name:'JS Bug2',group:'bug-open',color:'#ef4444',surface:'JS',desc:'page.evaluate() wraps nested string[][] as BiDi objects.',workaround:'JSON.stringify inside eval, JSON.parse on client',layer:4},
+  {id:'JS-Bug4',name:'JS Bug4',group:'bug-open',color:'#fb923c',surface:'JS',desc:'capture.navigation() stale on SPA pushState.',workaround:'Poll page.url() or evaluate("location.href")',layer:4},
+  {id:'JS-118',name:'#118',group:'bug-open',color:'#38bdf8',surface:'JS',desc:'No pierce selector for shadow DOM.',workaround:'page.evaluate() with shadowRoot.querySelector()',layer:4},
+  {id:'PY-146',name:'Py#146',group:'bug-open',color:'#ef4444',surface:'Python',desc:'capture.dialog deadlocks when fn triggers dialog via evaluate.',workaround:'Use setTimeout inside eval',layer:4},
+  {id:'JV-174',name:'Jv#174',group:'bug-open',color:'#ef4444',surface:'Java',desc:'page.waitForFunction() double-wraps → SyntaxError.',layer:4},
+  {id:'JV-135',name:'Jv#135',group:'bug-open',color:'#fb923c',surface:'Java',desc:'page.expose() registers but window.fn undefined in page.',layer:4},
+  {id:'JV-128',name:'Jv#128',group:'bug-open',color:'#ef4444',surface:'Java',desc:'page.route() causes go() deadlock.',workaround:'Avoid setHeaders/route before navigation',layer:4},
+  {id:'JV-106',name:'Jv#106',group:'bug-open',color:'#fb923c',surface:'Java',desc:'SelectorOptions not forwarded to engine.',layer:4},
+  {id:'p-dialog',name:'dialog_deadlock',group:'pattern',color:'#d946ef',desc:'BiDi socket deadlock: click waits for dialog; dialog needs another BiDi call.',layer:4},
+  {id:'p-findcase',name:'find_text_case',group:'pattern',color:'#a855f7',desc:'find text matches raw DOM. CSS text-transform never applied.',layer:4},
+  {id:'p-negval',name:'negative_values',group:'pattern',color:'#a855f7',desc:'Negative CLI args parsed as flags. Use -- separator.',layer:4},
+];
+bugPatternNodes.forEach(n => allNodes.push(n));
+
+// Fixed bugs + References
+const fixedRefNodes = [
+  {id:'B1',name:'B1 ✓',group:'bug-fixed',color:'#4ade80',desc:'count type mismatch — fixed v26.5.31',layer:5},
+  {id:'B2',name:'B2 ✓',group:'bug-fixed',color:'#4ade80',desc:'storage serialization — fixed v26.5.31',layer:5},
+  {id:'B4',name:'B4 ✓',group:'bug-fixed',color:'#4ade80',desc:'cookies domain — fixed v26.5.31',layer:5},
+  {id:'B7',name:'B7 ✓',group:'bug-fixed',color:'#4ade80',desc:'fill textarea — fixed v26.5.31',layer:5},
+  {id:'B9',name:'B9 ✓',group:'bug-fixed',color:'#4ade80',desc:'eval object repr — fixed v26.5.31',layer:5},
+  {id:'MB1',name:'MB1 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_count string→number — fixed v26.5.31',layer:5},
+  {id:'MB2',name:'MB2 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_storage_state cookie parse — fixed v26.5.31',layer:5},
+  {id:'MB4',name:'MB4 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_set_cookie domain — fixed v26.5.31',layer:5},
+  {id:'MB5',name:'MB5 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_get_attribute null — fixed v26.5.31',layer:5},
+  {id:'MB6',name:'MB6 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_evaluate empty string — fixed v26.5.31',layer:5},
+  {id:'MB7',name:'MB7 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_fill textarea — fixed v26.5.31',layer:5},
+  {id:'MB8',name:'MB8 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_screenshot annotate crash — fixed v26.5.31',layer:5},
+  {id:'MB9',name:'MB9 ✓',group:'bug-fixed',color:'#4ade80',desc:'browser_get_text null — fixed v26.5.31',layer:5},
+  {id:'JS-Bug1',name:'JS Bug1 ✓',group:'bug-fixed',color:'#4ade80',desc:'waitUntil expression timeout — fixed v26.5.31',layer:5},
+  {id:'JS-Bug3',name:'JS Bug3 ✓',group:'bug-fixed',color:'#4ade80',desc:'clock.setFixedTime silent fail — fixed v26.5.31',layer:5},
+  {id:'r-arch',name:'Architecture',group:'reference',color:'#475569',desc:'System diagram · CLI daemon · BiDi foundation',layer:5},
+  {id:'r-action',name:'Actionability',group:'reference',color:'#475569',desc:'5 checks: visible, stable, receivesEvents, enabled, editable',layer:5},
+  {id:'r-bidi',name:'BiDi 40/87',group:'reference',color:'#475569',desc:'WebDriver BiDi coverage tracker',layer:5},
+  {id:'r-roadmap',name:'Roadmap',group:'reference',color:'#475569',desc:'Cortex · Retina · AI locators · video · .NET',layer:5},
+  {id:'r-ainative',name:'AI Native (draft)',group:'reference',color:'#475569',desc:'page.check() and page.do() — not yet implemented',layer:5},
+];
+fixedRefNodes.forEach(n => allNodes.push(n));
+
+// ─── LAYER DEFINITIONS ────────────────────────────────────────────────────────
+const LAYER_DEFS = [
+  {id:'root',     label:'L0: Root',          color:'#7c3aed', planeColor:0x7c3aed, radius:0,   groups:new Set(['root'])},
+  {id:'surface',  label:'L1: Surfaces',      color:'#3b82f6', planeColor:0x3b82f6, radius:50,  groups:new Set(['surface'])},
+  {id:'category', label:'L2: Categories',    color:'#0ea5e9', planeColor:0x0ea5e9, radius:110, groups:new Set(['category'])},
+  {id:'command',  label:'L3: Commands',      color:'#94a3b8', planeColor:0x94a3b8, radius:200, groups:new Set(['command'])},
+  {id:'bugs',     label:'L4: Bugs & Patterns', color:'#ef4444', planeColor:0xef4444, radius:160, groups:new Set(['bug-open','bug-partial','bug-regression','pattern'])},
+  {id:'refs',     label:'L5: Fixed & Refs',  color:'#22c55e', planeColor:0x22c55e, radius:130, groups:new Set(['bug-fixed','reference'])},
+];
+
+// ─── POSITIONING ─────────────────────────────────────────────────────────────
+let SPACING = 90;
+const nodeMap = {};
+allNodes.forEach(n => nodeMap[n.id] = n);
+
+// Layer 0: root at center
+rootNode._x = 0; rootNode._z = 0;
+
+// Layer 1: surfaces in a circle
+SURFS.forEach((s, i) => {
+  const a = (2*Math.PI*i)/SURFS.length;
+  const node = nodeMap[s.id];
+  node._x = 45*Math.cos(a); node._z = 45*Math.sin(a);
+});
+
+// Layer 2: categories in a circle
+const catList = Object.keys(CATEGORIES);
+catList.forEach((id, i) => {
+  const a = (2*Math.PI*i)/catList.length;
+  const node = nodeMap['cat-'+id];
+  node._x = 110*Math.cos(a); node._z = 110*Math.sin(a);
+});
+
+// Layer 3: commands clustered around their category's projected position
+const catPos = {};
+catList.forEach((id,i) => {
+  const a = (2*Math.PI*i)/catList.length;
+  catPos[id] = {x:110*Math.cos(a), z:110*Math.sin(a)};
+});
+const cmdBycat = {};
+CMD.forEach(c => { if(!cmdBycat[c[1]]) cmdBycat[c[1]]=[]; cmdBycat[c[1]].push('cmd-'+c[0]); });
+Object.entries(cmdBycat).forEach(([catId, ids]) => {
+  const center = catPos[catId] || {x:0,z:0};
+  const r = Math.max(15, Math.sqrt(ids.length)*9);
+  ids.forEach((nid, i) => {
+    const a = (2*Math.PI*i)/ids.length;
+    const node = nodeMap[nid];
+    if(node){ node._x = center.x + r*Math.cos(a); node._z = center.z + r*Math.sin(a); }
+  });
+});
+
+// Layer 4: bugs by surface cluster, patterns at center
+const bugSurfAngles = {CLI:0, MCP:Math.PI*2/5, JS:Math.PI*4/5, Python:Math.PI*6/5, Java:Math.PI*8/5};
+const bugBySurf = {};
+bugPatternNodes.forEach(n => {
+  if(n.group==='pattern'){ n._x=(Math.random()-0.5)*40; n._z=(Math.random()-0.5)*40; return; }
+  const s = n.surface||'CLI';
+  if(!bugBySurf[s]) bugBySurf[s]=[];
+  bugBySurf[s].push(n);
+});
+Object.entries(bugBySurf).forEach(([surf, bugs]) => {
+  const baseA = bugSurfAngles[surf]||0;
+  const baseR = 90;
+  bugs.forEach((bug, i) => {
+    const a = baseA + (i - bugs.length/2)*0.3;
+    const r = baseR + i*8;
+    bug._x = r*Math.cos(a); bug._z = r*Math.sin(a);
+  });
+});
+
+// Layer 5: fixed bugs + references in a grid/spiral
+const phi = Math.PI*(3-Math.sqrt(5));
+fixedRefNodes.forEach((n,i) => {
+  const r = i===0 ? 0 : 100*Math.sqrt((i+0.5)/fixedRefNodes.length);
+  const a = i*phi;
+  n._x = r*Math.cos(a); n._z = r*Math.sin(a);
+});
+
+// ─── THREE.JS SCENE ───────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x07071a);
+scene.fog = new THREE.Fog(0x07071a, 800, 1800);
+
+const W = window.innerWidth, H = window.innerHeight;
+const camera = new THREE.PerspectiveCamera(55, W/H, 0.5, 3000);
+camera.position.set(0, 550, 900);
+camera.lookAt(0, 225, 0);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize(W, H);
+document.body.appendChild(renderer.domElement);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(W, H);
+labelRenderer.domElement.style.cssText='position:absolute;top:0;left:0;pointer-events:none';
+document.body.appendChild(labelRenderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.target.set(0, 225, 0);
+
+// Ambient + directional light
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const dLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dLight.position.set(100, 200, 100);
+scene.add(dLight);
+
+// ─── LAYER STATE ─────────────────────────────────────────────────────────────
+const layerVisible = {};
+const layerLabels  = {};
+LAYER_DEFS.forEach(l => { layerVisible[l.id]=true; layerLabels[l.id]=false; });
+// default labels on for sparse layers
+layerLabels['root'] = true;
+layerLabels['surface'] = true;
+layerLabels['category'] = true;
+let allLabels = false;
+
+// ─── BUILD 3D OBJECTS ────────────────────────────────────────────────────────
+const meshes = []; // {mesh, node, labelObj}
+const planeMeshes = {};
+const edgeLines = [];
+
+function getNodeSize(n) {
+  if(n.group==='root') return 6;
+  if(n.group==='surface') return 4.5;
+  if(n.group==='category') return 3.5;
+  if(n.group==='command') return 2;
+  if(n.group==='pattern') return 3;
+  if(n.group==='bug-open') return 2.5;
+  if(n.group==='bug-partial') return 2;
+  if(n.group==='bug-regression') return 1.8;
+  return 1.8;
+}
+
+function getLayerY(layerIdx) {
+  return layerIdx * SPACING;
+}
+
+function hexToThree(hex) {
+  return new THREE.Color(hex);
+}
+
+// Create planes
+LAYER_DEFS.forEach(layer => {
+  const y = getLayerY(layer.id==='root'?0 : layer.id==='surface'?1 : layer.id==='category'?2 : layer.id==='command'?3 : layer.id==='bugs'?4 : 5);
+  const r = layer.radius || 100;
+  const planeR = r * 1.6 + 40;
+  const geo = new THREE.CircleGeometry(planeR, 64);
+  const mat = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(layer.planeColor),
+    transparent: true, opacity: 0.05,
+    side: THREE.DoubleSide, depthWrite: false
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.rotation.x = -Math.PI/2;
+  mesh.position.y = y;
+  mesh.userData.layerId = layer.id;
+  scene.add(mesh);
+  planeMeshes[layer.id] = mesh;
+
+  // Layer ring edge
+  const ringGeo = new THREE.RingGeometry(planeR-0.5, planeR+0.5, 64);
+  const ringMat = new THREE.MeshBasicMaterial({color: new THREE.Color(layer.planeColor), transparent:true, opacity:0.25, side:THREE.DoubleSide, depthWrite:false});
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI/2;
+  ring.position.y = y;
+  ring.userData.layerId = layer.id;
+  scene.add(ring);
+
+  // Layer marking label at ring edge
+  const lIdx = LAYER_DEFS.indexOf(layer);
+  const markDiv = document.createElement('div');
+  markDiv.style.cssText = `font-size:11px;font-weight:700;letter-spacing:.07em;color:${layer.color};opacity:0.75;pointer-events:none;user-select:none;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,0.9)`;
+  markDiv.textContent = `L${lIdx}  ${layer.label.replace(/^L\d+:\s*/,'')}`;
+  const markObj = new CSS2DObject(markDiv);
+  markObj.position.set(-(planeR + 16), y, 0);
+  markObj.userData.layerId = layer.id;
+  scene.add(markObj);
+});
+
+// Create node meshes + labels
+const sphereGeoCache = {};
+function getSphereGeo(r) {
+  const k = r.toFixed(1);
+  if(!sphereGeoCache[k]) sphereGeoCache[k] = new THREE.SphereGeometry(r, 16, 12);
+  return sphereGeoCache[k];
+}
+
+allNodes.forEach(node => {
+  const layerDef = LAYER_DEFS[node.layer];
+  if(!layerDef) return;
+  const y = getLayerY(node.layer);
+  const r = getNodeSize(node);
+  const geo = getSphereGeo(r);
+  const mat = new THREE.MeshStandardMaterial({
+    color: hexToThree(node.color || '#94a3b8'),
+    roughness: 0.4, metalness: 0.1,
+    transparent: true, opacity: 1.0
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(node._x || 0, y, node._z || 0);
+  mesh.userData.node = node;
+  scene.add(mesh);
+
+  // CSS2D label
+  const div = document.createElement('div');
+  div.className = 'node-label';
+  div.textContent = node.name;
+  const labelObj = new CSS2DObject(div);
+  labelObj.position.set(0, r+1, 0);
+  labelObj.visible = false;
+  mesh.add(labelObj);
+
+  meshes.push({mesh, node, labelObj, div});
+});
+
+// Build edges (root→surf, cat→cmd, cmd→bug, root→ref)
+function addEdge(fromNode, toNode, color, opacity) {
+  const y0 = getLayerY(fromNode.layer);
+  const y1 = getLayerY(toNode.layer);
+  const pts = [
+    new THREE.Vector3(fromNode._x||0, y0, fromNode._z||0),
+    new THREE.Vector3(toNode._x||0, y1, toNode._z||0)
+  ];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({color: new THREE.Color(color), transparent:true, opacity:opacity||0.2});
+  const line = new THREE.Line(geo, mat);
+  line.userData = {fromId: fromNode.id, toId: toNode.id};
+  scene.add(line);
+  edgeLines.push(line);
+  return line;
+}
+
+// root → surfaces
+SURFS.forEach(s => addEdge(rootNode, nodeMap[s.id], '#7c3aed', 0.25));
+// root → references
+fixedRefNodes.filter(n=>n.group==='reference').forEach(n => addEdge(rootNode, n, '#475569', 0.15));
+// categories → commands
+CMD.forEach(c => {
+  const catNode = nodeMap['cat-'+c[1]];
+  const cmdNode = nodeMap['cmd-'+c[0]];
+  if(catNode && cmdNode) addEdge(catNode, cmdNode, CATEGORIES[c[1]]?.color||'#94a3b8', 0.12);
+});
+// commands → open bugs
+bugPatternNodes.filter(n=>n.group==='bug-open'||n.group==='bug-partial').forEach(bugNode => {
+  // find commands that reference this bug
+  allNodes.filter(n=>n.group==='command').forEach(cmd => {
+    if(cmd.openBugs && cmd.openBugs.includes(bugNode.id)) {
+      addEdge(cmd, bugNode, bugNode.color||'#ef4444', 0.15);
+    }
+  });
+});
+
+// ─── RAYCASTING ───────────────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let selectedMesh = null;
+let selectedOrigColor = null;
+
+function deselectAll() {
+  meshes.forEach(({mesh, node}) => {
+    mesh.material.color.set(hexToThree(node.color||'#94a3b8'));
+    mesh.material.opacity = 1.0;
+    mesh.material.emissive.set(0x000000);
+    mesh.material.emissiveIntensity = 0;
+  });
+  edgeLines.forEach(l => { l.material.opacity = 0.15; });
+  selectedMesh = null;
+  document.getElementById('info-panel').style.display='none';
+}
+
+function selectNode(item) {
+  deselectAll();
+  selectedMesh = item.mesh;
+  const node = item.node;
+
+  // Highlight selected
+  item.mesh.material.emissive.set(hexToThree(node.color||'#7c3aed'));
+  item.mesh.material.emissiveIntensity = 0.4;
+
+  // Dim others
+  meshes.forEach(({mesh, node:n}) => {
+    if(mesh !== item.mesh) { mesh.material.opacity = 0.3; }
+  });
+
+  // Highlight connected edges
+  const connectedIds = new Set([node.id]);
+  edgeLines.forEach(l => {
+    const {fromId, toId} = l.userData;
+    if(fromId===node.id || toId===node.id) {
+      l.material.opacity = 0.8;
+      connectedIds.add(fromId); connectedIds.add(toId);
+    }
+  });
+
+  // Restore connected node opacity
+  meshes.forEach(({mesh, node:n}) => {
+    if(connectedIds.has(n.id)) mesh.material.opacity = 1.0;
+  });
+
+  // Show info panel
+  showInfo(node);
+}
+
+function showInfo(node) {
+  const panel = document.getElementById('info-panel');
+  const typeColors = {
+    root:'#7c3aed', surface:'#3b82f6', category:'#0ea5e9', command:'#94a3b8',
+    'bug-open':'#ef4444','bug-partial':'#fbbf24','bug-fixed':'#22c55e',
+    'bug-regression':'#a78bfa', pattern:'#d946ef', reference:'#475569'
+  };
+  const tc = typeColors[node.group]||'#94a3b8';
+  let html = `<div class="node-type" style="background:${tc}22;color:${tc};border:1px solid ${tc}55">${node.group}</div>
+    <h3>${node.name}</h3>`;
+  if(node.desc) html += `<div class="desc">${node.desc}</div>`;
+  if(node.group==='command') {
+    html += `<div style="margin-top:8px">`;
+    [['CLI',node.cli],['MCP',node.mcp],['JS',node.js],['Python',node.py],['Java',node.java]]
+      .forEach(([l,v]) => {
+        html += `<div class="surf-row"><span class="sl">${l}</span><span class="sv">${v||'—'}</span></div>`;
+      });
+    html += `</div>`;
+    if(node.openBugs?.length) html += `<div style="margin-top:8px;font-size:10px;color:#ef4444">⚠ ${node.openBugs.join(', ')}</div>`;
+    if(node.fixedBugs?.length) html += `<div style="font-size:10px;color:#22c55e">✓ ${node.fixedBugs.join(', ')}</div>`;
+  }
+  if(node.workaround) html += `<div style="margin-top:8px;background:rgba(124,58,237,0.08);border-left:2px solid #7c3aed;padding:6px 8px;font-size:10px;color:#cbd5e1;font-family:monospace;white-space:pre-wrap">${node.workaround}</div>`;
+  document.getElementById('info-content').innerHTML = html;
+  panel.style.display = 'block';
+}
+
+window.addEventListener('click', e => {
+  if(e.target.closest('#layer-panel')||e.target.closest('#info-panel')) return;
+  pointer.x = (e.clientX/window.innerWidth)*2-1;
+  pointer.y = -(e.clientY/window.innerHeight)*2+1;
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(meshes.map(m=>m.mesh));
+  if(hits.length) {
+    const item = meshes.find(m=>m.mesh===hits[0].object);
+    if(item) { if(selectedMesh===item.mesh) deselectAll(); else selectNode(item); }
+  } else {
+    deselectAll();
+  }
+  // Drain any micro-drag velocity OrbitControls accumulated during the tap/click.
+  // Disabling damping for one update() call zeroes sphericalDelta immediately,
+  // so it doesn't linger and make the camera appear to follow the cursor.
+  const wasDamping = controls.enableDamping;
+  controls.enableDamping = false;
+  controls.update();
+  controls.enableDamping = wasDamping;
+});
+
+// ─── LABEL VISIBILITY ────────────────────────────────────────────────────────
+function updateLabels() {
+  meshes.forEach(({node, labelObj}) => {
+    const lId = LAYER_DEFS[node.layer]?.id;
+    labelObj.visible = allLabels || !!(lId && layerLabels[lId]);
+  });
+}
+
+// ─── LAYER TOGGLE UI ─────────────────────────────────────────────────────────
+const togglesDiv = document.getElementById('layer-toggles');
+LAYER_DEFS.forEach(layer => {
+  const row = document.createElement('div');
+  row.className = 'layer-toggle';
+  row.innerHTML = `
+    <label>
+      <input type="checkbox" data-layer="${layer.id}" checked>
+      <span class="layer-dot" style="background:${layer.color}"></span>
+      ${layer.label}
+    </label>
+    <button class="lbl-btn${layerLabels[layer.id]?' active':''}" data-layer-lbl="${layer.id}" title="Toggle node name labels for this layer">Labels</button>`;
+  togglesDiv.appendChild(row);
+});
+
+document.getElementById('layer-toggles').addEventListener('change', e => {
+  const lid = e.target.dataset.layer;
+  if(!lid) return;
+  layerVisible[lid] = e.target.checked;
+  const layerDef = LAYER_DEFS.find(l=>l.id===lid);
+  if(!layerDef) return;
+  const layerIdx = LAYER_DEFS.indexOf(layerDef);
+  meshes.forEach(({mesh, node}) => {
+    if(node.layer===layerIdx) mesh.visible = layerVisible[lid];
+  });
+  if(planeMeshes[lid]) {
+    planeMeshes[lid].visible = layerVisible[lid];
+    planeMeshes[lid].parent?.children.forEach(c => {
+      if(c.userData.layerId===lid) c.visible = layerVisible[lid];
+    });
+  }
+  // toggle plane and ring
+  scene.children.forEach(c => {
+    if(c.userData?.layerId===lid) c.visible = layerVisible[lid];
+  });
+  updateLabels();
+});
+
+document.getElementById('layer-toggles').addEventListener('click', e => {
+  const lid = e.target.dataset.layerLbl;
+  if(!lid) return;
+  layerLabels[lid] = !layerLabels[lid];
+  e.target.classList.toggle('active', layerLabels[lid]);
+  updateLabels();
+});
+
+document.getElementById('all-labels').addEventListener('change', e => {
+  allLabels = e.target.checked;
+  updateLabels();
+});
+
+// tag planes with layerId for visibility toggle
+LAYER_DEFS.forEach((layer, i) => {
+  if(planeMeshes[layer.id]) planeMeshes[layer.id].userData.layerId = layer.id;
+});
+
+// ─── SPACING SLIDER ───────────────────────────────────────────────────────────
+document.getElementById('spacing').addEventListener('input', e => {
+  SPACING = +e.target.value;
+  // Reposition all meshes and planes
+  meshes.forEach(({mesh, node}) => {
+    mesh.position.y = getLayerY(node.layer);
+  });
+  LAYER_DEFS.forEach((layer, i) => {
+    const y = getLayerY(i);
+    const p = planeMeshes[layer.id];
+    if(p) p.position.y = y;
+    scene.children.forEach(c => {
+      if(c.userData?.layerId===layer.id && (c.geometry?.type==='RingGeometry' || c.isCSS2DObject)) c.position.y=y;
+    });
+  });
+  // Rebuild edge geometry
+  edgeLines.forEach(line => {
+    const {fromId, toId} = line.userData;
+    const fn = nodeMap[fromId], tn = nodeMap[toId];
+    if(!fn||!tn) return;
+    const pts = [
+      new THREE.Vector3(fn._x||0, getLayerY(fn.layer), fn._z||0),
+      new THREE.Vector3(tn._x||0, getLayerY(tn.layer), tn._z||0)
+    ];
+    line.geometry.setFromPoints(pts);
+  });
+  controls.target.set(0, SPACING*2.5, 0);
+});
+
+// ─── HIDE PANEL ──────────────────────────────────────────────────────────────
+let panelHidden = false;
+document.getElementById('hide-panel').addEventListener('click', () => {
+  panelHidden = !panelHidden;
+  document.querySelectorAll('#layer-panel > *:not(h4)').forEach(el => {
+    el.style.display = panelHidden ? 'none' : '';
+  });
+  document.getElementById('hide-panel').textContent = panelHidden ? 'Show ▼' : 'Hide ▲';
+});
+
+// ─── INFO CLOSE ──────────────────────────────────────────────────────────────
+document.getElementById('info-close').addEventListener('click', deselectAll);
+
+// ─── RESIZE ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ─── TEST HOOKS (module-scope → window) ──────────────────────────────────────
+window._LG = {
+  get allLabels() { return allLabels; },
+  get SPACING()   { return SPACING; },
+  meshes, layerVisible, layerLabels, scene, nodeMap, allNodes,
+  LAYER_DEFS, planeMeshes, edgeLines,
+  camera, controls,
+  selectNode, deselectAll,
+  getMesh: id => meshes.find(m => m.node.id === id),
+  dist: () => { const t=controls.target,p=camera.position,dx=p.x-t.x,dy=p.y-t.y,dz=p.z-t.z; return Math.sqrt(dx*dx+dy*dy+dz*dz); },
+  resetCamera: () => { camera.position.set(0,550,900); controls.target.set(0,225,0); controls.update(); },
+};
+
+updateLabels();
+
+// ─── ANIMATE ─────────────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

@@ -4,3 +4,13 @@
 2026-06-17T022422Z  629 / 629 passed  (0 failed)  → runs/2026-06-17T022422Z.txt
 2026-06-17T024326Z  629 / 629 passed  (0 failed)  → runs/2026-06-17T024326Z.txt
 2026-06-17T025058Z  629 / 629 passed  (0 failed)  → runs/2026-06-17T025058Z.txt
+2026-06-17T033833Z  [layered] 236 / 249 passed  (13 failed)  → runs/layered-2026-06-17T033833Z.txt
+2026-06-17T033940Z  [layered] 249 / 249 passed  (0 failed)  → runs/layered-2026-06-17T033940Z.txt
+2026-06-17T034348Z  [layered] 269 / 269 passed  (0 failed)  → runs/layered-2026-06-17T034348Z.txt
+2026-06-17T034523Z  [layered] 269 / 269 passed  (0 failed)  → runs/layered-2026-06-17T034523Z.txt
+2026-06-17T035330Z  [layered] 299 / 304 passed  (5 failed)  → runs/layered-2026-06-17T035330Z.txt
+2026-06-17T035715Z  [layered] 304 / 304 passed  (0 failed)  → runs/layered-2026-06-17T035715Z.txt
+2026-06-17T040008Z  [layered] 302 / 304 passed  (2 failed)  → runs/layered-2026-06-17T040008Z.txt
+2026-06-17T040637Z  [layered] 302 / 304 passed  (2 failed)  → runs/layered-2026-06-17T040637Z.txt
+2026-06-17T041135Z  [layered] 303 / 303 passed  (0 failed)  → runs/layered-2026-06-17T041135Z.txt
+2026-06-17T061327Z  [layered] 303 / 303 passed  (0 failed)  → runs/layered-2026-06-17T061327Z.txt

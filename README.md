@@ -4,7 +4,7 @@ Community knowledge base for [Vibium](https://vibium.dev) — browser automation
 
 ---
 
-## Knowledge Graph Mindmap
+## Knowledge Graph — Force-Directed View
 
 `graph.html` — view on GitHub Pages or open locally:
 
@@ -17,6 +17,22 @@ open graph.html
 Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 226 nodes total: root → surfaces → categories → commands + bugs + patterns + references.
 
 **Features:** node click for sidebar with per-surface syntax · group/tier filters · surface focus buttons · search with hidden-match notice · ? Guide overlay
+
+---
+
+## Knowledge Graph — Layered Planes View
+
+`graph-layered.html` — view on GitHub Pages or open locally:
+
+**Layered graph:** https://lana-20.github.io/vibium-wiki/graph-layered.html
+
+```sh
+open graph-layered.html
+```
+
+Same 226-node dataset rendered as 6 horizontal planes stacked in Three.js. Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan). Each plane is a node tier: root / surfaces / categories / commands / bugs+patterns / fixed+refs.
+
+**Features:** layer visibility toggles · per-layer label buttons · spacing slider · L0–L5 ring markings · node click info panel
 
 ---
 
@@ -35,14 +51,21 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 
 ---
 
-## Test suite
+## Test suites
 
+**Force-directed view** (`graph.html`):
 ```sh
 cd tests && ./run-tests.sh
 # 629 / 629 pass — saves output to runs/<timestamp>.txt and run-history.log
 ```
 
-See [tests/TESTPLAN.md](tests/TESTPLAN.md) for 18 test sections covering the mindmap UI.
+**Layered planes view** (`graph-layered.html`):
+```sh
+cd tests && bash run-layered-tests.sh
+# 303 / 303 pass — 17 suites including camera controls and 360°/720° twirl tests
+```
+
+See [tests/TESTPLAN.md](tests/TESTPLAN.md) for full test plan coverage.
 
 ---
 
