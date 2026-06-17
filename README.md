@@ -6,12 +6,12 @@ Community knowledge base for [Vibium](https://vibium.dev) — browser automation
 
 ## Knowledge Graph Mindmap
 
-`index.html` — view on GitHub Pages or open locally:
+`graph.html` — view on GitHub Pages or open locally:
 
-**GitHub Pages:** https://lana-20.github.io/vibium-wiki/ · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html
+**Graph:** https://lana-20.github.io/vibium-wiki/graph.html · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html
 
 ```sh
-open index.html
+open graph.html
 ```
 
 Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 226 nodes total: root → surfaces → categories → commands + bugs + patterns + references.

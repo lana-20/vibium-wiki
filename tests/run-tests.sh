@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-URL="${1:-file:///Users/lanabegunova/vibium-wiki/index.html}"
+URL="${1:-file:///Users/lanabegunova/vibium-wiki/graph.html}"
 
 # ── Resolve vibium binary ─────────────────────────────────────────────────────
 # Check candidates in order; verify with 'go --help' to avoid picking up unrelated

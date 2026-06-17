@@ -1,6 +1,6 @@
 # Vibium Knowledge Graph — Test Plan
 
-**Subject:** `index.html`  
+**Subject:** `graph.html`  
 **Toolchain:** Vibium CLI (`/vibe-check` skill)  
 **Last verified:** 2026-06-17 · v26.5.31  
 **Runner:** `tests/run-tests.sh [url]`  
@@ -522,7 +522,7 @@ The denominator in `stat-cmds` is always `cmdNodes.length` (148) — total comma
 cd ~/vibium-wiki/tests
 ./run-tests.sh
 # or with custom URL:
-./run-tests.sh http://localhost:3000/index.html
+./run-tests.sh http://localhost:3000/graph.html
 ```
 
 Sources consulted for best practices:
