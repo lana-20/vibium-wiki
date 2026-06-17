@@ -4,11 +4,21 @@ Community knowledge base for [Vibium](https://vibium.dev) — browser automation
 
 ---
 
+## Guide
+
+New to the knowledge graphs? Start here:
+
+**https://lana-20.github.io/vibium-wiki/guide.html**
+
+Step-by-step instructions for both views — which graph to open, how to navigate, filter, and read nodes. Covers force-directed and layered planes side by side.
+
+---
+
 ## Knowledge Graph — Force-Directed View
 
 `graph.html` — view on GitHub Pages or open locally:
 
-**Graph:** https://lana-20.github.io/vibium-wiki/graph.html · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html
+**Graph:** https://lana-20.github.io/vibium-wiki/graph.html
 
 ```sh
 open graph.html
@@ -24,7 +34,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 
 `graph-layered.html` — view on GitHub Pages or open locally:
 
-**Layered graph:** https://lana-20.github.io/vibium-wiki/graph-layered.html
+**Layered graph:** https://lana-20.github.io/vibium-wiki/graph-layered.html · **Guide:** https://lana-20.github.io/vibium-wiki/guide.html#layered
 
 ```sh
 open graph-layered.html
