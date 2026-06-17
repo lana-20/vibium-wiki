@@ -3,7 +3,7 @@ method: go
 aliases: [vibium go, browser_navigate, page.go]
 last_tested: v26.5.31
 last_tested_date: 2026-06-01
-bugs: [B3]
+bugs: [B3, JS-126]
 status: open
 ---
 

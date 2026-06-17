@@ -4,13 +4,13 @@ Last run: v26.5.31 · 2026-06-06
 Repro repo: github.com/lana-20/vibium-test-js  
 Test suite: 127 PASS / 1 BUG / 0 FAIL on v26.5.31 (was 125/3/0 on v26.3.18)
 
-| ID | Issue | Method | Status (v26.5.31) | Workaround |
+| ID | gh Issue | Method | Status (v26.5.31) | Workaround |
 |---|---|---|---|---|
-| Bug 1 | waitUntil(expression) always times out | `page.waitUntil` | fixed #163 | was: `page.wait(ms)` |
-| Bug 2 | evaluate() wraps nested string[][] as BiDi typed objects | `page.evaluate` | open #124 | JSON.stringify wrap |
-| Bug 3 | clock.setFixedTime() silently fails without prior clock.install() | `page.clock` | fixed #163 | was: always call install() first |
-| Bug 4 | capture.navigation() / page.url() miss SPA pushState | `page.capture.navigation`, `page.url` | open #126 | poll url() or use evaluate('location.href') |
-| #118 | Pierce selector for shadow DOM not supported | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
+| Bug 1 | [#123](https://github.com/VibiumDev/vibium/issues/123) | `page.waitUntil` | fixed v26.5.31 (PR #163) | was: `page.wait(ms)` |
+| Bug 2 | [#124](https://github.com/VibiumDev/vibium/issues/124) | `page.evaluate` | open | JSON.stringify wrap |
+| Bug 3 | [#125](https://github.com/VibiumDev/vibium/issues/125) | `page.clock` | fixed v26.5.31 (PR #163) | was: always call install() first |
+| Bug 4 | [#126](https://github.com/VibiumDev/vibium/issues/126) | `page.capture.navigation`, `page.url` | open | poll url() or use evaluate('location.href') |
+| #118 | [#118](https://github.com/VibiumDev/vibium/issues/118) | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
 
 ---
 

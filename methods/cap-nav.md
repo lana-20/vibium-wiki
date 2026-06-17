@@ -2,7 +2,7 @@
 method: capture.navigation
 category: events
 last_tested: v26.5.31
-bugs: [JS-Bug4]
+bugs: [JS-Bug4, JS-126]
 status: open
 ---
 

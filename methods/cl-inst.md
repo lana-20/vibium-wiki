@@ -3,7 +3,7 @@ method: cl-inst
 aliases: [page_clock_install, page.clock.install]
 last_tested: v26.5.31
 last_tested_date: 2026-06-06
-bugs: [Bug3]
+bugs: [Bug3, JS-125]
 status: partial
 ---
 

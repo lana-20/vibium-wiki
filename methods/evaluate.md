@@ -3,7 +3,7 @@ method: eval / evaluate
 aliases: [browser_evaluate, page.eval, page.evaluate]
 last_tested: v26.5.31
 last_tested_date: 2026-06-01
-bugs: [B9, MCP-154]
+bugs: [B9, JS-124, MCP-154]
 status: partial
 ---
 

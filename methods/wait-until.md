@@ -2,7 +2,7 @@
 method: waitUntil
 category: waiting
 last_tested: v26.5.31
-bugs: [Bug1]
+bugs: [Bug1, JS-123]
 status: partial
 ---
 

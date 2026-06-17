@@ -2,7 +2,7 @@
 method: cl-sFixed
 aliases: [page_clock_set_fixed_time, page.clock.setFixedTime]
 last_tested: v26.5.31
-bugs: [Bug3, JV-137]
+bugs: [Bug3, JS-125, JV-137]
 status: partial
 ---
 
