@@ -789,4 +789,6 @@ HISTORY_FILE="$(dirname "$0")/run-history.log"
 echo "$RUN_TS  [layered] $PASS / $TOTAL passed  ($FAIL failed)  → runs/layered-$RUN_TS.txt" >> "$HISTORY_FILE"
 echo "Saved → $RUN_LOG"
 
+$VIB daemon stop 2>/dev/null || true
+
 [[ $FAIL -eq 0 ]] && exit 0 || exit 1
