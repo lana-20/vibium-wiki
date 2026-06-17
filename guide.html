@@ -247,6 +247,7 @@
   <span class="logo">⬡ Vibium Wiki</span>
   <div class="nav-links">
     <a href="#graph">Knowledge Graph</a>
+    <a href="#layered">Layered View</a>
     <a href="#features">Features</a>
     <a href="#nodes">Node Types</a>
     <a href="#filters">Filters</a>
@@ -264,6 +265,7 @@
   <p>An interactive 3D visualization of every Vibium browser automation API method — plus a structured wiki covering bugs, patterns, and deep-dives across CLI, MCP, JavaScript, Python, and Java.</p>
   <div class="hero-links">
     <a class="btn-primary" href="graph.html" target="_blank">Open Knowledge Graph ↗</a>
+    <a class="btn-ghost" href="graph-layered.html" target="_blank">Layered Planes View ↗</a>
     <a class="btn-ghost" href="https://github.com/lana-20/vibium-wiki" target="_blank">GitHub Repository</a>
     <a class="btn-ghost" href="index.md">Full Index →</a>
   </div>
@@ -383,6 +385,61 @@
         <p>Narrow the graph with group/tier filters, surface focus buttons, or the search box. See below for details on each.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ── Layered View ───────────────────────────────────── -->
+<section id="layered">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Layered Planes View</div>
+  <h2>Six tiers, one scene</h2>
+  <p>An alternative rendering of the same 226-node dataset — powered by <strong style="color:var(--text)">Three.js r161</strong> with OrbitControls. Nodes are arranged on six horizontal planes stacked by tier instead of a force-directed spring layout.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Open locally or on GitHub Pages</h3>
+        <p>Double-click <code>graph-layered.html</code>, or from Terminal:</p>
+      </div>
+    </div>
+  </div>
+  <pre>open graph-layered.html
+# or via GitHub Pages:
+# https://lana-20.github.io/vibium-wiki/graph-layered.html</pre>
+
+  <div class="steps" style="margin-top:4px">
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Orbit, zoom, pan</h3>
+        <p><strong style="color:var(--text)">Left-drag</strong> to rotate · <strong style="color:var(--text)">Scroll</strong> to zoom · <strong style="color:var(--text)">Right-drag</strong> to pan</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Click a node</h3>
+        <p>Click any node to open the info panel with full API syntax per surface. Click the same node again to deselect.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Layer controls</h3>
+        <p>Toggle layer visibility with checkboxes · show/hide labels per layer · drag the spacing slider to fan layers apart or compress them.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="node-legend" style="margin-top:32px">
+    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)">L0 Root</span>
+    <span class="node-badge" style="color:#3b82f6;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)">L1 Surfaces</span>
+    <span class="node-badge" style="color:#0ea5e9;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)">L2 Categories</span>
+    <span class="node-badge" style="color:#94a3b8;border-color:rgba(148,163,184,0.25);background:rgba(148,163,184,0.08)">L3 Commands</span>
+    <span class="node-badge" style="color:#dc2626;border-color:rgba(220,38,38,0.35);background:rgba(220,38,38,0.1)">L4 Bugs &amp; Patterns</span>
+    <span class="node-badge" style="color:#4ade80;border-color:rgba(74,222,128,0.35);background:rgba(74,222,128,0.1)">L5 Fixed &amp; Refs</span>
   </div>
 </section>
 
