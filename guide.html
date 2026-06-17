@@ -45,39 +45,38 @@
     background: rgba(7,7,26,0.95);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(12px);
-    padding: 0 32px;
-    display: flex; align-items: center; gap: 28px;
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 16px;
     height: 48px;
   }
   nav .logo { font-size: 13px; font-weight: 700; color: var(--purple); letter-spacing: .02em; white-space: nowrap; }
   nav a { font-size: 12px; color: var(--dim); text-decoration: none; white-space: nowrap; }
   nav a:hover { color: var(--muted); }
-  nav .nav-links { display: flex; gap: 20px; overflow-x: auto; }
+  nav .nav-links { display: flex; gap: 20px; overflow-x: auto; flex: 1; }
   nav .cta {
-    margin-left: auto; flex-shrink: 0;
+    flex-shrink: 0;
     background: rgba(124,58,237,0.2); border: 1px solid var(--purple-d);
-    color: var(--purple); padding: 4px 14px; border-radius: 20px;
-    font-size: 12px; text-decoration: none; white-space: nowrap;
+    color: var(--purple); padding: 4px 11px; border-radius: 20px;
+    font-size: 11px; text-decoration: none; white-space: nowrap;
   }
   nav .cta:hover { background: rgba(124,58,237,0.35); color: #c4b5fd; }
+  nav .cta-green {
+    background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: #34d399;
+  }
+  nav .cta-green:hover { background: rgba(16,185,129,0.28); color: #6ee7b7; }
 
   /* ── Layout ──────────────────────────────────── */
   .page { max-width: 900px; margin: 0 auto; padding: 0 32px 80px; }
 
   /* ── Hero ────────────────────────────────────── */
-  .hero {
-    padding: 72px 0 56px;
-    border-bottom: 1px solid var(--border);
-  }
+  .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--border); }
   .hero-eyebrow {
     font-size: 11px; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--purple);
-    margin-bottom: 16px;
+    text-transform: uppercase; color: var(--purple); margin-bottom: 16px;
   }
   .hero h1 {
     font-size: clamp(28px, 5vw, 44px); font-weight: 800;
-    line-height: 1.15; letter-spacing: -.02em;
-    color: var(--text); margin-bottom: 20px;
+    line-height: 1.15; letter-spacing: -.02em; color: var(--text); margin-bottom: 20px;
   }
   .hero h1 span { color: var(--purple); }
   .hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin-bottom: 32px; }
@@ -101,8 +100,7 @@
   section { padding: 56px 0 0; }
   .section-label {
     font-size: 10px; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase; color: var(--purple);
-    margin-bottom: 8px;
+    text-transform: uppercase; color: var(--purple); margin-bottom: 8px;
   }
   h2 { font-size: 24px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 12px; }
   h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
@@ -127,7 +125,7 @@
     border-radius: 12px; padding: 28px 24px; margin: 32px 0;
     font-family: var(--mono); font-size: 12px;
   }
-  .topo-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+  .topo-row { display: flex; align-items: center; flex-wrap: wrap; }
   .topo-node {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
@@ -137,6 +135,30 @@
   .topo-arr { color: var(--dim); padding: 0 8px; font-size: 14px; }
   .topo-count { font-size: 10px; opacity: .6; margin-left: 2px; }
 
+  /* ── Which view compare ──────────────────────── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;
+  }
+  @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+  }
+  .compare-card.purple { border-color: rgba(124,58,237,0.3); }
+  .compare-card.green  { border-color: rgba(16,185,129,0.3); }
+  .cc-eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .compare-card h3 { font-size: 16px; margin-bottom: 10px; }
+  .compare-card > p { font-size: 12px; margin-bottom: 16px; }
+  .compare-card ul {
+    list-style: none; padding: 0; margin: 0 0 18px;
+    display: flex; flex-direction: column; gap: 5px;
+    font-size: 12px; color: var(--muted);
+  }
+  .compare-card li::before { content: '→ '; color: var(--dim); }
+
   /* ── Feature cards ───────────────────────────── */
   .feature-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -144,17 +166,13 @@
   }
   .feat {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 20px;
-    transition: border-color .2s;
+    border-radius: 10px; padding: 20px; transition: border-color .2s;
   }
   .feat:hover { border-color: var(--border2); }
-  .feat-icon {
-    font-size: 20px; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
+  .feat-icon { font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .feat-icon .badge {
-    font-size: 10px; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 4px;
     background: rgba(124,58,237,0.15); color: var(--purple); border: 1px solid rgba(124,58,237,0.3);
   }
   .feat h3 { font-size: 14px; margin-bottom: 6px; }
@@ -182,11 +200,8 @@
   }
 
   /* ── Step list ───────────────────────────────── */
-  .steps { margin: 20px 0; counter-reset: step; }
-  .step {
-    display: flex; gap: 16px; margin-bottom: 20px;
-    counter-increment: step;
-  }
+  .steps { margin: 20px 0; }
+  .step { display: flex; gap: 16px; margin-bottom: 20px; }
   .step-num {
     flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
     background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);
@@ -203,10 +218,7 @@
   }
   .filter-demo-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
   .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  .pill {
-    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-    border: 1px solid; white-space: nowrap;
-  }
+  .pill { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid; white-space: nowrap; }
 
   /* ── Table ───────────────────────────────────── */
   table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
@@ -221,11 +233,18 @@
     border-radius: 8px; padding: 14px 16px; margin: 20px 0;
     font-size: 12px; color: var(--muted);
   }
-  .callout.amber {
-    background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); }
-  .callout.green {
-    background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); }
+  .callout.amber { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); }
+  .callout.green  { background: rgba(34,197,94,0.08);  border-color: rgba(34,197,94,0.2); }
   .callout strong { color: var(--text); }
+
+  /* ── Tips two-column ─────────────────────────── */
+  .tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 28px; }
+  @media (max-width: 640px) { .tips-grid { grid-template-columns: 1fr; } }
+  .tips-col-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .tips-col { display: flex; flex-direction: column; gap: 12px; }
 
   /* ── Divider ─────────────────────────────────── */
   hr { border: none; border-top: 1px solid var(--border); margin: 48px 0 0; }
@@ -246,13 +265,15 @@
 <nav>
   <span class="logo">⬡ Vibium Wiki</span>
   <div class="nav-links">
+    <a href="#choose">Which View?</a>
     <a href="#graph">Force-Directed</a>
     <a href="#layered">Layered View</a>
     <a href="#nodes">Node Types</a>
     <a href="#wiki">Wiki</a>
     <a href="#tests">Tests</a>
   </div>
-  <a class="cta" href="graph.html" target="_blank">Open Graph ↗</a>
+  <a class="cta" href="graph.html" target="_blank">graph.html ↗</a>
+  <a class="cta cta-green" href="graph-layered.html" target="_blank">graph-layered.html ↗</a>
 </nav>
 
 <!-- ── Hero ─────────────────────────────────────────── -->
@@ -276,30 +297,12 @@
   <p>148 API methods. 32 open bugs. 15 fixed bugs. 5 surfaces. All connected.</p>
 
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="num" style="color:var(--blue)">148</div>
-      <div class="lbl">API Methods</div>
-    </div>
-    <div class="stat-card">
-      <div class="num" style="color:var(--cyan)">5</div>
-      <div class="lbl">Surfaces</div>
-    </div>
-    <div class="stat-card">
-      <div class="num" style="color:var(--red)">32</div>
-      <div class="lbl">Open Bugs</div>
-    </div>
-    <div class="stat-card">
-      <div class="num" style="color:var(--green)">15</div>
-      <div class="lbl">Fixed Bugs</div>
-    </div>
-    <div class="stat-card">
-      <div class="num" style="color:var(--purple)">226</div>
-      <div class="lbl">Graph Nodes</div>
-    </div>
-    <div class="stat-card">
-      <div class="num" style="color:var(--muted)">148</div>
-      <div class="lbl">Method Pages</div>
-    </div>
+    <div class="stat-card"><div class="num" style="color:var(--blue)">148</div><div class="lbl">API Methods</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--cyan)">5</div><div class="lbl">Surfaces</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--red)">32</div><div class="lbl">Open Bugs</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--green)">15</div><div class="lbl">Fixed Bugs</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--purple)">226</div><div class="lbl">Graph Nodes</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--muted)">148</div><div class="lbl">Method Pages</div></div>
   </div>
 
   <div class="topo">
@@ -340,7 +343,45 @@
   </div>
 </section>
 
-<!-- ── Knowledge Graph ───────────────────────────────── -->
+<!-- ── Which view? ───────────────────────────────────── -->
+<section id="choose">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Choose your view</div>
+  <h2>Which graph should I open?</h2>
+  <p>Both views render the same 226 nodes and all their relationships. Pick based on what you want to do.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card purple">
+      <div class="cc-eyebrow" style="color:var(--purple)">Force-Directed · graph.html</div>
+      <h3>Explore connections</h3>
+      <p>Nodes float freely in 3D space and settle via physics. Best for discovering what's related — relationships emerge visually as the graph stabilizes.</p>
+      <ul>
+        <li>Search by name, CLI syntax, or description</li>
+        <li>Filter by surface count (tier) or node group</li>
+        <li>Surface Focus highlights one API's commands</li>
+        <li>Category collapse to reduce clutter</li>
+        <li>Live stats panel updates with every filter</li>
+      </ul>
+      <a class="btn-primary" href="graph.html" target="_blank" style="font-size:12px;padding:7px 16px">Open graph.html ↗</a>
+    </div>
+    <div class="compare-card green">
+      <div class="cc-eyebrow" style="color:#34d399">Layered Planes · graph-layered.html</div>
+      <h3>Understand the hierarchy</h3>
+      <p>Nodes sit on six fixed horizontal tiers — no physics. Best for seeing the structure of the API at a glance and comparing what lives on each layer.</p>
+      <ul>
+        <li>Six clear tiers: root → surfaces → categories → commands → bugs → refs</li>
+        <li>Toggle any layer on/off instantly</li>
+        <li>Adjust layer spacing with a slider</li>
+        <li>Per-layer label controls</li>
+        <li>Orbit freely in 3D to any angle</li>
+      </ul>
+      <a class="btn-ghost" href="graph-layered.html" target="_blank" style="font-size:12px;padding:7px 16px;border-color:rgba(16,185,129,0.4);color:#34d399">Open graph-layered.html ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Force-Directed View ───────────────────────────── -->
 <section id="graph">
   <hr>
   <div style="height:56px"></div>
@@ -365,7 +406,7 @@
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <h3>Rotate & zoom</h3>
+        <h3>Rotate &amp; zoom</h3>
         <p><strong style="color:var(--text)">Drag</strong> to rotate · <strong style="color:var(--text)">Scroll</strong> to zoom · <strong style="color:var(--text)">Right-drag</strong> to pan</p>
       </div>
     </div>
@@ -380,192 +421,13 @@
       <div class="step-num">4</div>
       <div class="step-body">
         <h3>Use filters and search</h3>
-        <p>Narrow the graph with group/tier filters, surface focus buttons, or the search box. See below for details on each.</p>
+        <p>Narrow the graph with group/tier filters, surface focus buttons, or the search box. See the features section below for details on each.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── Layered View ───────────────────────────────────── -->
-<section id="layered">
-  <hr>
-  <div style="height:56px"></div>
-  <div class="section-label">Layered Planes View · graph-layered.html</div>
-  <h2>Six tiers, one scene</h2>
-  <p>An alternative rendering of the same 226-node dataset — powered by <strong style="color:var(--text)">Three.js r161</strong> with OrbitControls. Nodes sit on six fixed horizontal planes stacked by tier, making the hierarchy immediately readable without waiting for a physics simulation to settle.</p>
-
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">
-        <h3>Open locally or on GitHub Pages</h3>
-        <p>Double-click <code>graph-layered.html</code>, or from Terminal:</p>
-      </div>
-    </div>
-  </div>
-  <pre>open graph-layered.html
-# or via GitHub Pages:
-# https://lana-20.github.io/vibium-wiki/graph-layered.html</pre>
-
-  <div class="steps" style="margin-top:4px">
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">
-        <h3>Orbit, zoom, pan</h3>
-        <p><strong style="color:var(--text)">Left-drag</strong> to rotate · <strong style="color:var(--text)">Scroll</strong> to zoom · <strong style="color:var(--text)">Right-drag</strong> to pan</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">
-        <h3>Click a node</h3>
-        <p>Click any node to open the info panel with full API syntax per surface. Click the same node again to deselect.</p>
-      </div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">
-        <h3>Layer controls</h3>
-        <p>Toggle layer visibility with checkboxes · show/hide labels per layer · drag the spacing slider to fan layers apart or compress them.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="node-legend" style="margin-top:32px">
-    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)">L0 Root</span>
-    <span class="node-badge" style="color:#3b82f6;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)">L1 Surfaces</span>
-    <span class="node-badge" style="color:#0ea5e9;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)">L2 Categories</span>
-    <span class="node-badge" style="color:#94a3b8;border-color:rgba(148,163,184,0.25);background:rgba(148,163,184,0.08)">L3 Commands</span>
-    <span class="node-badge" style="color:#dc2626;border-color:rgba(220,38,38,0.35);background:rgba(220,38,38,0.1)">L4 Bugs &amp; Patterns</span>
-    <span class="node-badge" style="color:#4ade80;border-color:rgba(74,222,128,0.35);background:rgba(74,222,128,0.1)">L5 Fixed &amp; Refs</span>
-  </div>
-
-  <div style="margin-top:40px">
-    <div class="section-label" style="margin-bottom:16px">Layered View · Features</div>
-    <div class="feature-grid">
-
-      <div class="feat">
-        <div class="feat-icon">☰ <span class="badge">Layer toggles</span></div>
-        <h3>Show / hide layers</h3>
-        <p>The left panel has a checkbox for each of the 6 tiers. Uncheck a layer to hide its plane, all its nodes, and all its labels in one click — useful for focusing on commands only or bugs only.</p>
-      </div>
-
-      <div class="feat">
-        <div class="feat-icon">𝐀 <span class="badge">Label controls</span></div>
-        <h3>Per-layer labels</h3>
-        <p>Each layer row has a <strong style="color:var(--text)">Labels</strong> button. Root, Surfaces, and Categories show labels by default; Commands, Bugs, and Refs are off. Toggle individually or check <strong style="color:var(--text)">All Node Labels</strong> for every node at once.</p>
-      </div>
-
-      <div class="feat">
-        <div class="feat-icon">↕ <span class="badge">Spacing slider</span></div>
-        <h3>Layer spacing</h3>
-        <p>Drag the <strong style="color:var(--text)">Layer Spacing</strong> slider (40 – 180 px, default 90) to fan the planes apart for a panoramic view or compress them to compare layers side-by-side. Edges and ring markers update live.</p>
-      </div>
-
-      <div class="feat">
-        <div class="feat-icon">◉ <span class="badge">Info panel</span></div>
-        <h3>Node info panel</h3>
-        <p>Click any node to open the right-side info panel with the same content as the force-directed sidebar: full API syntax per surface, bug tags, severity, and workarounds. Click the node again or <strong style="color:var(--text)">×</strong> to close.</p>
-      </div>
-
-      <div class="feat">
-        <div class="feat-icon">⊙ <span class="badge">Ring markings</span></div>
-        <h3>L0 – L5 tier rings</h3>
-        <p>Each plane carries a faint ring with a label (e.g. <code>L3 · Commands</code>) at the edge. The rings stay visible during orbit so you always know which tier you're looking at from any angle.</p>
-      </div>
-
-      <div class="feat">
-        <div class="feat-icon">↗ <span class="badge">Open</span></div>
-        <h3>Open the layered view</h3>
-        <p>Available on GitHub Pages or locally. Same dataset as graph.html — no extra install needed.</p>
-        <div style="margin-top:12px">
-          <a class="btn-ghost" href="graph-layered.html" target="_blank" style="font-size:12px;padding:6px 14px">Open Layered Planes View ↗</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ── Node Types ─────────────────────────────────────── -->
-<section id="nodes">
-  <hr>
-  <div style="height:56px"></div>
-  <div class="section-label">Node Types</div>
-  <h2>What each node represents</h2>
-  <p>Nodes are color-coded by type. Hover or click to explore.</p>
-
-  <div class="node-legend">
-    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)">
-      <span class="ndot" style="background:#7c3aed"></span>Root
-    </span>
-    <span class="node-badge" style="color:#93c5fd;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)">
-      <span class="ndot" style="background:#3b82f6"></span>Surface
-    </span>
-    <span class="node-badge" style="color:#7dd3fc;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)">
-      <span class="ndot" style="background:#0ea5e9"></span>Category
-    </span>
-    <span class="node-badge" style="color:#cbd5e1;border-color:rgba(148,163,184,0.3);background:rgba(148,163,184,0.07)">
-      <span class="ndot" style="background:#94a3b8"></span>Command
-    </span>
-    <span class="node-badge" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08)">
-      <span class="ndot" style="background:#ef4444"></span>Bug · Open
-    </span>
-    <span class="node-badge" style="color:#86efac;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08)">
-      <span class="ndot" style="background:#22c55e"></span>Bug · Fixed
-    </span>
-    <span class="node-badge" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08)">
-      <span class="ndot" style="background:#fbbf24"></span>Bug · Partial
-    </span>
-    <span class="node-badge" style="color:#f0abfc;border-color:rgba(217,70,239,0.3);background:rgba(217,70,239,0.08)">
-      <span class="ndot" style="background:#d946ef"></span>Pattern
-    </span>
-    <span class="node-badge" style="color:#94a3b8;border-color:rgba(71,85,105,0.35);background:rgba(71,85,105,0.1)">
-      <span class="ndot" style="background:#475569"></span>Reference
-    </span>
-  </div>
-
-  <table>
-    <tr><th>Node</th><th>What clicking it does</th><th>Sidebar content</th></tr>
-    <tr>
-      <td>Root</td>
-      <td>Highlights all 5 surfaces + 5 references + categories</td>
-      <td>Project overview</td>
-    </tr>
-    <tr>
-      <td>Surface (CLI / MCP / JS / Python / Java)</td>
-      <td>Highlights all commands available on that surface</td>
-      <td>Command count on that surface</td>
-    </tr>
-    <tr>
-      <td>Category</td>
-      <td>Highlights all commands in that category</td>
-      <td>Command count, bug count, Collapse/Expand button</td>
-    </tr>
-    <tr>
-      <td>Command</td>
-      <td>Highlights direct neighbors (category + attached bugs/patterns)</td>
-      <td>CLI / MCP / JS / Python / Java syntax, bug tags, ↗ docs link</td>
-    </tr>
-    <tr>
-      <td>Bug (open / partial / fixed)</td>
-      <td>Highlights the affected command(s)</td>
-      <td>Severity, workaround (if any), related bug IDs</td>
-    </tr>
-    <tr>
-      <td>Pattern</td>
-      <td>Highlights commands affected by the pattern</td>
-      <td>Pattern description and workaround</td>
-    </tr>
-    <tr>
-      <td>Reference</td>
-      <td>Highlights neighbors</td>
-      <td>Description and link</td>
-    </tr>
-  </table>
-</section>
-
-<!-- ── Features ──────────────────────────────────────── -->
+<!-- ── Force-Directed Features ───────────────────────── -->
 <section id="features">
   <hr>
   <div style="height:56px"></div>
@@ -573,19 +435,16 @@
   <h2>Everything graph.html can do</h2>
 
   <div class="feature-grid">
-
     <div class="feat">
       <div class="feat-icon">🔍 <span class="badge">Search</span></div>
       <h3>Search across all fields</h3>
       <p>The search box matches against method name, description, metadata, CLI syntax, MCP tool name, and category. Results highlight instantly. An amber notice appears when matched nodes are hidden by active filters.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">⬡ <span class="badge">Group filters</span></div>
       <h3>Group filters</h3>
       <p>Toggle entire node groups on and off: <strong style="color:var(--text)">Surfaces · API (148) · Open Bugs · Fixed Bugs · Patterns · References</strong>. Multiple groups combine — filters stack independently.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">📶 <span class="badge">Tier filters</span></div>
       <h3>Tier (surface count) filters</h3>
@@ -598,37 +457,31 @@
         <span class="pill" style="color:#374151;border-color:rgba(55,65,81,0.5)">Planned · 2</span>
       </div>
     </div>
-
     <div class="feat">
       <div class="feat-icon">🎯 <span class="badge">Surface Focus</span></div>
       <h3>Surface Focus buttons</h3>
       <p>The header buttons — <strong style="color:#3b82f6">CLI</strong> · <strong style="color:#06b6d4">MCP</strong> · <strong style="color:#eab308">JS</strong> · <strong style="color:#22c55e">Python</strong> · <strong style="color:#f97316">Java</strong> — highlight all commands on that surface without hiding any nodes. Mutually exclusive. Click again to clear.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">▼ <span class="badge">Collapse</span></div>
       <h3>Category collapse</h3>
-      <p>Click a category node, then use the <strong style="color:var(--text)">▼ Collapse commands</strong> button in the sidebar to hide that category's command nodes from the graph. Multiple categories can be collapsed simultaneously. Search notices update accordingly.</p>
+      <p>Click a category node, then use the <strong style="color:var(--text)">▼ Collapse commands</strong> button in the sidebar to hide that category's command nodes. Multiple categories can be collapsed simultaneously. Search notices update accordingly.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">↗ <span class="badge">Docs links</span></div>
       <h3>Direct docs links</h3>
       <p>Every command node's sidebar includes a <strong style="color:var(--text)">↗ docs</strong> link that jumps straight to the corresponding <code>methods/</code> page on GitHub — covering syntax, known bugs, and workarounds.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">📊 <span class="badge">Stats panel</span></div>
       <h3>Live stats panel</h3>
-      <p>The bottom-right panel updates in real time as you apply filters: visible commands (out of 148), open bugs, fixed bugs, total nodes, and total links currently rendered in the graph.</p>
+      <p>The bottom-right panel updates in real time as you apply filters: visible commands (out of 148), open bugs, fixed bugs, total nodes, and total links currently rendered.</p>
     </div>
-
     <div class="feat">
       <div class="feat-icon">? <span class="badge">Guide overlay</span></div>
       <h3>Built-in guide</h3>
       <p>Click <strong style="color:var(--text)">? Guide</strong> in the header for a quick-reference overlay covering navigation, filters, tier colors, and surface focus. Close with <code>Esc</code>, the × button, or by clicking outside.</p>
     </div>
-
   </div>
 </section>
 
@@ -672,6 +525,160 @@
   </div>
 </section>
 
+<!-- ── Layered View ───────────────────────────────────── -->
+<section id="layered">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Layered Planes View · graph-layered.html</div>
+  <h2>Six tiers, one scene</h2>
+  <p>An alternative rendering of the same 226-node dataset — powered by <strong style="color:var(--text)">Three.js r161</strong> with OrbitControls. Nodes sit on six fixed horizontal planes stacked by tier, making the hierarchy immediately readable without waiting for a physics simulation to settle.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Open locally or on GitHub Pages</h3>
+        <p>Double-click <code>graph-layered.html</code>, or from Terminal:</p>
+      </div>
+    </div>
+  </div>
+  <pre>open graph-layered.html
+# or via GitHub Pages:
+# https://lana-20.github.io/vibium-wiki/graph-layered.html</pre>
+
+  <div class="steps" style="margin-top:4px">
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Orbit, zoom, pan</h3>
+        <p><strong style="color:var(--text)">Left-drag</strong> to rotate · <strong style="color:var(--text)">Scroll</strong> to zoom · <strong style="color:var(--text)">Right-drag</strong> to pan</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Click a node</h3>
+        <p>Click any node to open the info panel on the right with full API syntax per surface. Click the same node again to deselect.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Layer controls</h3>
+        <p>Toggle layer visibility with checkboxes · show/hide labels per layer · drag the spacing slider to fan layers apart or compress them.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="node-legend" style="margin-top:32px">
+    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)">L0 Root</span>
+    <span class="node-badge" style="color:#3b82f6;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)">L1 Surfaces</span>
+    <span class="node-badge" style="color:#0ea5e9;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)">L2 Categories</span>
+    <span class="node-badge" style="color:#94a3b8;border-color:rgba(148,163,184,0.25);background:rgba(148,163,184,0.08)">L3 Commands</span>
+    <span class="node-badge" style="color:#dc2626;border-color:rgba(220,38,38,0.35);background:rgba(220,38,38,0.1)">L4 Bugs &amp; Patterns</span>
+    <span class="node-badge" style="color:#4ade80;border-color:rgba(74,222,128,0.35);background:rgba(74,222,128,0.1)">L5 Fixed &amp; Refs</span>
+  </div>
+
+  <div style="margin-top:40px">
+    <div class="section-label" style="margin-bottom:16px">Layered View · Features</div>
+    <div class="feature-grid">
+      <div class="feat">
+        <div class="feat-icon">☰ <span class="badge">Layer toggles</span></div>
+        <h3>Show / hide layers</h3>
+        <p>The left panel has a checkbox for each of the 6 tiers. Uncheck a layer to hide its plane, all its nodes, and all its labels in one click — useful for focusing on commands only or bugs only.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">𝐀 <span class="badge">Label controls</span></div>
+        <h3>Per-layer labels</h3>
+        <p>Each layer row has a <strong style="color:var(--text)">Labels</strong> button. Root, Surfaces, and Categories show labels by default; Commands, Bugs, and Refs are off. Toggle individually or check <strong style="color:var(--text)">All Node Labels</strong> for every node at once.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">↕ <span class="badge">Spacing slider</span></div>
+        <h3>Layer spacing</h3>
+        <p>Drag the <strong style="color:var(--text)">Layer Spacing</strong> slider (40 – 180 px, default 90) to fan the planes apart for a panoramic view or compress them to compare layers side-by-side. Edges and ring markers update live.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">◉ <span class="badge">Info panel</span></div>
+        <h3>Node info panel</h3>
+        <p>Click any node to open the right-side info panel with the same content as the force-directed sidebar: full API syntax per surface, bug tags, severity, and workarounds. Click the node again or <strong style="color:var(--text)">×</strong> to close.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">⊙ <span class="badge">Ring markings</span></div>
+        <h3>L0 – L5 tier rings</h3>
+        <p>Each plane carries a faint ring with a label (e.g. <code>L3 · Commands</code>) at its edge. The rings stay visible during orbit so you always know which tier you're looking at from any angle.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:28px;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25)">
+    <strong>Open it:</strong> <a href="graph-layered.html" target="_blank" style="color:#34d399">lana-20.github.io/vibium-wiki/graph-layered.html ↗</a> — or <code>open graph-layered.html</code> locally.
+  </div>
+</section>
+
+<!-- ── Node Types ─────────────────────────────────────── -->
+<section id="nodes">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Node Types</div>
+  <h2>What each node represents</h2>
+  <p>Nodes are color-coded by type. The same color scheme applies in both graph views.</p>
+
+  <div class="node-legend">
+    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)"><span class="ndot" style="background:#7c3aed"></span>Root</span>
+    <span class="node-badge" style="color:#93c5fd;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)"><span class="ndot" style="background:#3b82f6"></span>Surface</span>
+    <span class="node-badge" style="color:#7dd3fc;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)"><span class="ndot" style="background:#0ea5e9"></span>Category</span>
+    <span class="node-badge" style="color:#cbd5e1;border-color:rgba(148,163,184,0.3);background:rgba(148,163,184,0.07)"><span class="ndot" style="background:#94a3b8"></span>Command</span>
+    <span class="node-badge" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08)"><span class="ndot" style="background:#ef4444"></span>Bug · Open</span>
+    <span class="node-badge" style="color:#86efac;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08)"><span class="ndot" style="background:#22c55e"></span>Bug · Fixed</span>
+    <span class="node-badge" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08)"><span class="ndot" style="background:#fbbf24"></span>Bug · Partial</span>
+    <span class="node-badge" style="color:#f0abfc;border-color:rgba(217,70,239,0.3);background:rgba(217,70,239,0.08)"><span class="ndot" style="background:#d946ef"></span>Pattern</span>
+    <span class="node-badge" style="color:#94a3b8;border-color:rgba(71,85,105,0.35);background:rgba(71,85,105,0.1)"><span class="ndot" style="background:#475569"></span>Reference</span>
+  </div>
+
+  <table>
+    <tr><th>Node</th><th>Info panel / sidebar content</th><th>graph.html also</th></tr>
+    <tr>
+      <td>Root</td>
+      <td>Project overview, surfaces summary</td>
+      <td>Highlights all 5 surfaces + references</td>
+    </tr>
+    <tr>
+      <td>Surface (CLI / MCP / JS / Python / Java)</td>
+      <td>Command count on that surface</td>
+      <td>Highlights all commands on that surface</td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td>Command count, bug count</td>
+      <td>Highlights commands in category · Collapse/Expand button</td>
+    </tr>
+    <tr>
+      <td>Command</td>
+      <td>CLI / MCP / JS / Python / Java syntax, bug tags, ↗ docs link</td>
+      <td>Highlights category + attached bugs/patterns</td>
+    </tr>
+    <tr>
+      <td>Bug (open / partial / fixed)</td>
+      <td>Severity, workaround (if any), related bug IDs</td>
+      <td>Highlights the affected command(s)</td>
+    </tr>
+    <tr>
+      <td>Pattern</td>
+      <td>Pattern description and workaround</td>
+      <td>Highlights commands affected by the pattern</td>
+    </tr>
+    <tr>
+      <td>Reference</td>
+      <td>Description and link</td>
+      <td>Highlights neighbors</td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>Difference between views:</strong> In <strong>graph.html</strong>, clicking a node also lights up its neighboring edges. In <strong>graph-layered.html</strong>, clicking opens the info panel only — same content, no neighbor highlighting.
+  </div>
+</section>
+
 <!-- ── Wiki ──────────────────────────────────────────── -->
 <section id="wiki">
   <hr>
@@ -709,7 +716,6 @@
   </table>
 
   <h3 style="margin-top:28px">Key reference pages</h3>
-
   <div class="feature-grid" style="margin-top:14px">
     <div class="feat" style="padding:16px">
       <h3><a href="reference/api-reference.md" style="color:var(--text);text-decoration:none">Full API table →</a></h3>
@@ -814,30 +820,64 @@ bash run-layered-tests.sh
   <div class="section-label">Tips</div>
   <h2>Quick reference</h2>
 
-  <div class="feature-grid">
-    <div class="feat" style="padding:16px">
-      <h3>Find a method fast</h3>
-      <p style="font-size:12px">Type in the search box. Matches highlight immediately. Click the highlighted node for full syntax across all 5 surfaces.</p>
+  <div class="tips-grid">
+    <div>
+      <div class="tips-col-label" style="color:var(--purple)">graph.html — Force-Directed</div>
+      <div class="tips-col">
+        <div class="feat" style="padding:16px">
+          <h3>Find a method fast</h3>
+          <p style="font-size:12px">Type in the search box. Matches highlight immediately. Click the highlighted node for full syntax across all 5 surfaces.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Check surface availability</h3>
+          <p style="font-size:12px">Use <strong style="color:var(--text)">Tier filters</strong> to see commands on exactly N surfaces. Use <strong style="color:var(--text)">Surface Focus</strong> to highlight all commands on one surface.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Investigate a bug</h3>
+          <p style="font-size:12px">Search the bug ID (e.g. <code>B3</code>). Click the red bug node to see affected commands and workarounds. Follow the <strong style="color:var(--text)">↗ docs</strong> link for the full report.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Declutter the graph</h3>
+          <p style="font-size:12px">Toggle off <strong style="color:var(--text)">Fixed Bugs</strong> and <strong style="color:var(--text)">References</strong> to focus on active API methods. Collapse noisy categories from their sidebar button.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Compare surfaces</h3>
+          <p style="font-size:12px">Click a command node → sidebar shows all 5 surfaces at once. Planned entries show <code>⬜ planned</code>; missing show <code>—</code>.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Reset everything</h3>
+          <p style="font-size:12px">Reload the page to reset all filters. Or click <strong style="color:var(--text)">✕</strong> on the sidebar, click active filter buttons again to toggle them off.</p>
+        </div>
+      </div>
     </div>
-    <div class="feat" style="padding:16px">
-      <h3>Check surface availability</h3>
-      <p style="font-size:12px">Use <strong style="color:var(--text)">Tier filters</strong> to see commands on exactly N surfaces. Use <strong style="color:var(--text)">Surface Focus</strong> to highlight all commands on one surface.</p>
-    </div>
-    <div class="feat" style="padding:16px">
-      <h3>Investigate a bug</h3>
-      <p style="font-size:12px">Search the bug ID (e.g. <code>B3</code>). Click the red bug node to see affected commands and workarounds. Follow the <strong style="color:var(--text)">↗ docs</strong> link for the full bug report.</p>
-    </div>
-    <div class="feat" style="padding:16px">
-      <h3>Declutter the graph</h3>
-      <p style="font-size:12px">Toggle off <strong style="color:var(--text)">Fixed Bugs</strong> and <strong style="color:var(--text)">References</strong> to focus on active API methods. Collapse noisy categories from their sidebar button.</p>
-    </div>
-    <div class="feat" style="padding:16px">
-      <h3>Compare surfaces</h3>
-      <p style="font-size:12px">Click a command node → check the sidebar syntax table for all 5 surfaces at once. Planned entries show <code>⬜ planned</code>; missing show <code>—</code>.</p>
-    </div>
-    <div class="feat" style="padding:16px">
-      <h3>Reset everything</h3>
-      <p style="font-size:12px">Reload the page to reset all filters and state. Or click <strong style="color:var(--text)">✕</strong> on the sidebar, click active filter/tier buttons to toggle them off.</p>
+    <div>
+      <div class="tips-col-label" style="color:#34d399">graph-layered.html — Layered Planes</div>
+      <div class="tips-col">
+        <div class="feat" style="padding:16px">
+          <h3>Focus on one tier</h3>
+          <p style="font-size:12px">Uncheck all layers except the one you want. Try Commands-only (L3) to see just the 148 API methods, or Bugs-only (L4) to scan open issues.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Read node labels</h3>
+          <p style="font-size:12px">Labels are on by default for L0–L2. Turn on <strong style="color:var(--text)">All Node Labels</strong> to see every node named, or use individual layer <strong style="color:var(--text)">Labels</strong> buttons.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>See the full hierarchy at once</h3>
+          <p style="font-size:12px">Drag the <strong style="color:var(--text)">Layer Spacing</strong> slider right to fan tiers apart. Orbit to a top-down view to see all six planes as a stack.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Inspect a node</h3>
+          <p style="font-size:12px">Click any node to open the info panel on the right — same API syntax and bug data as the force-directed sidebar. Click again or press <strong style="color:var(--text)">×</strong> to close.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Orient yourself while orbiting</h3>
+          <p style="font-size:12px">Each plane has an <strong style="color:var(--text)">L0–L5</strong> ring label at its edge. If you lose your place, the ring tells you which tier you're looking at from any angle.</p>
+        </div>
+        <div class="feat" style="padding:16px">
+          <h3>Reset the camera</h3>
+          <p style="font-size:12px">Reload the page to return to the default orbit angle and spacing. All layer toggles and label states reset to defaults.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -848,7 +888,9 @@ bash run-layered-tests.sh
 <footer>
   <span>Vibium Wiki · v26.5.31 · June 2026</span>
   <span>·</span>
-  <a href="graph.html">Knowledge Graph</a>
+  <a href="graph.html">Force-Directed Graph</a>
+  <span>·</span>
+  <a href="graph-layered.html">Layered Planes Graph</a>
   <span>·</span>
   <a href="index.md">Full Index</a>
   <span>·</span>
