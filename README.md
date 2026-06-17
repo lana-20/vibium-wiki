@@ -28,7 +28,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 | [bugs/](bugs/) | B1–B33 CLI · MB1–MB10 MCP · JS · Python · Java bug indexes |
 | [methods/](methods/) | 119 per-method pages covering all 148 commands; 11 have full docs, 108 are stubs with syntax tables |
 | [patterns/](patterns/) | dialog_deadlock · negative_values · find_text_case |
-| [reference/](reference/) | Architecture · actionability · full API table (150 commands × 5 surfaces) · BiDi coverage · roadmap |
+| [reference/](reference/) | Architecture · actionability · full API cross-surface table · BiDi coverage · roadmap |
 | [guides/](guides/) | Getting started with JS/TS and MCP · recording format |
 | [releases/](releases/) | v26.5.31 release notes |
 | [SCHEMA.md](SCHEMA.md) | Page conventions, status values, ingest and lint rules |

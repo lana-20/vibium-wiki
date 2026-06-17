@@ -570,10 +570,32 @@ clear_search
 suite "T15 — Sidebar content"
 reset_state
 
-# Command node — surf-table and node-type label
+# Command node — surf-table, node-type label, docs link
 click_node "cmd-click" > /dev/null
 assert "sidebar cmd — node-type API Method" "$(ev "document.querySelector('#sidebar-content .node-type').textContent.includes('API Method') ? 'ok' : 'no'")" "ok"
 assert "sidebar cmd — surf-table rendered"  "$(ev "document.querySelector('#sidebar-content .surf-table') !== null ? 'ok' : 'no'")" "ok"
+assert "sidebar cmd — docs link present"    "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]') !== null ? 'ok' : 'no'")" "ok"
+assert "sidebar cmd — docs link URL correct" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/click.md"
+ev "closeSidebar()" > /dev/null
+
+# Docs link URL mapping — stub node (b-start → b-start.md)
+click_node "cmd-b-start" > /dev/null
+assert "docs link — stub node b-start.md"   "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/b-start.md"
+ev "closeSidebar()" > /dev/null
+
+# Docs link URL mapping — multi-command page (back → navigate.md)
+click_node "cmd-back" > /dev/null
+assert "docs link — multi-page back→navigate.md" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/navigate.md"
+ev "closeSidebar()" > /dev/null
+
+# Docs link URL mapping — camelCase ID (scrollIV → scroll-iv.md)
+click_node "cmd-scrollIV" > /dev/null
+assert "docs link — camelCase scrollIV→scroll-iv.md" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]').href")" "https://github.com/lana-20/vibium-wiki/blob/main/methods/scroll-iv.md"
+ev "closeSidebar()" > /dev/null
+
+# Docs link absent on non-command nodes (category, surface, bug)
+click_node "cat-interaction" > /dev/null
+assert "docs link — absent on category node" "$(ev "document.querySelector('#sidebar-content a[href*=\"methods/\"]') === null ? 'ok' : 'present'")" "ok"
 ev "closeSidebar()" > /dev/null
 
 # Category node — node-type, collapse button, commands count text

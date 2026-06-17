@@ -2,7 +2,7 @@
 
 **Subject:** `index.html`  
 **Toolchain:** Vibium CLI (`/vibe-check` skill)  
-**Last verified:** 2026-06-16 · v26.5.31  
+**Last verified:** 2026-06-17 · v26.5.31  
 **Runner:** `tests/run-tests.sh [url]`  
 **Run history:** `tests/run-history.log` (one line per run); full output in `tests/runs/<ISO-timestamp>.txt`
 
@@ -482,13 +482,22 @@ Verifies that each node group renders the correct content structure in `#sidebar
 
 | Group | Checks |
 |---|---|
-| command | `.node-type` text includes "API Method"; `.surf-table` element present |
-| category | `.node-type` text includes "Category"; sidebar button present; "commands" text in content |
+| command | `.node-type` text includes "API Method"; `.surf-table` present; `↗ docs` link present with correct `methods/` URL |
+| category | `.node-type` text includes "Category"; sidebar button present; "commands" text in content; no docs link |
 | surface | `.node-type` text includes "Surface"; "commands on this surface" in content |
 | bug-open | `.node-type` text includes "Open"; `.workaround` element present (for bugs with workarounds) |
 | root | `.node-type` text includes "Root" |
 
-Nodes used: `cmd-click`, `cat-interaction`, `cli`, `B3` (bug-open with workaround), `vibium` (root).
+**Docs link URL mapping** (4 cases verified):
+
+| Node | Expected URL |
+|---|---|
+| `cmd-click` (existing page) | `methods/click.md` |
+| `cmd-b-start` (stub) | `methods/b-start.md` |
+| `cmd-back` (multi-command page) | `methods/navigate.md` |
+| `cmd-scrollIV` (camelCase ID) | `methods/scroll-iv.md` |
+
+Nodes used: `cmd-click`, `cmd-b-start`, `cmd-back`, `cmd-scrollIV`, `cat-interaction`, `cli`, `B3` (bug-open with workaround), `vibium` (root).
 
 ---
 

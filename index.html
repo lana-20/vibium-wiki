@@ -1049,6 +1049,25 @@ function toggleCollapse(catId) {
   if (catNode) showSidebarContent(catNode);
 }
 
+const METHODS_MULTI = {
+  'go':'navigate.md','back':'navigate.md','forward':'navigate.md','reload':'navigate.md',
+  'url':'navigate.md','title':'navigate.md','bring':'navigate.md','pg-close':'navigate.md',
+  'find':'find.md','findAll':'find.md','el-find':'find.md','el-finA':'find.md',
+  'sleep':'wait.md','waitFor':'wait.md','waitForFn':'wait.md','waitURL':'wait.md',
+  'waitLoad':'wait.md','waitText':'wait.md','waitUntil':'wait.md',
+  'click':'click.md','fill':'fill.md','hover':'hover.md','select':'select.md','eval':'evaluate.md',
+  'map':'map.md','diff':'map.md','count':'map.md',
+  'cl-inst':'clock.md','cl-ff':'clock.md','cl-runF':'clock.md','cl-pAt':'clock.md',
+  'cl-res':'clock.md','cl-sFixed':'clock.md','cl-sSys':'clock.md','cl-sTZ':'clock.md',
+  'dlg-msg':'dialog.md','dlg-type':'dialog.md','dlg-dv':'dialog.md',
+  'dlg-acc':'dialog.md','dlg-dis':'dialog.md',
+};
+const METHODS_BASE = 'https://github.com/lana-20/vibium-wiki/blob/main/methods/';
+function methodsUrl(cmdId) {
+  const file = METHODS_MULTI[cmdId] || cmdId.replace(/([a-z])([A-Z])/g,'$1-$2').toLowerCase() + '.md';
+  return METHODS_BASE + file;
+}
+
 function showSidebarContent(node) {
   document.getElementById('sidebar-placeholder').style.display = 'none';
   document.getElementById('close-sidebar').style.display = '';
@@ -1082,7 +1101,11 @@ function showSidebarContent(node) {
     }).join('');
     const openList = (node.openBugs||[]).map(id => `<span class="tag" style="color:#f87171;border-color:#7f1d1d">${id}</span>`).join('');
     const fixList  = (node.fixedBugs||[]).map(id => `<span class="tag" style="color:#86efac;border-color:#14532d">${id} ✓</span>`).join('');
-    extraHtml = `<table class="surf-table">${rows}</table>${openList}${fixList}`;
+    const cmdId    = node.id.slice(4);
+    const docLink  = `<a href="${methodsUrl(cmdId)}" target="_blank" rel="noopener"
+      style="display:inline-block;margin-top:10px;font-size:11px;color:#64748b;text-decoration:none;border:1px solid rgba(100,116,139,0.3);border-radius:4px;padding:2px 8px"
+      onmouseover="this.style.color='#94a3b8'" onmouseout="this.style.color='#64748b'">↗ docs</a>`;
+    extraHtml = `<table class="surf-table">${rows}</table>${openList}${fixList}${docLink}`;
 
   } else if (node.group === 'category') {
     const count    = cmdNodes.filter(c => c.catId === node.catId).length;

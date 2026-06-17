@@ -131,7 +131,7 @@ Interactive 3D visualization of all 148 Vibium commands across 5 surfaces. Topol
 
 ```sh
 cd ~/vibium-wiki/tests
-./run-tests.sh          # 623 / 623 pass (2026-06-16)
+./run-tests.sh          # 629 / 629 pass (2026-06-17)
 ```
 
 | File | Contents |

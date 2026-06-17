@@ -177,8 +177,7 @@ Key notes:
 
 | # | Description | JS | Python |
 |---|---|---|---|
-| 148 | Assert visual claim | `page.check(claim)` | `page.check(claim)` |
-| 149 | Natural language action | `page.do(action, data?)` | `page.do(action, data=...)` |
+| 148 | AI-native methods: assert visual claim · natural language action | `page.check(claim)` · `page.do(action, data?)` | `page.check(claim)` · `page.do(action, data=...)` |
 
 ---
 
