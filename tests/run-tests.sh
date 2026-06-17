@@ -136,7 +136,7 @@ fi
 
 # Sample bug, pattern, reference nodes
 reset_state
-for nid in B1 B3 B6 MB1 JS-Bug2 PY-146 JV-128 p-dialog r-arch r-bidi; do
+for nid in B1 B3 B6 MB1 JS-124 PY-146 JV-128 p-dialog r-arch r-bidi; do
   check_click_unclick "$nid" "node: $nid"
 done
 
@@ -158,8 +158,8 @@ group_test() {
 
 group_test "surface"   "g.filter(function(n){return n.group==='surface'}).length"                                                                              "5"
 group_test "api"       "g.filter(function(n){return n.group==='command'}).length"                                                                              "148"
-group_test "bug-open"  "g.filter(function(n){return n.group==='bug-open'||n.group==='bug-partial'||n.group==='bug-regression'}).length"                        "39"
-group_test "bug-fixed" "g.filter(function(n){return n.group==='bug-fixed'}).length"                                                                            "25"
+group_test "bug-open"  "g.filter(function(n){return n.group==='bug-open'||n.group==='bug-partial'||n.group==='bug-regression'}).length"                        "37"
+group_test "bug-fixed" "g.filter(function(n){return n.group==='bug-fixed'}).length"                                                                            "23"
 group_test "pattern"   "g.filter(function(n){return n.group==='pattern'}).length"                                                                              "3"
 group_test "reference" "g.filter(function(n){return n.group==='reference'}).length"                                                                            "5"
 
@@ -442,7 +442,7 @@ assert "all groups off — remaining node is root"  "$(ev "Graph.graphData().nod
 for grp in surface api bug-open bug-fixed pattern reference; do
   ev "document.querySelector('[data-group=\"${grp}\"]').click()" > /dev/null
 done
-assert "all groups restored — 243 nodes" "$(ev "Graph.graphData().nodes.length + ''")" "243"
+assert "all groups restored — 239 nodes" "$(ev "Graph.graphData().nodes.length + ''")" "239"
 
 # Client/CLI-MCP tier buttons absent
 assert "no 'client' tier button in DOM"  "$(ev "document.querySelector('[data-tier=client]') ? 'found' : 'ok'")" "ok"
@@ -613,9 +613,9 @@ reset_state
 
 # Default state values
 assert "stats default — cmds = 148/148" "$(ev "document.getElementById('stat-cmds').textContent")" "148/148"
-assert "stats default — open = 39"      "$(ev "document.getElementById('stat-open').textContent")" "39"
-assert "stats default — fixed = 25"     "$(ev "document.getElementById('stat-fixed').textContent")" "25"
-assert "stats default — nodes = 243"    "$(ev "document.getElementById('stat-nodes').textContent")" "243"
+assert "stats default — open = 37"      "$(ev "document.getElementById('stat-open').textContent")" "37"
+assert "stats default — fixed = 23"     "$(ev "document.getElementById('stat-fixed').textContent")" "23"
+assert "stats default — nodes = 239"    "$(ev "document.getElementById('stat-nodes').textContent")" "239"
 
 # Dynamic: stat-nodes text matches Graph.graphData().nodes.length
 assert "stats — nodes match graph data" "$(ev "document.getElementById('stat-nodes').textContent === Graph.graphData().nodes.length + '' ? 'ok' : 'mismatch'")" "ok"

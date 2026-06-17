@@ -4,17 +4,17 @@ Last run: v26.5.31 · 2026-06-06
 Repro repo: github.com/lana-20/vibium-test-js  
 Test suite: 127 PASS / 1 BUG / 0 FAIL on v26.5.31 (was 125/3/0 on v26.3.18)
 
-| ID | gh Issue | Method | Status (v26.5.31) | Workaround |
-|---|---|---|---|---|
-| Bug 1 | [#123](https://github.com/VibiumDev/vibium/issues/123) | `page.waitUntil` | fixed v26.5.31 (PR #163) | was: `page.wait(ms)` |
-| Bug 2 | [#124](https://github.com/VibiumDev/vibium/issues/124) | `page.evaluate` | open | JSON.stringify wrap |
-| Bug 3 | [#125](https://github.com/VibiumDev/vibium/issues/125) | `page.clock` | fixed v26.5.31 (PR #163) | was: always call install() first |
-| Bug 4 | [#126](https://github.com/VibiumDev/vibium/issues/126) | `page.capture.navigation`, `page.url` | open | poll url() or use evaluate('location.href') |
-| #118 | [#118](https://github.com/VibiumDev/vibium/issues/118) | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
+| gh Issue | Method | Status (v26.5.31) | Workaround |
+|---|---|---|---|
+| [#123](https://github.com/VibiumDev/vibium/issues/123) | `page.waitUntil` | fixed v26.5.31 (PR #163) | was: `page.wait(ms)` |
+| [#124](https://github.com/VibiumDev/vibium/issues/124) | `page.evaluate` | open | JSON.stringify wrap |
+| [#125](https://github.com/VibiumDev/vibium/issues/125) | `page.clock` | fixed v26.5.31 (PR #163) | was: always call install() first |
+| [#126](https://github.com/VibiumDev/vibium/issues/126) | `page.capture.navigation`, `page.url` | open | poll url() or use evaluate('location.href') |
+| [#118](https://github.com/VibiumDev/vibium/issues/118) | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
 
 ---
 
-## Bug 1 — waitUntil(expression) always times out · **FIXED v26.5.31** (#163) {#Bug1}
+## #123 — waitUntil(expression) always times out · **FIXED v26.5.31** (PR #163)
 
 **Trigger:** `page.waitUntil(expression, opts)` threw timeout even for immediately-true expressions (e.g. `document.readyState === "complete"` on a loaded page). `page.waitUntil.url()` was unaffected.
 
@@ -32,11 +32,11 @@ await page.waitUntil(`document.readyState === "complete"`, { timeout: 5000 })
 
 **Workaround** (was needed on v26.3.18): `await page.wait(ms)` with empirically-chosen delay.
 
-→ `tests/repro-bug1-waituntil-expression.test.ts`
+→ `tests/repro-bug1-waituntil-expression.test.ts` · → [[bugs/js#123]]
 
 ---
 
-## Bug 2 — evaluate() wraps nested string[][] as BiDi typed objects · open (#124)
+## #124 — evaluate() wraps nested string[][] as BiDi typed objects · open
 
 **Trigger:** `page.evaluate()` returning a nested array (`string[][]`) — inner array items deserialize as `{ type: "string", value: "..." }` instead of plain strings. A flat `string[]` deserializes correctly.
 
@@ -68,11 +68,11 @@ const items = JSON.parse(json) as string[][]
 
 **Affects:** JS, Python, Java clients (same BiDi deserializer path). CLI returns JSON string (B9 fixed) so JSON.parse workaround works there already.
 
-→ `tests/repro-bug2-evaluate-nested-array.test.ts` · → [[methods/evaluate]]
+→ `tests/repro-bug2-evaluate-nested-array.test.ts` · → [[bugs/js#124]] · → [[methods/evaluate]]
 
 ---
 
-## Bug 3 — clock.setFixedTime() silently fails without clock.install() · **FIXED v26.5.31** (#163) {#Bug3}
+## #125 — clock.setFixedTime() silently fails without clock.install() · **FIXED v26.5.31** (PR #163)
 
 **Trigger:** Calling `page.clock.setFixedTime(time)` without first calling `page.clock.install()` had no effect — `Date.now()` returned live system time. No error thrown.
 
@@ -90,11 +90,11 @@ const ts = await page.evaluate<number>('Date.now()')
 // ts === 1577836800000 ✓
 ```
 
-→ `tests/repro-bug3-clock-setfixedtime.test.ts` · → [[methods/clock]]
+→ `tests/repro-bug3-clock-setfixedtime.test.ts` · → [[bugs/js#125]] · → [[methods/clock]]
 
 ---
 
-## Bug 4 — capture.navigation() / page.url() miss SPA pushState · open (#126)
+## #126 — capture.navigation() / page.url() miss SPA pushState · open
 
 Full detail in [[methods/navigate#126]].
 

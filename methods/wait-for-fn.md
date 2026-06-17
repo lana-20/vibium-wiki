@@ -2,7 +2,7 @@
 method: waitForFn
 aliases: [browser_wait_for_fn, page.waitUntil]
 last_tested: v26.5.31
-bugs: [Bug1, JS-123]
+bugs: [JS-123]
 status: partial
 ---
 
@@ -22,7 +22,7 @@ Wait until a JavaScript expression returns truthy.
 
 ## Known issues
 
-**Bug 1 — FIXED v26.5.31** (#163): expression-based waits always timed out in v26.3.18 regardless of expression value. v26.5.31 wraps bare expressions uniformly so both forms work:
+**#123 — FIXED v26.5.31** (PR #163): expression-based waits always timed out in v26.3.18 regardless of expression value. v26.5.31 wraps bare expressions uniformly so both forms work:
 
 ```ts
 // Both now work in v26.5.31:

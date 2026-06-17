@@ -52,15 +52,15 @@ echo "Page loaded."
 # ── T1: Data integrity ────────────────────────────────────────────────────────
 suite "T1 — Data integrity"
 
-assert "allNodes total = 243"       "$(ev "_LG.allNodes.length + ''")"  "243"
+assert "allNodes total = 239"       "$(ev "_LG.allNodes.length + ''")"  "239"
 assert "layer 0 nodes = 1 (root)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===0}).length + ''")"  "1"
 assert "layer 1 nodes = 5 (surf)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===1}).length + ''")"  "5"
 assert "layer 2 nodes = 17 (cat)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===2}).length + ''")"  "17"
 assert "layer 3 nodes = 148 (cmd)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===3}).length + ''")"  "148"
-assert "layer 4 nodes = 42 (bugs+patterns)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===4}).length + ''")"  "42"
-assert "layer 5 nodes = 30 (fixed+refs)"     "$(ev "_LG.allNodes.filter(function(n){return n.layer===5}).length + ''")"  "30"
+assert "layer 4 nodes = 40 (bugs+patterns)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===4}).length + ''")"  "40"
+assert "layer 5 nodes = 28 (fixed+refs)"     "$(ev "_LG.allNodes.filter(function(n){return n.layer===5}).length + ''")"  "28"
 assert "LAYER_DEFS length = 6"      "$(ev "_LG.LAYER_DEFS.length + ''")"  "6"
-assert "meshes count = 243"         "$(ev "_LG.meshes.length + ''")"  "243"
+assert "meshes count = 239"         "$(ev "_LG.meshes.length + ''")"  "239"
 assert "edgeLines exist"            "$(ev "_LG.edgeLines.length > 0 ? 'ok' : '0'")"  "ok"
 
 # Group counts
@@ -68,15 +68,15 @@ assert "group root = 1"          "$(ev "_LG.allNodes.filter(function(n){return n
 assert "group surface = 5"       "$(ev "_LG.allNodes.filter(function(n){return n.group==='surface'}).length + ''")"   "5"
 assert "group category = 17"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='category'}).length + ''")"  "17"
 assert "group command = 148"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='command'}).length + ''")"   "148"
-assert "group bug-open = 32"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-open'}).length + ''")"  "32"
+assert "group bug-open = 30"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-open'}).length + ''")"  "30"
 assert "group bug-partial = 6"   "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-partial'}).length + ''")"  "6"
 assert "group bug-regression = 1" "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-regression'}).length + ''")"  "1"
 assert "group pattern = 3"       "$(ev "_LG.allNodes.filter(function(n){return n.group==='pattern'}).length + ''")"   "3"
-assert "group bug-fixed = 25"    "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-fixed'}).length + ''")" "25"
+assert "group bug-fixed = 23"    "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-fixed'}).length + ''")" "23"
 assert "group reference = 5"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='reference'}).length + ''")"  "5"
 
 # nodeMap contains key nodes
-for nid in vibium cli mcp js python java cmd-click cmd-go B3 MB3 p-dialog r-arch JS-Bug1; do
+for nid in vibium cli mcp js python java cmd-click cmd-go B3 MB3 p-dialog r-arch JS-123; do
   assert "nodeMap has '$nid'"  "$(ev "_LG.nodeMap['$nid'] ? 'ok' : 'missing'")"  "ok"
 done
 
@@ -230,7 +230,7 @@ assert "all-labels on — allLabels = true"  "$(ev "_LG.allLabels + ''")"  "true
 assert "all-labels on — cmd-click labelObj visible"  "$(ev "_LG.getMesh('cmd-click').labelObj.visible + ''")"  "true"
 assert "all-labels on — B3 labelObj visible"         "$(ev "_LG.getMesh('B3').labelObj.visible + ''")"  "true"
 assert "all-labels on — r-arch labelObj visible"     "$(ev "_LG.getMesh('r-arch').labelObj.visible + ''")"  "true"
-assert "all-labels on — all 243 labelObjs visible"   \
+assert "all-labels on — all 239 labelObjs visible"   \
   "$(ev "_LG.meshes.filter(function(m){return !m.labelObj.visible}).length + ''")"  "0"
 
 # Uncheck
@@ -330,7 +330,7 @@ batch_result=$(ev "
 if [[ "$batch_result" == PASS:* ]]; then
   pass "all ${batch_result#PASS:} nodes — selectNode/deselectAll"
 else
-  fail "batch select/deselect" "$batch_result" "PASS:243"
+  fail "batch select/deselect" "$batch_result" "PASS:239"
 fi
 
 # ── T10: Edge integrity ───────────────────────────────────────────────────────

@@ -294,14 +294,14 @@
 <section>
   <div class="section-label">At a glance</div>
   <h2>Everything in one place</h2>
-  <p>148 API methods. 39 open bugs. 25 fixed bugs. 5 surfaces. All connected.</p>
+  <p>148 API methods. 37 open bugs. 23 fixed bugs. 5 surfaces. All connected.</p>
 
   <div class="stats-row">
     <div class="stat-card"><div class="num" style="color:var(--blue)">148</div><div class="lbl">API Methods</div></div>
     <div class="stat-card"><div class="num" style="color:var(--cyan)">5</div><div class="lbl">Surfaces</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--red)">39</div><div class="lbl">Open Bugs</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--green)">25</div><div class="lbl">Fixed Bugs</div></div>
-    <div class="stat-card"><div class="num" style="color:var(--purple)">243</div><div class="lbl">Graph Nodes</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--red)">37</div><div class="lbl">Open Bugs</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--green)">23</div><div class="lbl">Fixed Bugs</div></div>
+    <div class="stat-card"><div class="num" style="color:var(--purple)">239</div><div class="lbl">Graph Nodes</div></div>
     <div class="stat-card"><div class="num" style="color:var(--muted)">148</div><div class="lbl">Method Pages</div></div>
   </div>
 
@@ -327,10 +327,10 @@
     <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--dim)">
       <span>Commands attach to:</span>
       <span class="topo-node" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);font-size:10px">
-        <span class="topo-dot" style="background:#ef4444"></span>39 open bugs
+        <span class="topo-dot" style="background:#ef4444"></span>37 open bugs
       </span>
       <span class="topo-node" style="color:#86efac;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08);font-size:10px">
-        <span class="topo-dot" style="background:#22c55e"></span>25 fixed bugs
+        <span class="topo-dot" style="background:#22c55e"></span>23 fixed bugs
       </span>
       <span class="topo-node" style="color:#f0abfc;border-color:rgba(217,70,239,0.3);background:rgba(217,70,239,0.08);font-size:10px">
         <span class="topo-dot" style="background:#d946ef"></span>3 patterns
@@ -349,7 +349,7 @@
   <div style="height:56px"></div>
   <div class="section-label">Choose your view</div>
   <h2>Which graph should I open?</h2>
-  <p>Both views render the same 243 nodes and all their relationships. Pick based on what you want to do.</p>
+  <p>Both views render the same 239 nodes and all their relationships. Pick based on what you want to do.</p>
 
   <div class="compare-grid">
     <div class="compare-card purple">
@@ -531,7 +531,7 @@
   <div style="height:56px"></div>
   <div class="section-label">Layered Planes View · graph-layered.html</div>
   <h2>Six tiers, one scene</h2>
-  <p>An alternative rendering of the same 243-node dataset — powered by <strong style="color:var(--text)">Three.js r161</strong> with OrbitControls. Nodes sit on six fixed horizontal planes stacked by tier, making the hierarchy immediately readable without waiting for a physics simulation to settle.</p>
+  <p>An alternative rendering of the same 239-node dataset — powered by <strong style="color:var(--text)">Three.js r161</strong> with OrbitControls. Nodes sit on six fixed horizontal planes stacked by tier, making the hierarchy immediately readable without waiting for a physics simulation to settle.</p>
 
   <div class="steps">
     <div class="step">
@@ -752,7 +752,7 @@
 # Summary appended to run-history.log</pre>
 
   <div class="callout green">
-    <strong>What's covered:</strong> node click/unclick for all 243 nodes · 6 group filter buttons · 5 tier buttons · 5 surface focus buttons · search across fields · search notice with filter interactions · guide overlay · close sidebar · 8 compound interaction scenarios · category collapse · sidebar content per node type · docs link URL mapping · stats panel live counts.
+    <strong>What's covered:</strong> node click/unclick for all 239 nodes · 6 group filter buttons · 5 tier buttons · 5 surface focus buttons · search across fields · search notice with filter interactions · guide overlay · close sidebar · 8 compound interaction scenarios · category collapse · sidebar content per node type · docs link URL mapping · stats panel live counts.
   </div>
 
   <h3 style="margin-top:28px">Suite breakdown — graph.html (16 suites · 629 assertions)</h3>
@@ -788,7 +788,7 @@ bash run-layered-tests.sh
   <h3 style="margin-top:28px">Suite breakdown — graph-layered.html (17 suites · 303 assertions)</h3>
   <table>
     <tr><th>Suite</th><th>What it covers</th></tr>
-    <tr><td>T1 — Data integrity</td><td>243 nodes, layer counts, group counts, edge existence</td></tr>
+    <tr><td>T1 — Data integrity</td><td>239 nodes, layer counts, group counts, edge existence</td></tr>
     <tr><td>T2 — Node positions</td><td>each layer Y = layer_idx × SPACING</td></tr>
     <tr><td>T3 — Default visibility</td><td>all layers visible on load</td></tr>
     <tr><td>T4 — Default label state</td><td>root/surface/category on; command/bug/ref off</td></tr>
@@ -796,7 +796,7 @@ bash run-layered-tests.sh
     <tr><td>T6 — Per-layer Labels button</td><td>toggles labels for that layer only</td></tr>
     <tr><td>T7 — All Node Labels checkbox</td><td>bulk on/off for all labels</td></tr>
     <tr><td>T8 — selectNode / deselectAll</td><td>emissive highlight + full reset</td></tr>
-    <tr><td>T9 — Batch: all nodes selectable</td><td>all 243 nodes can be selected/deselected</td></tr>
+    <tr><td>T9 — Batch: all nodes selectable</td><td>all 239 nodes can be selected/deselected</td></tr>
     <tr><td>T10 — Edge integrity</td><td>edges span correct Y range between layers</td></tr>
     <tr><td>T11 — Spacing slider</td><td>min / max / default values</td></tr>
     <tr><td>T12 — Layer ring markings</td><td>L0–L5 CSS2D labels track layer visibility</td></tr>

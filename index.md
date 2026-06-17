@@ -117,7 +117,7 @@ See [SCHEMA.md](SCHEMA.md) for page conventions, status values, ingest rules, an
 
 ## Knowledge Graphs
 
-Two interactive views of the same 243-node dataset: root → 5 surfaces → 17 categories → 148 commands + 39 open bugs + 25 fixed bugs + 3 patterns + 5 references.
+Two interactive views of the same 239-node dataset: root → 5 surfaces → 17 categories → 148 commands + 37 open bugs + 23 fixed bugs + 3 patterns + 5 references.
 
 **Guide (start here):** https://lana-20.github.io/vibium-wiki/guide.html
 

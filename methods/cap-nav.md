@@ -2,7 +2,7 @@
 method: capture.navigation
 category: events
 last_tested: v26.5.31
-bugs: [JS-Bug4, JS-126]
+bugs: [JS-126]
 status: open
 ---
 
@@ -22,6 +22,6 @@ Capture navigation before load.
 
 ## Known bugs
 
-→ [[bugs/js#JS-Bug4]]
+→ [[bugs/js#126]]
 
 → [[reference/api-reference]]

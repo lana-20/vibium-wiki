@@ -3,7 +3,7 @@ method: cl-inst
 aliases: [page_clock_install, page.clock.install]
 last_tested: v26.5.31
 last_tested_date: 2026-06-06
-bugs: [Bug3, JS-125]
+bugs: [JS-125]
 status: partial
 ---
 
@@ -32,6 +32,6 @@ const ts = await page.evaluate<number>('Date.now()')
 // ts === 1577836800000 ✓
 ```
 
-**Bug 3 — FIXED v26.5.31**: `setFixedTime()` without prior `install()` silently had no effect in v26.3.18. v26.5.31 now returns an error message instead of silently succeeding. Standalone `setFixedTime()` (without install) is still not supported. → [[methods/cl-s-fixed]] · → [[bugs/js#Bug3]]
+**#125 — FIXED v26.5.31** (PR #163): `setFixedTime()` without prior `install()` silently had no effect in v26.3.18. v26.5.31 now returns an error message instead of silently succeeding. Standalone `setFixedTime()` (without install) is still not supported. → [[methods/cl-s-fixed]] · → [[bugs/js#125]]
 
 → [[reference/api-reference]]
