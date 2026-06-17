@@ -39,7 +39,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 
 ```sh
 cd tests && ./run-tests.sh
-# 623 / 623 pass — saves output to runs/<timestamp>.txt and run-history.log
+# 629 / 629 pass — saves output to runs/<timestamp>.txt and run-history.log
 ```
 
 See [tests/TESTPLAN.md](tests/TESTPLAN.md) for 18 test sections covering the mindmap UI.

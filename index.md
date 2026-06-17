@@ -86,7 +86,7 @@ All 148 commands have a page in [methods/](methods/). The 11 above have full doc
 |---|---|
 | [reference/architecture.md](reference/architecture.md) | System diagram, CLI vs MCP, sync/async bridge, BiDi foundation, platform support, install paths |
 | [reference/actionability.md](reference/actionability.md) | Five checks (visible/stable/receivesEvents/enabled/editable), per-action check sets, polling loop, semantic selectors |
-| [reference/api-reference.md](reference/api-reference.md) | Full 150-command cross-surface table (CLI / MCP / JS / Python / Java) |
+| [reference/api-reference.md](reference/api-reference.md) | Full 148-command cross-surface table (CLI / MCP / JS / Python / Java) |
 | [reference/api-surface.md](reference/api-surface.md) | Method counts per surface (CLI=66, MCP=85, JS=68, Python=72, Java=82), install links |
 | [reference/bidi-coverage.md](reference/bidi-coverage.md) | WebDriver BiDi coverage tracker: 40/87 implemented (63 commands + 24 events) |
 | [reference/ai-native.md](reference/ai-native.md) | Draft spec: `page.check()` and `page.do()` AI-powered methods (not yet implemented) |

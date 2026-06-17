@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibium Wiki & Knowledge Graph — Guide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07071a;
+    --surface: #0f0f28;
+    --surface2: #13132e;
+    --border: rgba(148,163,184,0.12);
+    --border2: rgba(148,163,184,0.2);
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --dim: #475569;
+    --purple: #a78bfa;
+    --purple-d: #7c3aed;
+    --blue: #3b82f6;
+    --cyan: #0ea5e9;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --pink: #d946ef;
+    --orange: #f97316;
+    --yellow: #eab308;
+    --mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ── Nav ─────────────────────────────────────── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(7,7,26,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    padding: 0 32px;
+    display: flex; align-items: center; gap: 28px;
+    height: 48px;
+  }
+  nav .logo { font-size: 13px; font-weight: 700; color: var(--purple); letter-spacing: .02em; white-space: nowrap; }
+  nav a { font-size: 12px; color: var(--dim); text-decoration: none; white-space: nowrap; }
+  nav a:hover { color: var(--muted); }
+  nav .nav-links { display: flex; gap: 20px; overflow-x: auto; }
+  nav .cta {
+    margin-left: auto; flex-shrink: 0;
+    background: rgba(124,58,237,0.2); border: 1px solid var(--purple-d);
+    color: var(--purple); padding: 4px 14px; border-radius: 20px;
+    font-size: 12px; text-decoration: none; white-space: nowrap;
+  }
+  nav .cta:hover { background: rgba(124,58,237,0.35); color: #c4b5fd; }
+
+  /* ── Layout ──────────────────────────────────── */
+  .page { max-width: 900px; margin: 0 auto; padding: 0 32px 80px; }
+
+  /* ── Hero ────────────────────────────────────── */
+  .hero {
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--purple);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px); font-weight: 800;
+    line-height: 1.15; letter-spacing: -.02em;
+    color: var(--text); margin-bottom: 20px;
+  }
+  .hero h1 span { color: var(--purple); }
+  .hero p { font-size: 16px; color: var(--muted); max-width: 600px; margin-bottom: 32px; }
+  .hero-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--purple-d); color: #fff;
+    padding: 10px 22px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; text-decoration: none; transition: background .15s;
+  }
+  .btn-primary:hover { background: #6d28d9; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border2); color: var(--muted);
+    padding: 10px 22px; border-radius: 8px; font-size: 13px;
+    text-decoration: none; transition: border-color .15s, color .15s;
+  }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+  /* ── Section ─────────────────────────────────── */
+  section { padding: 56px 0 0; }
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--purple);
+    margin-bottom: 8px;
+  }
+  h2 { font-size: 24px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 12px; }
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+  p { color: var(--muted); margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Stats row ───────────────────────────────── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px; margin: 32px 0;
+  }
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 16px; text-align: center;
+  }
+  .stat-card .num { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+  .stat-card .lbl { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+  /* ── Topology diagram ────────────────────────── */
+  .topo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px 24px; margin: 32px 0;
+    font-family: var(--mono); font-size: 12px;
+  }
+  .topo-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+  .topo-node {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid; white-space: nowrap;
+  }
+  .topo-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .topo-arr { color: var(--dim); padding: 0 8px; font-size: 14px; }
+  .topo-count { font-size: 10px; opacity: .6; margin-left: 2px; }
+
+  /* ── Feature cards ───────────────────────────── */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; margin-top: 28px;
+  }
+  .feat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+    transition: border-color .2s;
+  }
+  .feat:hover { border-color: var(--border2); }
+  .feat-icon {
+    font-size: 20px; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .feat-icon .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+    background: rgba(124,58,237,0.15); color: var(--purple); border: 1px solid rgba(124,58,237,0.3);
+  }
+  .feat h3 { font-size: 14px; margin-bottom: 6px; }
+  .feat p { font-size: 12px; margin-bottom: 0; }
+
+  /* ── Node legend ─────────────────────────────── */
+  .node-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+  .node-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid;
+  }
+  .ndot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── Code block ──────────────────────────────── */
+  pre {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; margin: 16px 0;
+    font-family: var(--mono); font-size: 12px; color: #7dd3fc;
+    overflow-x: auto; line-height: 1.7;
+  }
+  code {
+    font-family: var(--mono); font-size: 11.5px; color: #7dd3fc;
+    background: rgba(255,255,255,0.07); border-radius: 3px; padding: 1px 5px;
+  }
+
+  /* ── Step list ───────────────────────────────── */
+  .steps { margin: 20px 0; counter-reset: step; }
+  .step {
+    display: flex; gap: 16px; margin-bottom: 20px;
+    counter-increment: step;
+  }
+  .step-num {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.4);
+    color: var(--purple); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-body h3 { margin-bottom: 4px; font-size: 13px; }
+  .step-body p { font-size: 12px; margin-bottom: 0; }
+
+  /* ── Filter demo ─────────────────────────────── */
+  .filter-demo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; margin: 20px 0;
+  }
+  .filter-demo-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .pill {
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    border: 1px solid; white-space: nowrap;
+  }
+
+  /* ── Table ───────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; }
+  th { text-align: left; color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid rgba(148,163,184,0.06); color: var(--muted); vertical-align: top; }
+  td:first-child { color: var(--text); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Callout ─────────────────────────────────── */
+  .callout {
+    background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2);
+    border-radius: 8px; padding: 14px 16px; margin: 20px 0;
+    font-size: 12px; color: var(--muted);
+  }
+  .callout.amber {
+    background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); }
+  .callout.green {
+    background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); }
+  .callout strong { color: var(--text); }
+
+  /* ── Divider ─────────────────────────────────── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0 0; }
+
+  /* ── Footer ──────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border); padding: 28px 32px;
+    font-size: 11px; color: var(--dim); text-align: center;
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center;
+  }
+  footer a { color: var(--dim); text-decoration: none; }
+  footer a:hover { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────── -->
+<nav>
+  <span class="logo">⬡ Vibium Wiki</span>
+  <div class="nav-links">
+    <a href="#graph">Knowledge Graph</a>
+    <a href="#features">Features</a>
+    <a href="#nodes">Node Types</a>
+    <a href="#filters">Filters</a>
+    <a href="#wiki">Wiki</a>
+    <a href="#tests">Tests</a>
+  </div>
+  <a class="cta" href="index.html" target="_blank">Open Graph ↗</a>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────── -->
+<div class="page">
+<div class="hero">
+  <div class="hero-eyebrow">Vibium v26.5.31 · June 2026</div>
+  <h1>The <span>Vibium</span> Knowledge Graph<br>& Wiki</h1>
+  <p>An interactive 3D visualization of every Vibium browser automation API method — plus a structured wiki covering bugs, patterns, and deep-dives across CLI, MCP, JavaScript, Python, and Java.</p>
+  <div class="hero-links">
+    <a class="btn-primary" href="index.html" target="_blank">Open Knowledge Graph ↗</a>
+    <a class="btn-ghost" href="https://github.com/lana-20/vibium-wiki" target="_blank">GitHub Repository</a>
+    <a class="btn-ghost" href="index.md">Full Index →</a>
+  </div>
+</div>
+
+<!-- ── At a glance ──────────────────────────────────── -->
+<section>
+  <div class="section-label">At a glance</div>
+  <h2>Everything in one place</h2>
+  <p>148 API methods. 32 open bugs. 15 fixed bugs. 5 surfaces. All connected.</p>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num" style="color:var(--blue)">148</div>
+      <div class="lbl">API Methods</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--cyan)">5</div>
+      <div class="lbl">Surfaces</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--red)">32</div>
+      <div class="lbl">Open Bugs</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--green)">15</div>
+      <div class="lbl">Fixed Bugs</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--purple)">226</div>
+      <div class="lbl">Graph Nodes</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" style="color:var(--muted)">119</div>
+      <div class="lbl">Method Pages</div>
+    </div>
+  </div>
+
+  <div class="topo">
+    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">Graph Topology</div>
+    <div class="topo-row" style="gap:4px;flex-wrap:wrap;row-gap:10px">
+      <span class="topo-node" style="color:#a78bfa;border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.1)">
+        <span class="topo-dot" style="background:#7c3aed"></span>vibium<span class="topo-count">root</span>
+      </span>
+      <span class="topo-arr">→</span>
+      <span class="topo-node" style="color:#93c5fd;border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.1)">
+        <span class="topo-dot" style="background:#3b82f6"></span>5 surfaces
+      </span>
+      <span class="topo-arr">→</span>
+      <span class="topo-node" style="color:#7dd3fc;border-color:rgba(14,165,233,0.4);background:rgba(14,165,233,0.1)">
+        <span class="topo-dot" style="background:#0ea5e9"></span>17 categories
+      </span>
+      <span class="topo-arr">→</span>
+      <span class="topo-node" style="color:#cbd5e1;border-color:rgba(148,163,184,0.3);background:rgba(148,163,184,0.07)">
+        <span class="topo-dot" style="background:#94a3b8"></span>148 commands
+      </span>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--dim)">
+      <span>Commands attach to:</span>
+      <span class="topo-node" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);font-size:10px">
+        <span class="topo-dot" style="background:#ef4444"></span>32 open bugs
+      </span>
+      <span class="topo-node" style="color:#86efac;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08);font-size:10px">
+        <span class="topo-dot" style="background:#22c55e"></span>15 fixed bugs
+      </span>
+      <span class="topo-node" style="color:#f0abfc;border-color:rgba(217,70,239,0.3);background:rgba(217,70,239,0.08);font-size:10px">
+        <span class="topo-dot" style="background:#d946ef"></span>3 patterns
+      </span>
+      <span style="align-self:center">Root attaches to:</span>
+      <span class="topo-node" style="color:#94a3b8;border-color:rgba(71,85,105,0.4);background:rgba(71,85,105,0.1);font-size:10px">
+        <span class="topo-dot" style="background:#475569"></span>5 references
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Knowledge Graph ───────────────────────────────── -->
+<section id="graph">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Knowledge Graph</div>
+  <h2>The 3D interactive map</h2>
+  <p>The graph is a self-contained HTML file powered by <strong style="color:var(--text)">3d-force-graph</strong> (vasturiano / Three.js). It runs entirely in the browser — no server needed.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Open locally</h3>
+        <p>Double-click <code>index.html</code>, or from Terminal:</p>
+      </div>
+    </div>
+  </div>
+  <pre>open index.html        # macOS
+# or via GitHub Pages:
+# https://lana-20.github.io/vibium-wiki/</pre>
+
+  <div class="steps" style="margin-top:4px">
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Rotate & zoom</h3>
+        <p><strong style="color:var(--text)">Drag</strong> to rotate · <strong style="color:var(--text)">Scroll</strong> to zoom · <strong style="color:var(--text)">Right-drag</strong> to pan</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Click a node</h3>
+        <p>Click any node to highlight its neighbors and open the sidebar with full API syntax. Click the same node again to clear.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Use filters and search</h3>
+        <p>Narrow the graph with group/tier filters, surface focus buttons, or the search box. See below for details on each.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Node Types ─────────────────────────────────────── -->
+<section id="nodes">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Node Types</div>
+  <h2>What each node represents</h2>
+  <p>Nodes are color-coded by type. Hover or click to explore.</p>
+
+  <div class="node-legend">
+    <span class="node-badge" style="color:#a78bfa;border-color:rgba(124,58,237,0.35);background:rgba(124,58,237,0.1)">
+      <span class="ndot" style="background:#7c3aed"></span>Root
+    </span>
+    <span class="node-badge" style="color:#93c5fd;border-color:rgba(59,130,246,0.35);background:rgba(59,130,246,0.1)">
+      <span class="ndot" style="background:#3b82f6"></span>Surface
+    </span>
+    <span class="node-badge" style="color:#7dd3fc;border-color:rgba(14,165,233,0.35);background:rgba(14,165,233,0.1)">
+      <span class="ndot" style="background:#0ea5e9"></span>Category
+    </span>
+    <span class="node-badge" style="color:#cbd5e1;border-color:rgba(148,163,184,0.3);background:rgba(148,163,184,0.07)">
+      <span class="ndot" style="background:#94a3b8"></span>Command
+    </span>
+    <span class="node-badge" style="color:#fca5a5;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.08)">
+      <span class="ndot" style="background:#ef4444"></span>Bug · Open
+    </span>
+    <span class="node-badge" style="color:#86efac;border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08)">
+      <span class="ndot" style="background:#22c55e"></span>Bug · Fixed
+    </span>
+    <span class="node-badge" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08)">
+      <span class="ndot" style="background:#fbbf24"></span>Bug · Partial
+    </span>
+    <span class="node-badge" style="color:#f0abfc;border-color:rgba(217,70,239,0.3);background:rgba(217,70,239,0.08)">
+      <span class="ndot" style="background:#d946ef"></span>Pattern
+    </span>
+    <span class="node-badge" style="color:#94a3b8;border-color:rgba(71,85,105,0.35);background:rgba(71,85,105,0.1)">
+      <span class="ndot" style="background:#475569"></span>Reference
+    </span>
+  </div>
+
+  <table>
+    <tr><th>Node</th><th>What clicking it does</th><th>Sidebar content</th></tr>
+    <tr>
+      <td>Root</td>
+      <td>Highlights all 5 surfaces + 5 references + categories</td>
+      <td>Project overview</td>
+    </tr>
+    <tr>
+      <td>Surface (CLI / MCP / JS / Python / Java)</td>
+      <td>Highlights all commands available on that surface</td>
+      <td>Command count on that surface</td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td>Highlights all commands in that category</td>
+      <td>Command count, bug count, Collapse/Expand button</td>
+    </tr>
+    <tr>
+      <td>Command</td>
+      <td>Highlights direct neighbors (category + attached bugs/patterns)</td>
+      <td>CLI / MCP / JS / Python / Java syntax, bug tags, ↗ docs link</td>
+    </tr>
+    <tr>
+      <td>Bug (open / partial / fixed)</td>
+      <td>Highlights the affected command(s)</td>
+      <td>Severity, workaround (if any), related bug IDs</td>
+    </tr>
+    <tr>
+      <td>Pattern</td>
+      <td>Highlights commands affected by the pattern</td>
+      <td>Pattern description and workaround</td>
+    </tr>
+    <tr>
+      <td>Reference</td>
+      <td>Highlights neighbors</td>
+      <td>Description and link</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ── Features ──────────────────────────────────────── -->
+<section id="features">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Features</div>
+  <h2>Everything the graph can do</h2>
+
+  <div class="feature-grid">
+
+    <div class="feat">
+      <div class="feat-icon">🔍 <span class="badge">Search</span></div>
+      <h3>Search across all fields</h3>
+      <p>The search box matches against method name, description, metadata, CLI syntax, MCP tool name, and category. Results highlight instantly. An amber notice appears when matched nodes are hidden by active filters.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">⬡ <span class="badge">Group filters</span></div>
+      <h3>Group filters</h3>
+      <p>Toggle entire node groups on and off: <strong style="color:var(--text)">Surfaces · API (148) · Open Bugs · Fixed Bugs · Patterns · References</strong>. Multiple groups combine — filters stack independently.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">📶 <span class="badge">Tier filters</span></div>
+      <h3>Tier (surface count) filters</h3>
+      <p>Isolate commands by how many surfaces they're on. Mutually exclusive (radio). Click again to clear.</p>
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill" style="color:#cbd5e1;border-color:rgba(203,213,225,0.3)">All 5 · 72</span>
+        <span class="pill" style="color:#93c5fd;border-color:rgba(147,197,253,0.3)">4 surf · 9</span>
+        <span class="pill" style="color:#a5f3fc;border-color:rgba(165,243,252,0.3)">3 surf · 54</span>
+        <span class="pill" style="color:#bbf7d0;border-color:rgba(187,247,208,0.3)">2 surf · 11</span>
+        <span class="pill" style="color:#374151;border-color:rgba(55,65,81,0.5)">Planned · 2</span>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">🎯 <span class="badge">Surface Focus</span></div>
+      <h3>Surface Focus buttons</h3>
+      <p>The header buttons — <strong style="color:#3b82f6">CLI</strong> · <strong style="color:#06b6d4">MCP</strong> · <strong style="color:#eab308">JS</strong> · <strong style="color:#22c55e">Python</strong> · <strong style="color:#f97316">Java</strong> — highlight all commands on that surface without hiding any nodes. Mutually exclusive. Click again to clear.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">▼ <span class="badge">Collapse</span></div>
+      <h3>Category collapse</h3>
+      <p>Click a category node, then use the <strong style="color:var(--text)">▼ Collapse commands</strong> button in the sidebar to hide that category's command nodes from the graph. Multiple categories can be collapsed simultaneously. Search notices update accordingly.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">↗ <span class="badge">Docs links</span></div>
+      <h3>Direct docs links</h3>
+      <p>Every command node's sidebar includes a <strong style="color:var(--text)">↗ docs</strong> link that jumps straight to the corresponding <code>methods/</code> page on GitHub — covering syntax, known bugs, and workarounds.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">📊 <span class="badge">Stats panel</span></div>
+      <h3>Live stats panel</h3>
+      <p>The bottom-right panel updates in real time as you apply filters: visible commands (out of 148), open bugs, fixed bugs, total nodes, and total links currently rendered in the graph.</p>
+    </div>
+
+    <div class="feat">
+      <div class="feat-icon">? <span class="badge">Guide overlay</span></div>
+      <h3>Built-in guide</h3>
+      <p>Click <strong style="color:var(--text)">? Guide</strong> in the header for a quick-reference overlay covering navigation, filters, tier colors, and surface focus. Close with <code>Esc</code>, the × button, or by clicking outside.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Filters deep-dive ────────────────────────────── -->
+<section id="filters">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Filters</div>
+  <h2>Combining filters</h2>
+  <p>Group filters and tier filters compose independently. Surface Focus overlays on top of whatever is visible. Here are useful combinations:</p>
+
+  <div class="filter-demo">
+    <div class="filter-demo-label">Example: commands on exactly 3 surfaces</div>
+    <div class="pill-row">
+      <span class="pill" style="color:#a5f3fc;border-color:rgba(165,243,252,0.3)">Tier: 3 surf</span>
+      <span style="color:var(--dim);font-size:12px;align-self:center">→ 54 commands visible (fill, hover, scroll…)</span>
+    </div>
+  </div>
+
+  <div class="filter-demo">
+    <div class="filter-demo-label">Example: all open bugs for CLI commands only</div>
+    <div class="pill-row">
+      <span class="pill" style="color:#93c5fd;border-color:rgba(147,197,253,0.3)">Surface Focus: CLI</span>
+      <span style="color:var(--dim);font-size:12px;padding:0 8px;align-self:center">+</span>
+      <span class="pill" style="color:#fca5a5;border-color:rgba(239,68,68,0.3)">Group: Open Bugs ✓</span>
+      <span style="color:var(--dim);font-size:12px;align-self:center">→ CLI commands highlighted, open bugs visible</span>
+    </div>
+  </div>
+
+  <div class="filter-demo">
+    <div class="filter-demo-label">Example: find a method — does it have a Python equivalent?</div>
+    <div class="pill-row">
+      <span class="pill" style="color:#94a3b8;border-color:rgba(148,163,184,0.3)">Search: "hover"</span>
+      <span style="color:var(--dim);font-size:12px;padding:0 8px;align-self:center">→ click node →</span>
+      <span class="pill" style="color:#7dd3fc;border-color:rgba(125,211,252,0.3)">Sidebar: Python row</span>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <strong>Search notice:</strong> If you search while group or tier filters are active, an amber notice appears showing how many matching nodes are currently hidden. Toggle filters back on to reveal them.
+  </div>
+</section>
+
+<!-- ── Wiki ──────────────────────────────────────────── -->
+<section id="wiki">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Wiki</div>
+  <h2>What's in the docs</h2>
+  <p>The wiki lives alongside the graph in the same repo. All pages are Markdown, cross-linked via <code>[[wiki-link]]</code> notation.</p>
+
+  <table>
+    <tr><th>Directory</th><th>Contents</th></tr>
+    <tr>
+      <td><a href="bugs/cli.md" style="color:var(--red);text-decoration:none">bugs/</a></td>
+      <td>B1–B33 CLI bugs · MB1–MB10 MCP bugs · JS, Python, Java client bugs. Each entry covers reproduction steps, affected surfaces, and workarounds.</td>
+    </tr>
+    <tr>
+      <td><a href="methods/click.md" style="color:var(--cyan);text-decoration:none">methods/</a></td>
+      <td>119 pages — one per API method. 11 have full documentation (click, fill, find, hover, navigate, wait, select, evaluate, map, clock, dialog). 108 are stubs with cross-surface syntax tables.</td>
+    </tr>
+    <tr>
+      <td><a href="patterns/dialog_deadlock.md" style="color:var(--pink);text-decoration:none">patterns/</a></td>
+      <td>Cross-cutting behavioral patterns: <code>dialog_deadlock</code> (socket deadlock on native dialogs), <code>negative_values</code> (numbers parsed as flags), <code>find_text_case</code> (DOM text case sensitivity).</td>
+    </tr>
+    <tr>
+      <td><a href="reference/api-reference.md" style="color:var(--muted);text-decoration:none">reference/</a></td>
+      <td>Full 148-command cross-surface table · architecture · actionability checks · BiDi coverage tracker · roadmap · AI-native spec.</td>
+    </tr>
+    <tr>
+      <td><a href="guides/getting-started-js.md" style="color:var(--muted);text-decoration:none">guides/</a></td>
+      <td>Getting started with JS/TypeScript · MCP setup for Claude Code and Gemini CLI · recording format and player.</td>
+    </tr>
+    <tr>
+      <td><a href="releases/v26.5.31.md" style="color:var(--muted);text-decoration:none">releases/</a></td>
+      <td>v26.5.31 release notes: npm dist fix, fill textarea fix, select errors, MCP serialization, Python/Java fixes.</td>
+    </tr>
+  </table>
+
+  <h3 style="margin-top:28px">Key reference pages</h3>
+
+  <div class="feature-grid" style="margin-top:14px">
+    <div class="feat" style="padding:16px">
+      <h3><a href="reference/api-reference.md" style="color:var(--text);text-decoration:none">Full API table →</a></h3>
+      <p style="font-size:11px">All 148 commands with CLI, MCP, JS, Python, and Java syntax side by side. The fastest way to check cross-surface availability.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3><a href="reference/architecture.md" style="color:var(--text);text-decoration:none">Architecture →</a></h3>
+      <p style="font-size:11px">How Vibium works: sync/async bridge, WebDriver BiDi foundation, CLI vs MCP differences, platform support, daemon mode.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3><a href="reference/actionability.md" style="color:var(--text);text-decoration:none">Actionability →</a></h3>
+      <p style="font-size:11px">The five checks (visible, stable, receivesEvents, enabled, editable), per-action check sets, polling behavior, and how semantic selectors interact.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3><a href="patterns/dialog_deadlock.md" style="color:var(--text);text-decoration:none">Dialog deadlock →</a></h3>
+      <p style="font-size:11px">The most impactful open bug: socket-level deadlock when clicking any element that triggers a native dialog. Affects CLI, MCP, Python, Java, and recording mode.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Tests ─────────────────────────────────────────── -->
+<section id="tests">
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Test suite</div>
+  <h2>Automated tests for the graph</h2>
+  <p>The graph ships with a 629-assertion test suite that runs against the live page using the Vibium CLI. It covers every interactive feature.</p>
+
+  <pre>cd ~/vibium-wiki/tests
+./run-tests.sh
+# 629 / 629 pass
+# Full output saved to runs/&lt;timestamp&gt;.txt
+# Summary appended to run-history.log</pre>
+
+  <div class="callout green">
+    <strong>What's covered:</strong> node click/unclick for all 226 nodes · 6 group filter buttons · 5 tier buttons · 5 surface focus buttons · search across fields · search notice with filter interactions · guide overlay · close sidebar · 8 compound interaction scenarios · category collapse · sidebar content per node type · docs link URL mapping · stats panel live counts.
+  </div>
+
+  <h3 style="margin-top:28px">Suite breakdown</h3>
+  <table>
+    <tr><th>Suite</th><th>Assertions</th><th>What it covers</th></tr>
+    <tr><td>T1 — Node click/unclick</td><td>batch · all 226</td><td>Sidebar, badge, state vars for every node</td></tr>
+    <tr><td>T2 — Group filters</td><td>18</td><td>Toggle on/off, node counts, activeFilters</td></tr>
+    <tr><td>T3 — Tier filters</td><td>22</td><td>Mutually exclusive, command counts per tier</td></tr>
+    <tr><td>T4 — Surface focus</td><td>25</td><td>activeSurfHi, badge casing, clear, switch</td></tr>
+    <tr><td>T5 — Search</td><td>14</td><td>Name, desc, CLI, case-insensitive, clear</td></tr>
+    <tr><td>T6 — Search notice</td><td>12</td><td>Amber notice, singular/plural, filter interaction</td></tr>
+    <tr><td>T7 — Guide overlay</td><td>4</td><td>Open, close via X / backdrop / Escape</td></tr>
+    <tr><td>T8 — Close sidebar</td><td>5</td><td>Placeholder restore, badge, state clear</td></tr>
+    <tr><td>T9 — Compound</td><td>22</td><td>8 multi-feature interaction scenarios</td></tr>
+    <tr><td>T10 — Negative cases</td><td>9</td><td>Space search, all-groups-off, absent buttons</td></tr>
+    <tr><td>T11 — Edge cases</td><td>8</td><td>Special chars, rapid toggle, singular notice</td></tr>
+    <tr><td>T12 — Visual/UI state</td><td>10</td><td>Button counts, badge, sidebar width</td></tr>
+    <tr><td>T13 — Accessibility</td><td>5</td><td>Escape key, search type=search</td></tr>
+    <tr><td>T14 — Category collapse</td><td>16</td><td>collapsedCats, multi-collapse, search notice</td></tr>
+    <tr><td>T15 — Sidebar content</td><td>16</td><td>node-type labels, surf-table, docs link URLs</td></tr>
+    <tr><td>T16 — Stats panel</td><td>9</td><td>Default counts, dynamic updates with filters</td></tr>
+  </table>
+
+  <div class="callout" style="margin-top:20px">
+    <strong>Test plan:</strong> See <a href="tests/TESTPLAN.md" style="color:var(--purple)">tests/TESTPLAN.md</a> for the full specification of all 16 suites, expected values, edge cases, and runner-discovered facts.
+  </div>
+</section>
+
+<!-- ── Quick tips ────────────────────────────────────── -->
+<section>
+  <hr>
+  <div style="height:56px"></div>
+  <div class="section-label">Tips</div>
+  <h2>Quick reference</h2>
+
+  <div class="feature-grid">
+    <div class="feat" style="padding:16px">
+      <h3>Find a method fast</h3>
+      <p style="font-size:12px">Type in the search box. Matches highlight immediately. Click the highlighted node for full syntax across all 5 surfaces.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3>Check surface availability</h3>
+      <p style="font-size:12px">Use <strong style="color:var(--text)">Tier filters</strong> to see commands on exactly N surfaces. Use <strong style="color:var(--text)">Surface Focus</strong> to highlight all commands on one surface.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3>Investigate a bug</h3>
+      <p style="font-size:12px">Search the bug ID (e.g. <code>B3</code>). Click the red bug node to see affected commands and workarounds. Follow the <strong style="color:var(--text)">↗ docs</strong> link for the full bug report.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3>Declutter the graph</h3>
+      <p style="font-size:12px">Toggle off <strong style="color:var(--text)">Fixed Bugs</strong> and <strong style="color:var(--text)">References</strong> to focus on active API methods. Collapse noisy categories from their sidebar button.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3>Compare surfaces</h3>
+      <p style="font-size:12px">Click a command node → check the sidebar syntax table for all 5 surfaces at once. Planned entries show <code>⬜ planned</code>; missing show <code>—</code>.</p>
+    </div>
+    <div class="feat" style="padding:16px">
+      <h3>Reset everything</h3>
+      <p style="font-size:12px">Reload the page to reset all filters and state. Or click <strong style="color:var(--text)">✕</strong> on the sidebar, click active filter/tier buttons to toggle them off.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.page -->
+
+<!-- ── Footer ────────────────────────────────────────── -->
+<footer>
+  <span>Vibium Wiki · v26.5.31 · June 2026</span>
+  <span>·</span>
+  <a href="index.html">Knowledge Graph</a>
+  <span>·</span>
+  <a href="index.md">Full Index</a>
+  <span>·</span>
+  <a href="https://github.com/lana-20/vibium-wiki">GitHub</a>
+  <span>·</span>
+  <a href="tests/TESTPLAN.md">Test Plan</a>
+  <span>·</span>
+  <a href="SCHEMA.md">Schema</a>
+  <span>·</span>
+  <span>MIT License</span>
+</footer>
+
+</body>
+</html>

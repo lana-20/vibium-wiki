@@ -26,7 +26,7 @@ vibium-wiki/
 ├── reference/
 │   ├── architecture.md     ← system diagram, sync/async bridge, BiDi
 │   ├── actionability.md    ← five checks, polling loop, semantic selectors
-│   ├── api-reference.md    ← 150-command cross-surface table
+│   ├── api-reference.md    ← 148-command cross-surface table
 │   ├── api-surface.md      ← method counts per surface, install links
 │   ├── bidi-coverage.md    ← BiDi spec coverage tracker (40/87)
 │   ├── ai-native.md        ← draft: page.check() / page.do() spec
