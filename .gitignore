@@ -3,3 +3,4 @@ tests/runs/
 .env
 .env.*
 !.env.example
+linkedin-article.md
