@@ -41,6 +41,16 @@
   #info-close:hover{color:#94a3b8}
   #controls-hint{position:absolute;bottom:12px;left:12px;font-size:10px;color:#334155}
   .node-label{color:#f1f5f9;background:rgba(7,7,26,0.82);padding:2px 6px;border-radius:3px;font-size:11px;font-weight:500;pointer-events:none;white-space:nowrap;user-select:none;text-shadow:0 1px 3px rgba(0,0,0,0.9);border:1px solid rgba(148,163,184,0.18)}
+
+  @media (max-width: 640px) {
+    #layer-panel { width:170px; padding:10px 12px; }
+    #info-panel {
+      top:auto; bottom:0; right:0; left:0;
+      width:100%; max-height:50vh;
+      border-radius:12px 12px 0 0;
+    }
+    #controls-hint { display:none; }
+  }
 </style>
 </head>
 <body>
@@ -800,6 +810,11 @@ document.getElementById('spacing').addEventListener('input', e => {
 
 // ─── HIDE PANEL ──────────────────────────────────────────────────────────────
 let panelHidden = false;
+if (window.innerWidth < 640) {
+  panelHidden = true;
+  document.querySelectorAll('#layer-panel > *:not(h4)').forEach(el => { el.style.display = 'none'; });
+  document.getElementById('hide-panel').textContent = 'Show ▼';
+}
 document.getElementById('hide-panel').addEventListener('click', () => {
   panelHidden = !panelHidden;
   document.querySelectorAll('#layer-panel > *:not(h4)').forEach(el => {
