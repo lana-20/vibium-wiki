@@ -2,7 +2,7 @@
 
 **Current version:** v26.5.31 (2026-06-01)  
 **Last ingest:** 2026-06-14  
-**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (MB1–MB10), vibium-js-test suite (JS Bug1–4, #118), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
+**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (#149–#157 + MB10), vibium-js-test suite (#118, #123–#126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
 
 ---
 
@@ -11,8 +11,8 @@
 | Index | Contents | Open | Fixed |
 |---|---|---|---|
 | [bugs/cli.md](bugs/cli.md) | B1–B33 CLI bugs | B3 B6 B8 B10–B22 B24–B33 | B1 B2 B4 B7 B9; B5/B30/B32 partial |
-| [bugs/mcp.md](bugs/mcp.md) | MB1–MB10 MCP bugs | MB3 MB10 | MB1 MB2 MB4–MB9 |
-| [bugs/js.md](bugs/js.md) | JS client bugs (Bug 1–4 + #118) | Bug 2 (#124) Bug 4 (#126) #118 | Bug 1 Bug 3 (fixed v26.5.31 #163) |
+| [bugs/mcp.md](bugs/mcp.md) | MCP bugs (#149–#157 + MB10) | #151 MB10 | #149 #150 #152–#157 |
+| [bugs/js.md](bugs/js.md) | JS client bugs (#118, #123–#126) | #124 #126 #118 | #123 #125 (fixed v26.5.31 #163) |
 | [bugs/python.md](bugs/python.md) | Python client bugs | #146 | #168 #147 #145 #144 #110 + v26.3 era |
 | [bugs/java.md](bugs/java.md) | Java client bugs | #174 #135 #128 #106 | 9 bugs fixed v26.5.31 |
 
@@ -23,16 +23,16 @@
 | Method | CLI bugs | MCP bugs | Status |
 |---|---|---|---|
 | [click](methods/click.md) | B3 B6 | MB10 | open |
-| [dialog](methods/dlg-acc.md) | B3 | MB3 | open |
-| [eval / evaluate](methods/evaluate.md) | B9 ✓ | MB6 ✓ | partial (#124 open) |
-| [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | MB7 ✓ | partial |
+| [dialog](methods/dlg-acc.md) | B3 | #151 | open |
+| [eval / evaluate](methods/evaluate.md) | B9 ✓ | #154 ✓ | partial (#124 open) |
+| [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | #155 ✓ | partial |
 | [find](methods/find.md) | B15✓ B17 B29 | — | partial |
 | [hover](methods/hover.md) | B30 partial | — | partial |
 | [map](methods/map.md) | B16 B24 | — | open |
 | [go](methods/go.md) | B3 #126 | — | open |
 | [select](methods/select.md) | B5 partial | — | partial |
-| [waitForFn / waitUntil](methods/wait-for-fn.md) | Bug 1 JS (fixed v26.5.31) | — | fixed |
-| [clock.install](methods/cl-inst.md) | Bug 3 JS (fixed v26.5.31) | — | fixed |
+| [waitForFn / waitUntil](methods/wait-for-fn.md) | #123 (fixed v26.5.31) | — | fixed |
+| [clock.install](methods/cl-inst.md) | #125 (fixed v26.5.31) | — | fixed |
 
 All 148 commands have a page in [methods/](methods/) — one file per command. The pages above have full documentation with bug details and workarounds; all others have cross-surface syntax tables.
 
@@ -68,7 +68,7 @@ All 148 commands have a page in [methods/](methods/) — one file per command. T
 | #137 | clock — ClockOptions.time() builder path still ignored after partial fix | Java | partial |
 | #159 | vibium pipe fails with Selenium Grid | CLI | — |
 | #158 | vibium pipe --connect disconnects immediately | CLI | — |
-| #151 | browser_click deadlocks on native dialog (MCP) | MCP | MB3 |
+| #151 | browser_click deadlocks on native dialog (MCP) | MCP | — |
 | #146 | capture.dialog deadlocks in Python | Python | dialog_deadlock |
 | #142 | vibium click hangs during recording on POST redirect | CLI | B3 variant |
 | #135 | page.expose() never injects function | Java | — |
@@ -153,7 +153,7 @@ cd ~/vibium-wiki/tests && ./run-tests.sh
 **Tech:** Three.js r161 · OrbitControls · CSS2DRenderer · also opens locally via `file://`  
 **Last updated:** 2026-06-16 · v26.5.31
 
-Same 226 nodes arranged as 6 stacked horizontal planes (root / surfaces / categories / commands / bugs+patterns / fixed+refs). Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan) — best for understanding hierarchy and tier structure.
+Same 230 nodes arranged as 6 stacked horizontal planes (root / surfaces / categories / commands / bugs+patterns / fixed+refs). Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan) — best for understanding hierarchy and tier structure.
 
 **Features:**
 - **Layer toggles** — show/hide each of the 6 planes independently

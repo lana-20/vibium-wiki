@@ -4,7 +4,7 @@
 
 The most dangerous cross-cutting pattern in Vibium. A BiDi socket-level deadlock occurs whenever a command triggers a blocking event (native dialog, page navigation, form POST redirect) that the socket cannot follow while still waiting for the command to return.
 
-**Affects:** CLI (B3), MCP (MB3 · #151), Python (#146), Java (#128), CLI recording mode (#142).
+**Affects:** CLI (B3), MCP (#151), Python (#146), Java (#128), CLI recording mode (#142).
 
 ---
 
@@ -12,7 +12,7 @@ The most dangerous cross-cutting pattern in Vibium. A BiDi socket-level deadlock
 
 | Trigger | Clients | Issue |
 |---|---|---|
-| `click` on element that fires `alert` / `confirm` / `prompt` | CLI, MCP | B3, MB3, #151 |
+| `click` on element that fires `alert` / `confirm` / `prompt` | CLI, MCP | B3, #151 |
 | `capture.dialog(fn)` where `fn` awaits the click | Python (JS SDK via capture API) | #146 |
 | `click` during recording when form POST redirects back to same page | CLI | #142 |
 | `page.route()` or `page.setHeaders()` then `page.go()` — server-side interception blocks navigation | Java | #128 |
@@ -116,11 +116,11 @@ browser_start {}
 | Client | Status | Tracking |
 |---|---|---|
 | CLI | open | B3 |
-| MCP | open · deferred | #151 / MB3 |
+| MCP | open · deferred | #151 |
 | Python capture.dialog | open | #146 |
 | CLI recording mode | open | #142 |
 | Java route/setHeaders | open | #128 |
 
 No fix timeline announced for any of these as of 2026-06-14.
 
-→ [[methods/dialog]] · → [[methods/click]] · → [[bugs/cli#B3]] · → [[bugs/mcp#MB3]]
+→ [[methods/dialog]] · → [[methods/click]] · → [[bugs/cli#B3]] · → [[bugs/mcp#151]]

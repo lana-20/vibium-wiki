@@ -135,7 +135,7 @@ page.waitForFunction("() => true", new WaitOptions().timeout(3000));
 
 `page.setHeaders()` or `page.route()` cause `page.go()` to hang permanently — server-side network interception blocks navigation at the BiDi layer.
 
-**Same root cause as:** B3 (CLI), MB3 (MCP) — socket-level deadlock.
+**Same root cause as:** B3 (CLI), #151 (MCP) — socket-level deadlock.
 
 **Workaround:** avoid `setHeaders`/`route` before navigation. Use `page.evaluate()` for header injection patterns where possible.
 

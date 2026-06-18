@@ -60,7 +60,7 @@ All three modes share the same BiDi proxy and handler logic under `clicker/inter
 | Lifecycle | persistent daemon — survives between commands | per-session — `browser_start` / `browser_stop` |
 | Interface | Bash subcommands | JSON-RPC tool calls |
 | Commands/tools | 66 | 85 |
-| Dialog deadlock | B3 (deferred) | MB3 (deferred) |
+| Dialog deadlock | B3 (deferred) | #151 (deferred) |
 | Obscured check | unaffected | MB10 (intermittent) |
 
 ### Client libraries

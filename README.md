@@ -24,7 +24,7 @@ Step-by-step instructions for both views — which graph to open, how to navigat
 open graph.html
 ```
 
-Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 226 nodes total: root → surfaces → categories → commands + bugs + patterns + references.
+Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 230 nodes total: root → surfaces → categories → commands + bugs + patterns + references.
 
 **Features:** node click for sidebar with per-surface syntax · group/tier filters · surface focus buttons · search with hidden-match notice · ? Guide overlay
 
@@ -40,7 +40,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 open graph-layered.html
 ```
 
-Same 226-node dataset rendered as 6 horizontal planes stacked in Three.js. Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan). Each plane is a node tier: root / surfaces / categories / commands / bugs+patterns / fixed+refs.
+Same 230-node dataset rendered as 6 horizontal planes stacked in Three.js. Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan). Each plane is a node tier: root / surfaces / categories / commands / bugs+patterns / fixed+refs.
 
 **Features:** layer visibility toggles · per-layer label buttons · spacing slider · L0–L5 ring markings · node click info panel
 
@@ -51,7 +51,7 @@ Same 226-node dataset rendered as 6 horizontal planes stacked in Three.js. Camer
 | Section | What's inside |
 |---|---|
 | [index.md](index.md) | Full table of contents |
-| [bugs/](bugs/) | B1–B33 CLI · MB1–MB10 MCP · JS · Python · Java bug indexes |
+| [bugs/](bugs/) | B1–B33 CLI · #149–#157 + MB10 MCP · JS · Python · Java bug indexes |
 | [methods/](methods/) | 148 per-method pages — one per command; all have syntax tables, key commands have full docs |
 | [patterns/](patterns/) | dialog_deadlock · negative_values · find_text_case |
 | [reference/](reference/) | Architecture · actionability · full API cross-surface table · BiDi coverage · roadmap |

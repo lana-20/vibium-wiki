@@ -12,8 +12,8 @@ vibium-wiki/
 ├── index.md           ← full wiki index
 ├── bugs/
 │   ├── cli.md         ← B1–B33 index
-│   ├── mcp.md         ← MB1–MB10 index
-│   ├── js.md          ← JS client bugs (Bug 1–4 + #118)
+│   ├── mcp.md         ← MCP bug index (#149–#157 + MB10)
+│   ├── js.md          ← JS client bugs (#118, #123–#126)
 │   ├── python.md      ← Python client bugs
 │   └── java.md        ← Java client bugs
 ├── methods/
@@ -105,7 +105,7 @@ Links that don't resolve yet are placeholders — not errors.
 
 | Version | Date | Notable changes |
 |---|---|---|
-| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/MB7), select errors on non-match + label matching (B5), eval JSON fixed (B9/MB6), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (MB1-MB9 except MB3/MB10), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
+| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/#155), select errors on non-match + label matching (B5), eval JSON fixed (B9/#154), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (#149–#157 except #151/MB10), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
 | v26.3.18 | — | Previous release — npm package shipped without dist/ (broken) |
 
 ## GitHub issues cross-reference
@@ -113,7 +113,7 @@ Links that don't resolve yet are placeholders — not errors.
 | Issue | Bug ID | Status |
 |---|---|---|
 | #174 | Java B3 | open — Java client double-wraps waitForFunction |
-| #151 | MB3 | open — MCP browser_click dialog deadlock |
+| #151 | — | open — MCP browser_click dialog deadlock |
 | #146 | Python #146 | open — capture.dialog deadlock (Python) |
 | #142 | B3 variant | open — recording mode POST redirect deadlock |
 | #128 | Java #128 | open — page.route()/setHeaders() navigation deadlock |
@@ -122,13 +122,13 @@ Links that don't resolve yet are placeholders — not errors.
 | #118 | B16 enhancement | open — pierce selector for shadow DOM |
 | #112 | B1–B33 | open — original CLI bug report |
 | #117 | B7 | closed v26.5.31 — fill textarea CLI |
-| #155 | MB7 | closed v26.5.31 — fill textarea MCP |
+| #155 | — | closed v26.5.31 — fill textarea MCP |
 | #140 | B5 | closed v26.5.31 — select label matching + error on miss |
-| #149 | MB1 | closed v26.5.31 — browser_count type mismatch |
-| #150 | MB2 | closed v26.5.31 — browser_storage_state cookie parse |
-| #152 | MB4 | closed v26.5.31 — browser_set_cookie domain |
-| #153 | MB5 | closed v26.5.31 — browser_get_attribute null/absent |
-| #154 | MB6 | closed v26.5.31 — browser_evaluate empty string |
-| #156 | MB8 | closed v26.5.31 — browser_screenshot annotate crash |
-| #157 | MB9 | closed v26.5.31 — browser_get_text empty text |
+| #149 | — | closed v26.5.31 — browser_count type mismatch |
+| #150 | — | closed v26.5.31 — browser_storage_state cookie parse |
+| #152 | — | closed v26.5.31 — browser_set_cookie domain |
+| #153 | — | closed v26.5.31 — browser_get_attribute null/absent |
+| #154 | — | closed v26.5.31 — browser_evaluate empty string |
+| #156 | — | closed v26.5.31 — browser_screenshot annotate crash |
+| #157 | — | closed v26.5.31 — browser_get_text empty text |
 | #173 | — | closed — vibium click obscured on var.parts (real overlay, not false positive) |
