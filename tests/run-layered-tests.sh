@@ -536,6 +536,20 @@ assert "hint text — Rotate: Drag"      "$(ev "document.getElementById('control
 assert "hint text — Zoom: Scroll"      "$(ev "document.getElementById('controls-hint').textContent.includes('Zoom: Scroll') ? 'ok' : 'no'")"  "ok"
 assert "hint text — Pan: Right-drag"   "$(ev "document.getElementById('controls-hint').textContent.includes('Pan: Right-drag') ? 'ok' : 'no'")"  "ok"
 
+# ── resetCamera accuracy ──────────────────────────────────────────────────────
+# Camera is panned; rotate it further so position is definitely off, then verify
+# resetCamera lands within 1 unit of (0,550,900) — regression for double-update fix
+$VIB mouse move "$CX" "$CY"
+$VIB mouse down
+$VIB mouse move "$((CX + DRAG_W))" "$CY"
+$VIB mouse up
+$VIB sleep 400
+
+reset_cam
+
+assert "resetCamera — camera at exact spawn (0,550,900) within 1 unit" \
+  "$(ev "(function(){ var p=_LG.camera.position; var dx=Math.abs(p.x), dy=Math.abs(p.y-550), dz=Math.abs(p.z-900); return Math.max(dx,dy,dz)<1?'ok':'x='+p.x.toFixed(1)+' y='+p.y.toFixed(1)+' z='+p.z.toFixed(1) }())")"  "ok"
+
 reset_cam
 
 # ── T16b: Rotate extended ─────────────────────────────────────────────────────
