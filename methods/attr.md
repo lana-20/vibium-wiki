@@ -2,7 +2,7 @@
 method: el.attr
 category: reading
 last_tested: v26.5.31
-bugs: [B8, MB5, MCP-153]
+bugs: [B8, MCP-153]
 status: open
 ---
 

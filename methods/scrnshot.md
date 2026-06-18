@@ -2,7 +2,7 @@
 method: screenshot
 category: page-control
 last_tested: v26.5.31
-bugs: [MB8, MCP-156]
+bugs: [MCP-156]
 status: fixed
 ---
 

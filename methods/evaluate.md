@@ -16,7 +16,7 @@ Executes JavaScript in the page context and returns the result.
 | Bug | Description |
 |---|---|
 | B9 (CLI) | Objects/arrays printed as Go internal repr (`map[type:string value:...]`) — now returns valid JSON |
-| MB6 (MCP) | Empty string `""` result caused `invalid_union` serialization error — fixed (#154) |
+| #154 (MCP) | Empty string `""` result caused `invalid_union` serialization error — fixed v26.5.31 |
 | #123, #131, #145 | `waitUntil` / `waitForFunction` accepted only arrow functions — bare expressions now work |
 
 ## Open issues
@@ -72,7 +72,7 @@ vibium eval 'JSON.stringify([["a","b"],["c","d"]])'
 | nested array strings | may wrap (#124) | may wrap (#124) | may wrap | may wrap |
 | `null` | "null" | null | None | null |
 | `undefined` | "" or "undefined" | varies | None | null |
-| empty string `""` | `""` | `""` ✓ (fixed MB6) | `""` | `""` |
+| empty string `""` | `""` | `""` ✓ (fixed #154) | `""` | `""` |
 
 ---
 
@@ -126,4 +126,4 @@ vibium eval 'const s=document.querySelector("input[type=range]"); s.value="3"; s
 
 ## Related
 
-→ [[bugs/cli#B9]] · → [[bugs/mcp#MB6]] · → [[methods/fill]] · → [[patterns/dialog_deadlock]]
+→ [[bugs/cli#B9]] · → [[bugs/mcp#154]] · → [[methods/fill]] · → [[patterns/dialog_deadlock]]

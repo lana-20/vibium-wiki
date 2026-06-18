@@ -21,9 +21,9 @@ Accept a pending native browser dialog (alert, confirm, prompt).
 | Python | `page.capture.dialog(fn)` |
 | Java | `page.captureDialog(fn)` |
 
-## Critical — deadlock with click (B3 / MB3)
+## Critical — deadlock with click (B3 / #151)
 
-Clicking an element that fires a native dialog deadlocks the daemon socket. `dialog accept` issued afterward also hangs. **Status: open in CLI (B3) and MCP (MB3, deferred #151).**
+Clicking an element that fires a native dialog deadlocks the daemon socket. `dialog accept` issued afterward also hangs. **Status: open in CLI (B3) and MCP (#151, deferred).**
 
 **Safe workaround — pre-stub:**
 ```sh
@@ -43,4 +43,4 @@ await page.capture.dialog(async () => {
 pkill -f vibium && sleep 2 && vibium daemon start && sleep 2
 ```
 
-→ [[patterns/dialog_deadlock]] · → [[methods/dlg-dis]] · → [[bugs/cli#B3]] · → [[bugs/mcp#MB3]] · → [[reference/api-reference]]
+→ [[patterns/dialog_deadlock]] · → [[methods/dlg-dis]] · → [[bugs/cli#B3]] · → [[bugs/mcp#151]] · → [[reference/api-reference]]

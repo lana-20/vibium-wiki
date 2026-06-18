@@ -76,7 +76,7 @@ Command tier breakdown: all5=72, 4surf=9, 3surf=54, 2surf=11, planned=2
 | Root | `vibium` |
 | Surfaces | `cli` `mcp` `js` `python` `java` |
 | Categories (all 17) | `cat-browser` `cat-navigation` `cat-finding` `cat-waiting` `cat-interaction` `cat-reading` `cat-page-control` `cat-context` `cat-input` `cat-network` `cat-events` `cat-clock` `cat-recording` `cat-dialog` `cat-download` `cat-extras` `cat-ai` |
-| Sampled bugs | `B1` `B3` `B6` `MB1` `JS-Bug2` `PY-146` `JV-128` |
+| Sampled bugs | `B1` `B3` `B6` `MCP-149` `JS-124` `PY-146` `JV-128` |
 | Pattern | `p-dialog` |
 | References | `r-arch` `r-action` `r-bidi` `r-roadmap` `r-ainative` |
 

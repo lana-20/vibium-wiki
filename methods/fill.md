@@ -19,14 +19,14 @@ Sets the value of an input element. Clears existing value then types the new val
 | `input[type=password]` | ok | ok |
 | `input[type=email]` | ok | ok |
 | `input[type=number]` | ok | ok |
-| `textarea` | fixed v26.5.31 (was B7) | fixed v26.5.31 (was MB7) |
+| `textarea` | fixed v26.5.31 (was B7) | fixed v26.5.31 (was #155) |
 | `input[type=range]` | open — B31 | untested |
 | empty string value `""` | open — B20 | untested |
 | negative number value `"-2"` | open — B18 | untested |
 
 ## Known bugs
 
-### B7 / MB7 — fill fails on `<textarea>` · fixed v26.5.31
+### B7 / #155 — fill fails on `<textarea>` · fixed v26.5.31
 
 Previously: `element type is not supported for fill` on textarea elements.
 
@@ -82,4 +82,4 @@ vibium eval 'const s=document.querySelector("input[type=range]"); s.value="3"; s
 
 ## Related
 
-→ [[bugs/cli#B7]] · → [[bugs/cli#B18]] · → [[bugs/cli#B20]] · → [[bugs/cli#B31]] · → [[bugs/mcp#MB7]]
+→ [[bugs/cli#B7]] · → [[bugs/cli#B18]] · → [[bugs/cli#B20]] · → [[bugs/cli#B31]] · → [[bugs/mcp#155]]

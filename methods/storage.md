@@ -2,7 +2,7 @@
 method: storage
 category: context
 last_tested: v26.5.31
-bugs: [B2, MB2, MCP-150]
+bugs: [B2, MCP-150]
 status: fixed
 ---
 
