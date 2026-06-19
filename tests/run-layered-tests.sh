@@ -52,15 +52,15 @@ echo "Page loaded."
 # ── T1: Data integrity ────────────────────────────────────────────────────────
 suite "T1 — Data integrity"
 
-assert "allNodes total = 230"       "$(ev "_LG.allNodes.length + ''")"  "230"
+assert "allNodes total = 229"       "$(ev "_LG.allNodes.length + ''")"  "229"
 assert "layer 0 nodes = 1 (root)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===0}).length + ''")"  "1"
 assert "layer 1 nodes = 5 (surf)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===1}).length + ''")"  "5"
 assert "layer 2 nodes = 17 (cat)"   "$(ev "_LG.allNodes.filter(function(n){return n.layer===2}).length + ''")"  "17"
 assert "layer 3 nodes = 148 (cmd)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===3}).length + ''")"  "148"
-assert "layer 4 nodes = 39 (bugs+patterns)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===4}).length + ''")"  "39"
+assert "layer 4 nodes = 38 (bugs+patterns)"  "$(ev "_LG.allNodes.filter(function(n){return n.layer===4}).length + ''")"  "38"
 assert "layer 5 nodes = 20 (fixed+refs)"     "$(ev "_LG.allNodes.filter(function(n){return n.layer===5}).length + ''")"  "20"
 assert "LAYER_DEFS length = 6"      "$(ev "_LG.LAYER_DEFS.length + ''")"  "6"
-assert "meshes count = 230"         "$(ev "_LG.meshes.length + ''")"  "230"
+assert "meshes count = 230"         "$(ev "_LG.meshes.length + ''")"  "229"
 assert "edgeLines exist"            "$(ev "_LG.edgeLines.length > 0 ? 'ok' : '0'")"  "ok"
 
 # Group counts
@@ -68,7 +68,7 @@ assert "group root = 1"          "$(ev "_LG.allNodes.filter(function(n){return n
 assert "group surface = 5"       "$(ev "_LG.allNodes.filter(function(n){return n.group==='surface'}).length + ''")"   "5"
 assert "group category = 17"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='category'}).length + ''")"  "17"
 assert "group command = 148"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='command'}).length + ''")"   "148"
-assert "group bug-open = 29"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-open'}).length + ''")"  "29"
+assert "group bug-open = 28"     "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-open'}).length + ''")"  "28"
 assert "group bug-partial = 6"   "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-partial'}).length + ''")"  "6"
 assert "group bug-regression = 1" "$(ev "_LG.allNodes.filter(function(n){return n.group==='bug-regression'}).length + ''")"  "1"
 assert "group pattern = 3"       "$(ev "_LG.allNodes.filter(function(n){return n.group==='pattern'}).length + ''")"   "3"
@@ -230,7 +230,7 @@ assert "all-labels on — allLabels = true"  "$(ev "_LG.allLabels + ''")"  "true
 assert "all-labels on — cmd-click labelObj visible"  "$(ev "_LG.getMesh('cmd-click').labelObj.visible + ''")"  "true"
 assert "all-labels on — B3 labelObj visible"         "$(ev "_LG.getMesh('B3').labelObj.visible + ''")"  "true"
 assert "all-labels on — r-arch labelObj visible"     "$(ev "_LG.getMesh('r-arch').labelObj.visible + ''")"  "true"
-assert "all-labels on — all 230 labelObjs visible"   \
+assert "all-labels on — all 229 labelObjs visible"   \
   "$(ev "_LG.meshes.filter(function(m){return !m.labelObj.visible}).length + ''")"  "0"
 
 # Uncheck
@@ -330,7 +330,7 @@ batch_result=$(ev "
 if [[ "$batch_result" == PASS:* ]]; then
   pass "all ${batch_result#PASS:} nodes — selectNode/deselectAll"
 else
-  fail "batch select/deselect" "$batch_result" "PASS:230"
+  fail "batch select/deselect" "$batch_result" "PASS:229"
 fi
 
 # ── T10: Edge integrity ───────────────────────────────────────────────────────

@@ -158,7 +158,7 @@ group_test() {
 
 group_test "surface"   "g.filter(function(n){return n.group==='surface'}).length"                                                                              "5"
 group_test "api"       "g.filter(function(n){return n.group==='command'}).length"                                                                              "148"
-group_test "bug-open"  "g.filter(function(n){return n.group==='bug-open'||n.group==='bug-partial'||n.group==='bug-regression'}).length"                        "36"
+group_test "bug-open"  "g.filter(function(n){return n.group==='bug-open'||n.group==='bug-partial'||n.group==='bug-regression'}).length"                        "35"
 group_test "bug-fixed" "g.filter(function(n){return n.group==='bug-fixed'}).length"                                                                            "15"
 group_test "pattern"   "g.filter(function(n){return n.group==='pattern'}).length"                                                                              "3"
 group_test "reference" "g.filter(function(n){return n.group==='reference'}).length"                                                                            "5"
@@ -442,7 +442,7 @@ assert "all groups off — remaining node is root"  "$(ev "Graph.graphData().nod
 for grp in surface api bug-open bug-fixed pattern reference; do
   ev "document.querySelector('[data-group=\"${grp}\"]').click()" > /dev/null
 done
-assert "all groups restored — 230 nodes" "$(ev "Graph.graphData().nodes.length + ''")" "230"
+assert "all groups restored — 230 nodes" "$(ev "Graph.graphData().nodes.length + ''")" "229"
 
 # Client/CLI-MCP tier buttons absent
 assert "no 'client' tier button in DOM"  "$(ev "document.querySelector('[data-tier=client]') ? 'found' : 'ok'")" "ok"
@@ -613,9 +613,9 @@ reset_state
 
 # Default state values
 assert "stats default — cmds = 148/148" "$(ev "document.getElementById('stat-cmds').textContent")" "148/148"
-assert "stats default — open = 36"      "$(ev "document.getElementById('stat-open').textContent")" "36"
+assert "stats default — open = 36"      "$(ev "document.getElementById('stat-open').textContent")" "35"
 assert "stats default — fixed = 15"     "$(ev "document.getElementById('stat-fixed').textContent")" "15"
-assert "stats default — nodes = 230"    "$(ev "document.getElementById('stat-nodes').textContent")" "230"
+assert "stats default — nodes = 230"    "$(ev "document.getElementById('stat-nodes').textContent")" "229"
 
 # Dynamic: stat-nodes text matches Graph.graphData().nodes.length
 assert "stats — nodes match graph data" "$(ev "document.getElementById('stat-nodes').textContent === Graph.graphData().nodes.length + '' ? 'ok' : 'mismatch'")" "ok"

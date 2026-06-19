@@ -24,7 +24,7 @@ Step-by-step instructions for both views — which graph to open, how to navigat
 open graph.html
 ```
 
-Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 230 nodes total: root → surfaces → categories → commands + bugs + patterns + references.
+Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / MCP / JS / Python / Java). 229 nodes total: root → surfaces → categories → commands + bugs + patterns + references.
 
 **Features:** node click for sidebar with per-surface syntax · group/tier filters · surface focus buttons · search with hidden-match notice · ? Guide overlay
 
@@ -40,7 +40,7 @@ Interactive 3D force graph of all 148 Vibium commands across 5 surfaces (CLI / M
 open graph-layered.html
 ```
 
-Same 230-node dataset rendered as 6 horizontal planes stacked in Three.js. Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan). Each plane is a node tier: root / surfaces / categories / commands / bugs+patterns / fixed+refs.
+Same 229-node dataset rendered as 6 horizontal planes stacked in Three.js. Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan). Each plane is a node tier: root / surfaces / categories / commands / bugs+patterns / fixed+refs.
 
 **Features:** layer visibility toggles · per-layer label buttons · spacing slider · L0–L5 ring markings · node click info panel
 
@@ -79,4 +79,4 @@ See [tests/TESTPLAN.md](tests/TESTPLAN.md) for full test plan coverage.
 
 ---
 
-**Version:** v26.5.31 · **Last ingest:** 2026-06-14
+**Version:** v26.5.31 · **Last ingest:** 2026-06-19

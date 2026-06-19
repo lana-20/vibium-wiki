@@ -1,7 +1,7 @@
 # Vibium LLM Wiki
 
 **Current version:** v26.5.31 (2026-06-01)  
-**Last ingest:** 2026-06-14  
+**Last ingest:** 2026-06-19  
 **Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (MCP #149–MCP #157), vibium-js-test suite (JS #118, JS #123–JS #126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
 
 ---
@@ -117,7 +117,7 @@ See [SCHEMA.md](SCHEMA.md) for page conventions, status values, ingest rules, an
 
 ## Knowledge Graphs
 
-Two interactive views of the same 230-node dataset: root → 5 surfaces → 17 categories → 148 commands + 36 open bugs + 15 fixed bugs + 3 patterns + 5 references.
+Two interactive views of the same 229-node dataset: root → 5 surfaces → 17 categories → 148 commands + 35 open bugs + 15 fixed bugs + 3 patterns + 5 references.
 
 **Guide (start here):** https://lana-20.github.io/vibium-wiki/guide.html
 
@@ -127,7 +127,7 @@ Two interactive views of the same 230-node dataset: root → 5 surfaces → 17 c
 
 **Live:** https://lana-20.github.io/vibium-wiki/graph.html  
 **Tech:** 3d-force-graph (vasturiano / Three.js) · also opens locally via `file://`  
-**Last updated:** 2026-06-14 · v26.5.31
+**Last updated:** 2026-06-19 · v26.5.31
 
 3D force-directed graph. Nodes spring apart and attract based on connections — best for exploring relationships and neighbors.
 
@@ -142,7 +142,7 @@ Two interactive views of the same 230-node dataset: root → 5 surfaces → 17 c
 **Test suite:**
 ```sh
 cd ~/vibium-wiki/tests && ./run-tests.sh
-# 629 / 629 pass (2026-06-17) — 16 suites
+# 629 / 629 pass (2026-06-19) — 16 suites
 ```
 
 ---
@@ -151,9 +151,9 @@ cd ~/vibium-wiki/tests && ./run-tests.sh
 
 **Live:** https://lana-20.github.io/vibium-wiki/graph-layered.html  
 **Tech:** Three.js r161 · OrbitControls · CSS2DRenderer · also opens locally via `file://`  
-**Last updated:** 2026-06-16 · v26.5.31
+**Last updated:** 2026-06-19 · v26.5.31
 
-Same 230 nodes arranged as 6 stacked horizontal planes (root / surfaces / categories / commands / bugs+patterns / fixed+refs). Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan) — best for understanding hierarchy and tier structure.
+Same 229 nodes arranged as 6 stacked horizontal planes (root / surfaces / categories / commands / bugs+patterns / fixed+refs). Camera orbits freely via OrbitControls (left-drag rotate · scroll zoom · right-drag pan) — best for understanding hierarchy and tier structure.
 
 **Features:**
 - **Layer toggles** — show/hide each of the 6 planes independently
@@ -166,7 +166,7 @@ Same 230 nodes arranged as 6 stacked horizontal planes (root / surfaces / catego
 **Test suite:**
 ```sh
 cd ~/vibium-wiki/tests && bash run-layered-tests.sh
-# 303 / 303 pass (2026-06-17) — 18 suites incl. T16b 360°/720° twirl
+# 303 / 303 pass (2026-06-19) — 18 suites incl. T16b 360°/720° twirl
 ```
 
 ---

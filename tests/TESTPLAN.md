@@ -27,7 +27,7 @@ Command tier breakdown: all5=72, 4surf=9, 3surf=54, 2surf=11, planned=2
 
 ## T1 — Node click / unclick (happy path)
 
-**Applies to:** all 230 nodes across all groups.
+**Applies to:** all 229 nodes across all groups.
 
 ### Click (first click on a node)
 
@@ -327,7 +327,7 @@ Tests that multiple features compose correctly when active simultaneously.
 | Toggle same group filter on/off rapidly | final state matches last click; no intermediate render crash |
 | Toggle same tier button rapidly | `activeTierFilter` reflects last click; `activeTiers` correct |
 | Tier switch mid-animation (before graph settles) | no crash; correct tier applied after settle |
-| All groups off then back on | all 230 nodes restored |
+| All groups off then back on | all 229 nodes restored |
 
 ### Node click edge cases
 
