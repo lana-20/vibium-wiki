@@ -12,7 +12,7 @@ vibium-wiki/
 ├── index.md           ← full wiki index
 ├── bugs/
 │   ├── cli.md         ← B1–B33 index
-│   ├── mcp.md         ← MCP bug index (#149–#157 + MB10)
+│   ├── mcp.md         ← MCP bug index (#149–#157)
 │   ├── js.md          ← JS client bugs (#118, #123–#126)
 │   ├── python.md      ← Python client bugs
 │   └── java.md        ← Java client bugs
@@ -105,7 +105,7 @@ Links that don't resolve yet are placeholders — not errors.
 
 | Version | Date | Notable changes |
 |---|---|---|
-| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/#155), select errors on non-match + label matching (B5), eval JSON fixed (B9/#154), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (#149–#157 except #151/MB10), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
+| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/#155), select errors on non-match + label matching (B5), eval JSON fixed (B9/#154), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (#149–#157 except #151), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
 | v26.3.18 | — | Previous release — npm package shipped without dist/ (broken) |
 
 ## GitHub issues cross-reference

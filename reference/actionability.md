@@ -57,20 +57,6 @@ Div elements with explicit `width/height` CSS pass immediately (fixed in v26.5.3
 
 ---
 
-### MB10 / false "element obscured" on sticky nav pages (ReceivesEvents)
-
-`ClickChecks` includes `CheckReceivesEvents`. The check runs: `document.elementFromPoint(cx, cy)` where cx/cy is the element's center. If the hit element is not the target or a descendant → `receivesEvents check failed — element is obscured`.
-
-`elementFromPoint()` respects CSS stacking context. A sticky nav with `position:sticky + z-index:50 + backdrop-filter:blur()` creates a compositing layer that can appear to cover elements that are visually below it. The backdrop-filter compositing layer specifically causes `elementFromPoint()` to return the nav rather than the element behind it during React hydration.
-
-The exact triggering CSS combination:
-```css
-nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
-```
-This is why MB10 only reproduces on live Next.js/React apps with this nav pattern and not on synthetic `set_content` pages — the `backdrop-filter` compositing layer is absent from injected HTML.
-
----
-
 ### B17 / find role button times out on input[type=submit] (role matching)
 
 Semantic role matching uses explicit `role` attributes first, then maps HTML element types to ARIA roles. `input[type=submit]` has an implicit ARIA role of `button` per spec, but Vibium's semantic matching does not yet enumerate all implicit role mappings. So `find role button` scans for `<button>` elements and elements with explicit `role="button"` but misses `input[type=submit]`.
@@ -144,4 +130,4 @@ page.find({ selector: 'nav', role: 'link', text: 'Home' })
 | `clicker/internal/api/handlers_elements.go` | `buildFindScript`, `semanticMatchesHelper`, `pickBest` |
 | `clicker/internal/api/router.go` | `DefaultTimeout` (30s) |
 
-→ [[methods/hover]] · → [[methods/find]] · → [[methods/click]] · → [[methods/fill]] · → [[bugs/cli#B17]] · → [[bugs/cli#B29]] · → [[bugs/cli#B30]] · → [[bugs/mcp#MB10]]
+→ [[methods/hover]] · → [[methods/find]] · → [[methods/click]] · → [[methods/fill]] · → [[bugs/cli#B17]] · → [[bugs/cli#B29]] · → [[bugs/cli#B30]]

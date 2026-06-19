@@ -13,7 +13,6 @@ Last run: v26.5.31 · 2026-06-06
 | [#155](https://github.com/VibiumDev/vibium/issues/155) | High | P2 | browser_fill | fixed | browser_click + browser_type (no longer needed) |
 | [#156](https://github.com/VibiumDev/vibium/issues/156) | Medium | P3 | browser_screenshot | fixed | annotate: false then manual annotation (no longer needed) |
 | [#157](https://github.com/VibiumDev/vibium/issues/157) | Medium | P3 | browser_get_text | fixed | browser_evaluate with `\|\| null` (no longer needed) |
-| MB10 | — | High | P2 | browser_click | intermittent · open · not reported | browser_evaluate `.click()` or mouse_click by coords |
 
 ## Detail entries
 
@@ -31,21 +30,3 @@ Last run: v26.5.31 · 2026-06-06
 
 → [[methods/dialog]] · → [[methods/click]] · → [[patterns/dialog_deadlock]]
 
----
-
-### MB10 — false "element obscured" on sticky nav (High · P2 · intermittent · not reported)
-
-**Note on #173:** [VibiumDev/vibium#173](https://github.com/VibiumDev/vibium/issues/173) "vibium click fails with 'element is obscured' on var.parts" (closed) is a related CLI bug on a different site — not the same as MB10. CLI `vibium click` is unaffected by MB10; #173 is tracked separately in bugs/cli.md.
-
-**Trigger:** `browser_click` reports `receivesEvents check failed — element is obscured` on elements that are not obscured. Requires all three CSS properties simultaneously on a nav: `position:sticky` + explicit `z-index` + `backdrop-filter`.
-
-**Repro site:** automation-exercise.daisyladybug.com (Next.js/React app with sticky nav using `position:sticky + z-index:50 + backdrop-filter:blur(12px)`). Does not reproduce on synthetic `set_content` pages.
-
-**Hypothesis:** hydration-timing dependent — manifests during React hydration window. Does not reproduce every session.
-
-**CLI comparison:** `vibium click` (CLI) is unaffected — bug is MCP-specific.
-
-**Workaround A:** `browser_evaluate { expression: "document.querySelector('...').click()" }`
-**Workaround B:** get coords via getBoundingClientRect → `browser_mouse_click { x, y }`
-
-→ [[methods/click]]

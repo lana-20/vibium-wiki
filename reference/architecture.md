@@ -61,7 +61,6 @@ All three modes share the same BiDi proxy and handler logic under `clicker/inter
 | Interface | Bash subcommands | JSON-RPC tool calls |
 | Commands/tools | 66 | 85 |
 | Dialog deadlock | B3 (deferred) | #151 (deferred) |
-| Obscured check | unaffected | MB10 (intermittent) |
 
 ### Client libraries
 

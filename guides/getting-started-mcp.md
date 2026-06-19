@@ -89,7 +89,6 @@ gemini mcp remove vibium
 | Browser lifecycle | Persistent daemon | Explicit `browser_start` / `browser_stop` |
 | Count | 66 commands | 85 tools |
 | Dialog deadlock | B3 (deferred) | #151 (deferred) |
-| Obscured false-positive | Unaffected | MB10 (intermittent, sticky nav) |
 | Cost | Cheaper (recommended) | 4.4× more costly in benchmarks |
 | Speed | 6.3× faster | Slower |
 

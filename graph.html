@@ -368,7 +368,7 @@ const CMD = [
   ['waitText',  'extras', 'wait text',        'Wait for text visible on page','vibium wait text','browser_wait_for_text','','','',[],[]],
   ['waitUntil', 'waiting','el.waitUntil',    'Wait for element state change','vibium wait --state','browser_wait','el.waitUntil()','el.wait_until()','el.waitUntil()',[],[]],
   // INTERACTION
-  ['click',    'interaction','click',        'Click element',                'vibium click','browser_click','el.click()','el.click()','el.click()',['B3','B6','MB10','MCP-151'],[]],
+  ['click',    'interaction','click',        'Click element',                'vibium click','browser_click','el.click()','el.click()','el.click()',['B3','B6','MCP-151'],[]],
   ['dblclick', 'interaction','dblclick',     'Double-click element',         'vibium dblclick','browser_dblclick','el.dblclick()','el.dblclick()','el.dblclick()',[],[]],
   ['fill',     'interaction','fill',         'Fill input with value',        'vibium fill','browser_fill','el.fill()','el.fill()','el.fill()',['B18','B20','B31'],['B7','MCP-155']],
   ['type',     'interaction','type',         'Type character by character',  'vibium type','browser_type','el.type()','el.type()','el.type()',['B18'],[]],
@@ -646,10 +646,6 @@ const STATIC_NODES = [
     desc:'fill on <textarea> — fixed v26.5.31 (#117)' },
   { id:'B9', name:'B9 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'CLI', severity:'High',
     desc:'eval returned Go internal repr for objects/arrays — fixed. JSON now correct.' },
-  // MCP bugs — open (MB10 has no issue number yet)
-  { id:'MB10', name:'MB10', group:'bug-open', val:5, color:'#f87171', surface:'MCP', severity:'High', priority:'P2',
-    desc:'False "element obscured" on sticky nav pages. Requires position:sticky + z-index + backdrop-filter simultaneously. Intermittent.',
-    workaround:'browser_evaluate { expression: "document.querySelector(\'…\').click()" }\nOr get coords → browser_mouse_click' },
   // MCP issue nodes (#149–#157)
   { id:'MCP-149', name:'#149 ✓', group:'bug-fixed', val:3, color:'#4ade80', surface:'MCP', severity:'Critical',
     desc:'browser_count — Go type mismatch crash on every selector. Fixed v26.5.31.' },
@@ -856,7 +852,6 @@ const bugCmdLinks = [
   { source:'B7',  target:'cmd-fill',    width:1, color:'rgba(74,222,128,0.2)' },
   { source:'B9',  target:'cmd-eval',    width:1, color:'rgba(74,222,128,0.2)' },
   // MCP open → commands
-  { source:'MB10', target:'cmd-click',   width:1,   color:'rgba(248,113,113,0.4)' },
   { source:'MCP-149', target:'cmd-count',   width:1, color:'rgba(74,222,128,0.2)' },
   { source:'MCP-150', target:'cmd-storage', width:1, color:'rgba(74,222,128,0.2)' },
   { source:'MCP-151', target:'cmd-click',   width:1.5, color:'rgba(220,38,38,0.5)' },

@@ -2,7 +2,7 @@
 
 **Current version:** v26.5.31 (2026-06-01)  
 **Last ingest:** 2026-06-14  
-**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (#149–#157 + MB10), vibium-js-test suite (#118, #123–#126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
+**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (#149–#157), vibium-js-test suite (#118, #123–#126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
 
 ---
 
@@ -11,7 +11,7 @@
 | Index | Contents | Open | Fixed |
 |---|---|---|---|
 | [bugs/cli.md](bugs/cli.md) | B1–B33 CLI bugs | B3 B6 B8 B10–B22 B24–B33 | B1 B2 B4 B7 B9; B5/B30/B32 partial |
-| [bugs/mcp.md](bugs/mcp.md) | MCP bugs (#149–#157 + MB10) | #151 MB10 | #149 #150 #152–#157 |
+| [bugs/mcp.md](bugs/mcp.md) | MCP bugs (#149–#157) | #151 | #149 #150 #152–#157 |
 | [bugs/js.md](bugs/js.md) | JS client bugs (#118, #123–#126) | #124 #126 #118 | #123 #125 (fixed v26.5.31 #163) |
 | [bugs/python.md](bugs/python.md) | Python client bugs | #146 | #168 #147 #145 #144 #110 + v26.3 era |
 | [bugs/java.md](bugs/java.md) | Java client bugs | #174 #135 #128 #106 | 9 bugs fixed v26.5.31 |
@@ -22,7 +22,7 @@
 
 | Method | CLI bugs | MCP bugs | Status |
 |---|---|---|---|
-| [click](methods/click.md) | B3 B6 | MB10 | open |
+| [click](methods/click.md) | B3 B6 | #151 (deferred) | open |
 | [dialog](methods/dlg-acc.md) | B3 | #151 | open |
 | [eval / evaluate](methods/evaluate.md) | B9 ✓ | #154 ✓ | partial (#124 open) |
 | [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | #155 ✓ | partial |

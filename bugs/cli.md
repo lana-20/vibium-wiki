@@ -99,4 +99,4 @@ Original report: VibiumDev/vibium#112
 
 [VibiumDev/vibium#173](https://github.com/VibiumDev/vibium/issues/173) — `vibium click` reports `receivesEvents check failed — element is obscured` on var.parts product pages after adding an item to cart. Closed (completed) by @hugs.
 
-**Note:** symptom resembles MB10 (MCP false-obscured on sticky nav), but this is CLI-only and site-specific to var.parts. Not part of the original B1–B33 block; tracked here for cross-reference only.
+**Note:** This is CLI-only and site-specific to var.parts. Not part of the original B1–B33 block; tracked here for cross-reference only.
