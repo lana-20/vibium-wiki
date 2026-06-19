@@ -22,7 +22,7 @@ Set Date.now() to a fixed value. Requires prior `clock.install()`.
 
 ## Known issues
 
-**#125 — FIXED v26.5.31** (PR #163): calling `setFixedTime()` without prior `clock.install()` silently had no effect in v26.3.18. v26.5.31 returns an error. Standalone `setFixedTime()` (without install) remains unsupported. → [[methods/cl-inst]] · → [[bugs/js#125]]
+**JS #125 — FIXED v26.5.31** (PR #163): calling `setFixedTime()` without prior `clock.install()` silently had no effect in v26.3.18. v26.5.31 returns an error. Standalone `setFixedTime()` (without install) remains unsupported. → [[methods/cl-inst]] · → [[bugs/js#125]]
 
 **JV-137 — partial (#137):** `ClockOptions.time()` builder path ignored in Java. Pass time directly as a string arg instead.
 

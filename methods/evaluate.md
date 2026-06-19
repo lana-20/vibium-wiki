@@ -16,16 +16,16 @@ Executes JavaScript in the page context and returns the result.
 | Bug | Description |
 |---|---|
 | B9 (CLI) | Objects/arrays printed as Go internal repr (`map[type:string value:...]`) — now returns valid JSON |
-| #154 (MCP) | Empty string `""` result caused `invalid_union` serialization error — fixed v26.5.31 |
-| #123, #131, #145 | `waitUntil` / `waitForFunction` accepted only arrow functions — bare expressions now work |
+| MCP #154 (MCP) | Empty string `""` result caused `invalid_union` serialization error — fixed v26.5.31 |
+| JS #123, #131, #145 | `waitUntil` / `waitForFunction` accepted only arrow functions — bare expressions now work |
 
 ## Open issues
 
-### #124 — page.evaluate() wraps nested string[][] as BiDi typed objects (open)
+### JS #124 — page.evaluate() wraps nested string[][] as BiDi typed objects (open)
 
 When an expression returns a `string[][]` (nested array), the JS/Python/Java clients deserialize inner array items as BiDi typed objects `{ type: "string", value: "..." }` instead of plain JS strings. A flat `string[]` deserializes correctly — only the second (and deeper) nesting level is affected.
 
-**Distinct from B9** — B9 was top-level object/array repr in CLI output. #124 is nested array deserialization in client libraries.
+**Distinct from B9** — B9 was top-level object/array repr in CLI output. JS #124 is nested array deserialization in client libraries.
 
 **JS repro:**
 ```ts
@@ -69,10 +69,10 @@ vibium eval 'JSON.stringify([["a","b"],["c","d"]])'
 | number | stringified | stringified | number | number |
 | boolean | stringified | stringified | bool | bool |
 | object/array | JSON ✓ (fixed B9) | JSON ✓ (fixed B9) | dict/list | Map |
-| nested array strings | may wrap (#124) | may wrap (#124) | may wrap | may wrap |
+| nested array strings | may wrap (JS #124) | may wrap (JS #124) | may wrap | may wrap |
 | `null` | "null" | null | None | null |
 | `undefined` | "" or "undefined" | varies | None | null |
-| empty string `""` | `""` | `""` ✓ (fixed #154) | `""` | `""` |
+| empty string `""` | `""` | `""` ✓ (fixed MCP #154) | `""` | `""` |
 
 ---
 

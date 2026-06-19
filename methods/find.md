@@ -78,7 +78,7 @@ Note: `find text` and `find role` also leak for `<button>` but not for `<input>`
 
 ---
 
-### #118 — No pierce selector for shadow DOM · open (enhancement) {#shadow-dom}
+### JS #118 — No pierce selector for shadow DOM · open (enhancement) {#shadow-dom}
 
 `page.find()` and `page.findAll()` do not cross shadow boundaries. There is no pierce combinator (`>>` or `>>>`). Standard CSS selectors are also blocked — `document.querySelector('host p')` returns null across a shadow root.
 

@@ -22,6 +22,6 @@ General-purpose condition wait; dispatches to url / loaded / text / expression v
 
 ## Known issues
 
-**#123 — FIXED v26.5.31** (PR #163): expression-based form `page.waitUntil(expression)` always timed out in v26.3.18. → [[methods/wait-for-fn]] · → [[bugs/js#123]]
+**JS #123 — FIXED v26.5.31** (PR #163): expression-based form `page.waitUntil(expression)` always timed out in v26.3.18. → [[methods/wait-for-fn]] · → [[bugs/js#123]]
 
 → [[reference/api-reference]]

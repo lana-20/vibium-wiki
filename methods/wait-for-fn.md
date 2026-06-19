@@ -22,7 +22,7 @@ Wait until a JavaScript expression returns truthy.
 
 ## Known issues
 
-**#123 — FIXED v26.5.31** (PR #163): expression-based waits always timed out in v26.3.18 regardless of expression value. v26.5.31 wraps bare expressions uniformly so both forms work:
+**JS #123 — FIXED v26.5.31** (PR #163): expression-based waits always timed out in v26.3.18 regardless of expression value. v26.5.31 wraps bare expressions uniformly so both forms work:
 
 ```ts
 // Both now work in v26.5.31:

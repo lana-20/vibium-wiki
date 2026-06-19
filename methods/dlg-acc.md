@@ -21,9 +21,9 @@ Accept a pending native browser dialog (alert, confirm, prompt).
 | Python | `page.capture.dialog(fn)` |
 | Java | `page.captureDialog(fn)` |
 
-## Critical — deadlock with click (B3 / #151)
+## Critical — deadlock with click (B3 / MCP #151)
 
-Clicking an element that fires a native dialog deadlocks the daemon socket. `dialog accept` issued afterward also hangs. **Status: open in CLI (B3) and MCP (#151, deferred).**
+Clicking an element that fires a native dialog deadlocks the daemon socket. `dialog accept` issued afterward also hangs. **Status: open in CLI (B3) and MCP #151 (deferred).**
 
 **Safe workaround — pre-stub:**
 ```sh

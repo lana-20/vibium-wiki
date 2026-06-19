@@ -30,7 +30,7 @@ Last updated: 2026-06-14 · reference version: v26.5.31
 
 **Workaround:** use `page.evaluate("setTimeout(() => alert('msg'), 300)")` — the evaluate returns before the dialog fires.
 
-**Same root cause as:** B3 (CLI), #151 (MCP), #142 (recording mode), #128 (Java route/setHeaders).
+**Same root cause as:** B3 (CLI), MCP #151 (MCP), #142 (recording mode), #128 (Java route/setHeaders).
 
 → [[patterns/dialog_deadlock]]
 

@@ -2,7 +2,7 @@
 
 **Current version:** v26.5.31 (2026-06-01)  
 **Last ingest:** 2026-06-14  
-**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (#149–#157), vibium-js-test suite (#118, #123–#126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
+**Sources:** vibium-cli-test SKILL.md (B1–B33), vibium-mcp-test SKILL.md (MCP #149–MCP #157), vibium-js-test suite (JS #118, JS #123–JS #126), vibium-python-test suite (Py #146), vibium-java-test suite (JV #174, #129, #130, #135, #136, #137, #128, #106), GitHub issues (VibiumDev/vibium), v26.5.31 release notes, VibiumDev/vibium repo (README, ROADMAP, docs/, clients/)
 
 ---
 
@@ -11,8 +11,8 @@
 | Index | Contents | Open | Fixed |
 |---|---|---|---|
 | [bugs/cli.md](bugs/cli.md) | B1–B33 CLI bugs | B3 B6 B8 B10–B22 B24–B33 | B1 B2 B4 B7 B9; B5/B30/B32 partial |
-| [bugs/mcp.md](bugs/mcp.md) | MCP bugs (#149–#157) | #151 | #149 #150 #152–#157 |
-| [bugs/js.md](bugs/js.md) | JS client bugs (#118, #123–#126) | #124 #126 #118 | #123 #125 (fixed v26.5.31 #163) |
+| [bugs/mcp.md](bugs/mcp.md) | MCP bugs (MCP #149–MCP #157) | MCP #151 | MCP #149 MCP #150 MCP #152–MCP #157 |
+| [bugs/js.md](bugs/js.md) | JS client bugs (JS #118, JS #123–JS #126) | JS #124 JS #126 JS #118 | JS #123 JS #125 (fixed v26.5.31 #163) |
 | [bugs/python.md](bugs/python.md) | Python client bugs | #146 | #168 #147 #145 #144 #110 + v26.3 era |
 | [bugs/java.md](bugs/java.md) | Java client bugs | #174 #135 #128 #106 | 9 bugs fixed v26.5.31 |
 
@@ -22,17 +22,17 @@
 
 | Method | CLI bugs | MCP bugs | Status |
 |---|---|---|---|
-| [click](methods/click.md) | B3 B6 | #151 (deferred) | open |
-| [dialog](methods/dlg-acc.md) | B3 | #151 | open |
-| [eval / evaluate](methods/evaluate.md) | B9 ✓ | #154 ✓ | partial (#124 open) |
-| [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | #155 ✓ | partial |
+| [click](methods/click.md) | B3 B6 | MCP #151 (deferred) | open |
+| [dialog](methods/dlg-acc.md) | B3 | MCP #151 | open |
+| [eval / evaluate](methods/evaluate.md) | B9 ✓ | MCP #154 ✓ | partial (JS #124 open) |
+| [fill](methods/fill.md) | B7 ✓ B18 B20 B31 | MCP #155 ✓ | partial |
 | [find](methods/find.md) | B15✓ B17 B29 | — | partial |
 | [hover](methods/hover.md) | B30 partial | — | partial |
 | [map](methods/map.md) | B16 B24 | — | open |
-| [go](methods/go.md) | B3 #126 | — | open |
+| [go](methods/go.md) | B3 JS #126 | — | open |
 | [select](methods/select.md) | B5 partial | — | partial |
-| [waitForFn / waitUntil](methods/wait-for-fn.md) | #123 (fixed v26.5.31) | — | fixed |
-| [clock.install](methods/cl-inst.md) | #125 (fixed v26.5.31) | — | fixed |
+| [waitForFn / waitUntil](methods/wait-for-fn.md) | JS #123 (fixed v26.5.31) | — | fixed |
+| [clock.install](methods/cl-inst.md) | JS #125 (fixed v26.5.31) | — | fixed |
 
 All 148 commands have a page in [methods/](methods/) — one file per command. The pages above have full documentation with bug details and workarounds; all others have cross-surface syntax tables.
 
@@ -68,19 +68,19 @@ All 148 commands have a page in [methods/](methods/) — one file per command. T
 | #137 | clock — ClockOptions.time() builder path still ignored after partial fix | Java | partial |
 | #159 | vibium pipe fails with Selenium Grid | CLI | — |
 | #158 | vibium pipe --connect disconnects immediately | CLI | — |
-| #151 | browser_click deadlocks on native dialog (MCP) | MCP | — |
+| MCP #151 | browser_click deadlocks on native dialog (MCP) | MCP | — |
 | #146 | capture.dialog deadlocks in Python | Python | dialog_deadlock |
 | #142 | vibium click hangs during recording on POST redirect | CLI | B3 variant |
 | #135 | page.expose() never injects function | Java | — |
 | #128 | page.route()/setHeaders() → go() deadlock | Java | dialog_deadlock |
-| #126 | capture.navigation() misses SPA pushState | All | navigate |
-| #124 | page.evaluate() wraps nested array strings | JS/Python/Java | evaluate |
+| JS #126 | capture.navigation() misses SPA pushState | All | navigate |
+| JS #124 | page.evaluate() wraps nested array strings | JS/Python/Java | evaluate |
 | #112 | 33 CLI bugs (original report) | CLI | bugs/cli |
 | #108 | Interaction scripts with semantic locators | CLI | — |
 | #107 | HTTP 500 on browser session creation | CLI | — |
 | #106 | SelectorOptions not applied in element lookup | Java | — |
 | #98 | vibium install misses chromedriver | CLI | — |
-| #118 | Pierce selector support for shadow DOM (enhancement) | All | map B16 |
+| JS #118 | Pierce selector support for shadow DOM (enhancement) | All | map B16 |
 
 ---
 

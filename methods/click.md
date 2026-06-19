@@ -3,7 +3,7 @@ method: click
 aliases: [browser_click]
 last_tested: v26.5.31
 last_tested_date: 2026-06-06
-bugs: [B3, B6, MCP-151 (deferred #151)]
+bugs: [B3, B6, MCP-151 (deferred MCP #151)]
 status: open
 ---
 
@@ -13,9 +13,9 @@ Clicks an element identified by a CSS selector or `@ref`.
 
 ## Known bugs
 
-### B3 / #151 — deadlock on dialog-firing elements · open (deferred · [#151](https://github.com/VibiumDev/vibium/issues/151))
+### B3 / MCP #151 — deadlock on dialog-firing elements · open (deferred · [MCP #151](https://github.com/VibiumDev/vibium/issues/151))
 
-Clicking any element that fires a native JS dialog deadlocks the daemon socket. CLI tracks as B3; MCP tracks as [#151](https://github.com/VibiumDev/vibium/issues/151) (deferred). See → [[methods/dialog]] for full detail, workarounds, and recovery.
+Clicking any element that fires a native JS dialog deadlocks the daemon socket. CLI tracks as B3; MCP tracks as [MCP #151](https://github.com/VibiumDev/vibium/issues/151) (deferred). See → [[methods/dialog]] for full detail, workarounds, and recovery.
 
 ---
 

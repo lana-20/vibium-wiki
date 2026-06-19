@@ -12,8 +12,8 @@ vibium-wiki/
 ├── index.md           ← full wiki index
 ├── bugs/
 │   ├── cli.md         ← B1–B33 index
-│   ├── mcp.md         ← MCP bug index (#149–#157)
-│   ├── js.md          ← JS client bugs (#118, #123–#126)
+│   ├── mcp.md         ← MCP bug index (MCP #149–MCP #157)
+│   ├── js.md          ← JS client bugs (JS #118, JS #123–JS #126)
 │   ├── python.md      ← Python client bugs
 │   └── java.md        ← Java client bugs
 ├── methods/
@@ -105,7 +105,7 @@ Links that don't resolve yet are placeholders — not errors.
 
 | Version | Date | Notable changes |
 |---|---|---|
-| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/#155), select errors on non-match + label matching (B5), eval JSON fixed (B9/#154), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (#149–#157 except #151), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
+| v26.5.31 | 2026-06-01 | Fill textarea fixed (B7/MCP #155), select errors on non-match + label matching (B5), eval JSON fixed (B9/MCP #154), MCP: count/storage/cookies/annotate/get_attribute/get_text fixed (MCP #149–MCP #157 except MCP #151), Python: eval alias, BoundingBox dict, large pipe; Java: 9 method fixes. See [releases/v26.5.31.md](releases/v26.5.31.md) |
 | v26.3.18 | — | Previous release — npm package shipped without dist/ (broken) |
 
 ## GitHub issues cross-reference
@@ -113,22 +113,22 @@ Links that don't resolve yet are placeholders — not errors.
 | Issue | Bug ID | Status |
 |---|---|---|
 | #174 | Java B3 | open — Java client double-wraps waitForFunction |
-| #151 | — | open — MCP browser_click dialog deadlock |
+| MCP #151 | — | open — MCP browser_click dialog deadlock |
 | #146 | Python #146 | open — capture.dialog deadlock (Python) |
 | #142 | B3 variant | open — recording mode POST redirect deadlock |
 | #128 | Java #128 | open — page.route()/setHeaders() navigation deadlock |
-| #126 | navigate #126 | open — SPA pushState navigation not captured |
-| #124 | evaluate #124 | open — nested array strings wrapped as BiDi typed objects |
-| #118 | B16 enhancement | open — pierce selector for shadow DOM |
+| JS #126 | navigate JS #126 | open — SPA pushState navigation not captured |
+| JS #124 | evaluate JS #124 | open — nested array strings wrapped as BiDi typed objects |
+| JS #118 | B16 enhancement | open — pierce selector for shadow DOM |
 | #112 | B1–B33 | open — original CLI bug report |
 | #117 | B7 | closed v26.5.31 — fill textarea CLI |
-| #155 | — | closed v26.5.31 — fill textarea MCP |
+| MCP #155 | — | closed v26.5.31 — fill textarea MCP |
 | #140 | B5 | closed v26.5.31 — select label matching + error on miss |
-| #149 | — | closed v26.5.31 — browser_count type mismatch |
-| #150 | — | closed v26.5.31 — browser_storage_state cookie parse |
-| #152 | — | closed v26.5.31 — browser_set_cookie domain |
-| #153 | — | closed v26.5.31 — browser_get_attribute null/absent |
-| #154 | — | closed v26.5.31 — browser_evaluate empty string |
-| #156 | — | closed v26.5.31 — browser_screenshot annotate crash |
-| #157 | — | closed v26.5.31 — browser_get_text empty text |
+| MCP #149 | — | closed v26.5.31 — browser_count type mismatch |
+| MCP #150 | — | closed v26.5.31 — browser_storage_state cookie parse |
+| MCP #152 | — | closed v26.5.31 — browser_set_cookie domain |
+| MCP #153 | — | closed v26.5.31 — browser_get_attribute null/absent |
+| MCP #154 | — | closed v26.5.31 — browser_evaluate empty string |
+| MCP #156 | — | closed v26.5.31 — browser_screenshot annotate crash |
+| MCP #157 | — | closed v26.5.31 — browser_get_text empty text |
 | #173 | — | closed — vibium click obscured on var.parts (real overlay, not false positive) |

@@ -33,7 +33,7 @@ vibium eval 'JSON.stringify(document.querySelector("shop-app")?.shadowRoot?.quer
 # Returns: "null" on shop.polymer-project.org (also fails)
 ```
 
-**Enhancement tracking:** #118 requests pierce selector support (`>>>` / `pierce/`) for shadow DOM — would fix B16 if implemented.
+**Enhancement tracking:** JS #118 requests pierce selector support (`>>>` / `pierce/`) for shadow DOM — would fix B16 if implemented.
 
 ---
 

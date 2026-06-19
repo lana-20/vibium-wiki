@@ -6,15 +6,15 @@ Test suite: 127 PASS / 1 BUG / 0 FAIL on v26.5.31 (was 125/3/0 on v26.3.18)
 
 | gh Issue | Method | Status (v26.5.31) | Workaround |
 |---|---|---|---|
-| [#123](https://github.com/VibiumDev/vibium/issues/123) | `page.waitUntil` | fixed v26.5.31 (PR #163) | was: `page.wait(ms)` |
-| [#124](https://github.com/VibiumDev/vibium/issues/124) | `page.evaluate` | open | JSON.stringify wrap |
-| [#125](https://github.com/VibiumDev/vibium/issues/125) | `page.clock` | fixed v26.5.31 (PR #163) | was: always call install() first |
-| [#126](https://github.com/VibiumDev/vibium/issues/126) | `page.capture.navigation`, `page.url` | open | poll url() or use evaluate('location.href') |
-| [#118](https://github.com/VibiumDev/vibium/issues/118) | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
+| [JS #123](https://github.com/VibiumDev/vibium/issues/123) | `page.waitUntil` | fixed v26.5.31 (PR #163) | was: `page.wait(ms)` |
+| [JS #124](https://github.com/VibiumDev/vibium/issues/124) | `page.evaluate` | open | JSON.stringify wrap |
+| [JS #125](https://github.com/VibiumDev/vibium/issues/125) | `page.clock` | fixed v26.5.31 (PR #163) | was: always call install() first |
+| [JS #126](https://github.com/VibiumDev/vibium/issues/126) | `page.capture.navigation`, `page.url` | open | poll url() or use evaluate('location.href') |
+| [JS #118](https://github.com/VibiumDev/vibium/issues/118) | `page.find`, `page.findAll` | open (enhancement) | evaluate() with shadowRoot.querySelector |
 
 ---
 
-## #123 — waitUntil(expression) always times out · **FIXED v26.5.31** (PR #163)
+## JS #123 — waitUntil(expression) always times out · **FIXED v26.5.31** (PR #163)
 
 **Trigger:** `page.waitUntil(expression, opts)` threw timeout even for immediately-true expressions (e.g. `document.readyState === "complete"` on a loaded page). `page.waitUntil.url()` was unaffected.
 
@@ -36,7 +36,7 @@ await page.waitUntil(`document.readyState === "complete"`, { timeout: 5000 })
 
 ---
 
-## #124 — evaluate() wraps nested string[][] as BiDi typed objects · open
+## JS #124 — evaluate() wraps nested string[][] as BiDi typed objects · open
 
 **Trigger:** `page.evaluate()` returning a nested array (`string[][]`) — inner array items deserialize as `{ type: "string", value: "..." }` instead of plain strings. A flat `string[]` deserializes correctly.
 
@@ -72,7 +72,7 @@ const items = JSON.parse(json) as string[][]
 
 ---
 
-## #125 — clock.setFixedTime() silently fails without clock.install() · **FIXED v26.5.31** (PR #163)
+## JS #125 — clock.setFixedTime() silently fails without clock.install() · **FIXED v26.5.31** (PR #163)
 
 **Trigger:** Calling `page.clock.setFixedTime(time)` without first calling `page.clock.install()` had no effect — `Date.now()` returned live system time. No error thrown.
 
@@ -94,7 +94,7 @@ const ts = await page.evaluate<number>('Date.now()')
 
 ---
 
-## #126 — capture.navigation() / page.url() miss SPA pushState · open
+## JS #126 — capture.navigation() / page.url() miss SPA pushState · open
 
 Full detail in [[methods/navigate#126]].
 
@@ -114,7 +114,7 @@ const urlAfter = await page.evaluate<string>('location.href')  // always current
 
 ---
 
-## Enhancement — Pierce selector for shadow DOM · open (#118) {#118}
+## Enhancement — Pierce selector for shadow DOM · open (JS #118) {JS #118}
 
 Full detail in [[methods/find#shadow-dom]].
 

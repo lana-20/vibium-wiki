@@ -12,7 +12,7 @@ The most dangerous cross-cutting pattern in Vibium. A BiDi socket-level deadlock
 
 | Trigger | Clients | Issue |
 |---|---|---|
-| `click` on element that fires `alert` / `confirm` / `prompt` | CLI, MCP | B3, #151 |
+| `click` on element that fires `alert` / `confirm` / `prompt` | CLI, MCP | B3, MCP (#151) |
 | `capture.dialog(fn)` where `fn` awaits the click | Python (JS SDK via capture API) | #146 |
 | `click` during recording when form POST redirects back to same page | CLI | #142 |
 | `page.route()` or `page.setHeaders()` then `page.go()` — server-side interception blocks navigation | Java | #128 |
@@ -116,7 +116,7 @@ browser_start {}
 | Client | Status | Tracking |
 |---|---|---|
 | CLI | open | B3 |
-| MCP | open · deferred | #151 |
+| MCP | open · deferred | MCP (#151) |
 | Python capture.dialog | open | #146 |
 | CLI recording mode | open | #142 |
 | Java route/setHeaders | open | #128 |

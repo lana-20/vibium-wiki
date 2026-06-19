@@ -174,7 +174,7 @@ Source: `docs/trackers/arewebidiyet.md` · Spec: `w3c.github.io/webdriver-bidi/`
 ## Notable gaps
 
 - **`emulation.*`** — Only geolocation implemented; timezone, locale, network conditions, user-agent all missing
-- **`browsingContext.historyUpdated`** — Directly related to open issue #126 (SPA pushState not captured) → [[methods/navigate#126]]
+- **`browsingContext.historyUpdated`** — Directly related to open issue JS #126 (SPA pushState not captured) → [[methods/navigate#126]]
 - **`browsingContext.fragmentNavigated`** — Same gap for hash-change SPAs
 - **`script.addPreloadScript`** — Implemented but `removePreloadScript` missing
 - **`network.continueWithAuth`** — Basic auth flows need this

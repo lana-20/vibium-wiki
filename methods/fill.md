@@ -19,14 +19,14 @@ Sets the value of an input element. Clears existing value then types the new val
 | `input[type=password]` | ok | ok |
 | `input[type=email]` | ok | ok |
 | `input[type=number]` | ok | ok |
-| `textarea` | fixed v26.5.31 (was B7) | fixed v26.5.31 (was #155) |
+| `textarea` | fixed v26.5.31 (was B7) | fixed v26.5.31 (was MCP #155) |
 | `input[type=range]` | open — B31 | untested |
 | empty string value `""` | open — B20 | untested |
 | negative number value `"-2"` | open — B18 | untested |
 
 ## Known bugs
 
-### B7 / #155 — fill fails on `<textarea>` · fixed v26.5.31
+### B7 / MCP #155 — fill fails on `<textarea>` · fixed v26.5.31
 
 Previously: `element type is not supported for fill` on textarea elements.
 

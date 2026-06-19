@@ -41,7 +41,7 @@ Do NOT use `vibium go` to subdomain pages. Do NOT click internal PrestaShop nav 
 
 ---
 
-### #126 — capture.navigation() and page.url() miss SPA pushState navigation · open
+### JS #126 — capture.navigation() and page.url() miss SPA pushState navigation · open
 
 On SPAs that use `history.pushState()` for routing (React Router, Vue Router, Next.js client-side navigation), `capture.navigation()` does not fire and `page.url()` returns the previous URL.
 

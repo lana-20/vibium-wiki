@@ -51,7 +51,7 @@ Same 230-node dataset rendered as 6 horizontal planes stacked in Three.js. Camer
 | Section | What's inside |
 |---|---|
 | [index.md](index.md) | Full table of contents |
-| [bugs/](bugs/) | B1–B33 CLI · #149–#157 MCP · JS · Python · Java bug indexes |
+| [bugs/](bugs/) | B1–B33 CLI · MCP #149–MCP #157 MCP · JS · Python · Java bug indexes |
 | [methods/](methods/) | 148 per-method pages — one per command; all have syntax tables, key commands have full docs |
 | [patterns/](patterns/) | dialog_deadlock · negative_values · find_text_case |
 | [reference/](reference/) | Architecture · actionability · full API cross-surface table · BiDi coverage · roadmap |
